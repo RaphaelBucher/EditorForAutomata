@@ -9,7 +9,10 @@ import java.awt.Color;
 
 public interface Config {
   /** Drawable pixels */
+  int MINIMAL_FRAME_HEIGHT = 350; // adjust manually
+  
   int DRAWABLE_PANEL_X = 1200, DRAWABLE_PANEL_Y = 800;
+  int DRAWABLE_PANEL_MINIMUM_X = 400;
 
   int TOOLBAR_X = 60, TOOLBAR_Y = DRAWABLE_PANEL_Y;
   int TOOLBAR_ICON_XY = 50;
@@ -52,4 +55,7 @@ public interface Config {
   long ERROR_MESSAGE_DURATION_MILLIS = 3000; // How many millis until the
                                              // message faded away completely
   int ERROR_MESSAGE_FONT_SIZE = 20;
+  
+  int BORDER_THICKNESS = 5; // The thickness of the FlowLayouts borders of Editors container
+  
 }

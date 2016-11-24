@@ -5,12 +5,15 @@
  * */
 package editor;
 
+import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -40,13 +43,13 @@ public class DrawablePanel extends JPanel {
 
     automat = new Automat();
 
-    // del. used for testing only
-    automat.createExampleAutomat();
+    // delete, used for testing only
+    //automat.createExampleAutomat();
   }
-
+  
   private void addMouseListener() {
     this.addMouseListener(new MouseAdapter() {
-      public void mouseClicked(MouseEvent evt) {
+      public void mousePressed(MouseEvent evt) {
         handleMouseClicked(evt);
       }
     });
@@ -98,12 +101,10 @@ public class DrawablePanel extends JPanel {
 
     ErrorMessage.paint(graphics2D);
 
-    // Del
+    // test drawable area: default 0,0 to 1199, 799
     // graphics2D.drawRect(0, 0, 1, 1);
     // 1200, 800
-    // graphics2D.drawRect(Config.DRAWABLE_PANEL_X - 1, Config.DRAWABLE_PANEL_Y
-    // - 1, 1, 1);
-    // => drawable area is: (0, 0) bis (1199, 799)
+    // graphics2D.drawRect(Config.DRAWABLE_PANEL_X - 1, Config.DRAWABLE_PANEL_Y - 1, 1, 1);
 
     graphics2D.dispose();
   }

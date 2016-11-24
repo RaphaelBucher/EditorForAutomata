@@ -25,18 +25,21 @@ public class Automat {
   }
 
   public void handleMouseClicked(MouseEvent evt, String cursorName) {
-    if (cursorName.equals(Config.Cursor_names.STATE_CURSOR)) {
+    if (cursorName.equals(new Cursor(Cursor.DEFAULT_CURSOR).getName())) {
+      // Default arrow-cursor
+      
+    } else if (cursorName.equals(Config.Cursor_names.STATE_CURSOR)) {
       // Add state Cursor
-      addState(new State(evt.getX(), evt.getY()));
+      addState(new State(findNewStateIndex(), evt.getX(), evt.getY()));
     } else if (cursorName.equals(Config.Cursor_names.START_STATE_CURSOR)) {
       // Add start state cursor
-      addState(new StartState(evt.getX(), evt.getY()));
+      addState(new StartState(findNewStateIndex(), evt.getX(), evt.getY()));
     } else if (cursorName.equals(Config.Cursor_names.END_STATE_CURSOR)) {
       // Add end state cursor
-      addState(new EndState(evt.getX(), evt.getY()));
+      addState(new EndState(findNewStateIndex(), evt.getX(), evt.getY()));
     } else if (cursorName.equals(Config.Cursor_names.START_END_STATE_CURSOR)) {
       // Add start-end state cursor
-      addState(new StartEndState(evt.getX(), evt.getY()));
+      addState(new StartEndState(findNewStateIndex(), evt.getX(), evt.getY()));
     } else if ((cursorName.equals(Config.Cursor_names.TRANSITION_CURSOR))) {
       // Transition cursor
     }
@@ -53,12 +56,12 @@ public class Automat {
    * another state, state is partly outside the drawable JPanel etc.
    */
   private boolean addingStateAllowed(State state) {
-    // check if state is visually allowed to be added. Write default checking
+    // check if state is visually allowed to be added??? Write default checking
     // method in class State and override it then in the subclasses when
     // start-state is bigger on the left side for example???
 
     // checking for class-dependent rules
-    if (state instanceof StartState) {
+    if (state instanceof StartState || state instanceof StartEndState) {
       if (!addingStartStateAllowed()) {
         return false;
       }
@@ -80,22 +83,47 @@ public class Automat {
   /** Returns true if the Automat already has a start-state, false instead. */
   private boolean hasStartState() {
     for (int i = 0; i < states.size(); i++) {
-      if (states.get(i) instanceof StartState)
+      if (states.get(i) instanceof StartState || states.get(i) instanceof StartEndState)
         return true;
     }
 
     return false;
   }
+  
+  private int findNewStateIndex() {
+    int i = 0;
+    while (getStateByStateIndex(i) != null) {
+      i++;
+    }
+    
+    return i;
+  }
 
+  /** Returns the found state, or null otherwise. */
+  private State getStateByStateIndex(int stateIndex) {
+    for (int i = 0; i < states.size(); i++) {
+      if (stateIndex == states.get(i).getStateIndex())
+        return states.get(i);
+    }
+    
+    return null;
+  }
+  
   // Currently only used for testing
   public void createExampleAutomat() {
     // Discard all current states.
     this.states = new ArrayList<State>();
 
     // add some states
-    states.add(new State(100, 100));
+    states.add(new State(findNewStateIndex(), 100, 100));
     // states.add(new StartState(200, 200));
-    states.add(new EndState(300, 300));
-    states.add(new StartEndState(400, 400));
+    states.add(new EndState(findNewStateIndex(), 300, 300));
+    states.add(new StartEndState(findNewStateIndex(), 400, 400));
+    
+    //states.remove(1);
+    
+    states.add(new State(findNewStateIndex(), 600, 600));
+    states.add(new State(findNewStateIndex(), 600, 600));
+    //states.remove(2);
   }
 }

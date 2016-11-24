@@ -8,8 +8,8 @@ package editor;
 import java.awt.Graphics2D;
 
 public class EndState extends State {
-  public EndState(int drawX, int drawY) {
-    super(drawX, drawY);
+  public EndState(int stateIndex, int x, int y) {
+    super(stateIndex, x, y);
   }
 
   // custom paint method which overrides the one from class State
@@ -17,7 +17,7 @@ public class EndState extends State {
     super.paint(graphics2D);
 
     // draw the second inner oval of an end-state
-    graphics2D.drawOval(drawX - (Config.END_STATE_INNER_DIAMETER / 2), drawY - (Config.END_STATE_INNER_DIAMETER / 2),
+    graphics2D.drawOval(x - (Config.END_STATE_INNER_DIAMETER / 2), y - (Config.END_STATE_INNER_DIAMETER / 2),
         Config.END_STATE_INNER_DIAMETER, Config.END_STATE_INNER_DIAMETER);
   }
 }

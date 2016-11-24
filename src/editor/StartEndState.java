@@ -8,8 +8,8 @@ package editor;
 import java.awt.Graphics2D;
 
 public class StartEndState extends State {
-  public StartEndState(int drawX, int drawY) {
-    super(drawX, drawY);
+  public StartEndState(int stateIndex, int x, int y) {
+    super(stateIndex, x, y);
   }
 
   // custom paint method which overrides the one from class State
@@ -17,11 +17,13 @@ public class StartEndState extends State {
     super.paint(graphics2D);
 
     // draw the second inner oval of an end-state
-    graphics2D.drawOval(drawX - (Config.END_STATE_INNER_DIAMETER / 2), drawY - (Config.END_STATE_INNER_DIAMETER / 2),
+    graphics2D.drawOval(x - (Config.END_STATE_INNER_DIAMETER / 2), y - (Config.END_STATE_INNER_DIAMETER / 2),
         Config.END_STATE_INNER_DIAMETER, Config.END_STATE_INNER_DIAMETER);
 
     // the arrow indicating that it's a start state
-    graphics2D.drawArc(drawX - Config.STATE_DIAMETER, drawY - Config.STATE_DIAMETER, Config.STATE_DIAMETER,
+    graphics2D.drawArc(x - Config.STATE_DIAMETER, y - Config.STATE_DIAMETER, Config.STATE_DIAMETER,
         Config.STATE_DIAMETER, 225, 45);
+    graphics2D.drawLine(x - Config.STATE_DIAMETER / 2, y, x - Config.STATE_DIAMETER / 2 - 8, y - 7);
+    graphics2D.drawLine(x - Config.STATE_DIAMETER / 2, y, x - Config.STATE_DIAMETER / 2 - 8, y + 5);
   }
 }

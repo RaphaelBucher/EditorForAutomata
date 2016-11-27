@@ -19,7 +19,7 @@ public class StartState extends State {
     // the arrow indicating that it's a start state
     graphics2D.drawArc(x - Config.STATE_DIAMETER, y - Config.STATE_DIAMETER, Config.STATE_DIAMETER,
         Config.STATE_DIAMETER, 225, 45);
-    
+
     // the arrow
     graphics2D.drawLine(x - Config.STATE_DIAMETER / 2, y, x - Config.STATE_DIAMETER / 2 - 8, y - 7);
     graphics2D.drawLine(x - Config.STATE_DIAMETER / 2, y, x - Config.STATE_DIAMETER / 2 - 8, y + 5);

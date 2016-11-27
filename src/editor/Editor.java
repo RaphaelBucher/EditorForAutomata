@@ -5,92 +5,67 @@
  * */
 package editor;
 
-import java.awt.BasicStroke;
-import java.awt.BorderLayout;
-import java.awt.Cursor;
+import java.awt.ComponentOrientation;
+import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.MouseInfo;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.Timer;
 
 public class Editor extends JFrame {
   private static final long serialVersionUID = 1L;
-  private static JPanel container;
+  private static Container container;
   private static ToolBar toolBar;
   private static DrawablePanel drawablePanel;
-  private Timer resizeDelay;
 
   public Editor(DrawablePanel editor) {
     this.setTitle("Editor for Automata");
-    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // close Window => System.exit
-    
-    this.setLayout(new BorderLayout());
+    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // close Window =>
+                                                         // System.exit
+    this.setMinimumSize(new Dimension(Config.FRAME_PANEL_MIN_WIDTH, Config.FRAME_PANEL_MIN_HEIGHT));
 
-    container = new JPanel();
-    toolBar = new ToolBar();
+    this.pack(); // Let the window expand to the minimal size specified above.
+    container = this.getContentPane();
+    container.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+    container.setLayout(new GridBagLayout());
+    GridBagConstraints gridBagConstraints = new GridBagConstraints();
+
+    // Toolbar
+    toolBar = new ToolBar(container.getHeight()); // initialize with full
+                                                  // available height
+    // Element is placed in the first grid on the first row
+    gridBagConstraints.gridx = 0; // Element is placed in the first grid
+    gridBagConstraints.gridy = 0; // Element is placed in the first grid
+    // When the size of the container is bigger than the preferred size,
+    // it doesn't expand horizontally but fully vertically
+    gridBagConstraints.weightx = 0;
+    gridBagConstraints.weighty = 1.0;
+    gridBagConstraints.fill = GridBagConstraints.VERTICAL;
+    container.add(toolBar, gridBagConstraints);
+
+    // Toolbar
     drawablePanel = new DrawablePanel();
+    // Element is placed in the second grid on the first row
+    gridBagConstraints.gridx = 1; // Element is placed in the first grid
+    gridBagConstraints.gridy = 0; // Element is placed in the first grid
+    // When the size of the container is bigger than the preferred size,
+    // it doesn't expands fully in both directions
+    gridBagConstraints.weightx = 1.0;
+    gridBagConstraints.weighty = 1.0;
+    gridBagConstraints.fill = GridBagConstraints.BOTH;
+    container.add(drawablePanel, gridBagConstraints);
 
-    container.setLayout(new FlowLayout(FlowLayout.LEADING, Config.BORDER_THICKNESS,
-        Config.BORDER_THICKNESS));
-    container.add(toolBar);
-    container.add(drawablePanel);
-
-    this.add(container);
-
+    // The order of these calls is important for the positioning.
     this.pack();
-    
-    // The order of these calls is important for the positioning through
-    // setLocationRelativeTo()
     this.setLocationRelativeTo(null);
     this.setVisible(true);
     this.setResizable(true);
-    
-    // Called when the Frame is being resized
-    this.addComponentListener(new ComponentAdapter() {
-      public void componentResized(ComponentEvent e) {
-        resizeDrawableArea();
-      }
-    });
-    
-    // Frame cannot be resized below this Dimension
-    this.setMinimumSize(new Dimension(toolBar.getWidth() + Config.BORDER_THICKNESS * 3 + 
-        Config.DRAWABLE_PANEL_MINIMUM_X, Config.MINIMAL_FRAME_HEIGHT));
-  }
-  
-  // Called when the Frame is being resized
-  private void resizeDrawableArea() {
-    int takenWidth = toolBar.getWidth() + Config.BORDER_THICKNESS * 3;
-    int availableWidth = this.getWidth() - takenWidth;
-    int availableHeight = this.getContentPane().getHeight() - Config.BORDER_THICKNESS * 2;
-    
-    drawablePanel.setPreferredSize(new Dimension(availableWidth, availableHeight));
-    toolBar.setPreferredSize(new Dimension(Config.TOOLBAR_X, availableHeight));
-    
-    container.remove(toolBar);
-    container.add(toolBar);
-    
-    container.remove(drawablePanel);
-    container.add(drawablePanel);
-    
-    this.pack();
   }
 
   public static void main(String[] args) {
     Editor editor = new Editor(drawablePanel);
-
+    
     editor.run();
   }
 
@@ -102,12 +77,11 @@ public class Editor extends JFrame {
     while (true) {
       // Frame-rate like in games to not permanently repaint() everything when
       // not needed.
-      // Doesn't eat too much unneeded system resources
       startTime = System.currentTimeMillis();
 
       // Updating
       drawablePanel.update(toolBar);
-      
+
       // Painting
       toolBar.repaint();
       drawablePanel.repaint();
@@ -131,5 +105,10 @@ public class Editor extends JFrame {
       interruptedException.printStackTrace();
       System.err.println("Thread.sleep() failed.");
     }
+  }
+  
+  // Getter
+  public static DrawablePanel getDrawablePanel() {
+    return drawablePanel;
   }
 }

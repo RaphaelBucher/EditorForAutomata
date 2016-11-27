@@ -5,7 +5,12 @@
  * */
 package editor;
 
+import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -14,54 +19,65 @@ import javax.swing.JToggleButton;
 
 public class ToggleButton extends JToggleButton {
   private static final long serialVersionUID = 1L;
-  private boolean isHovered; // to simulate the hover-effect, see
-                             // this.paintComponent()
+  private Cursor customCursor;
+
+  // To simulate the hover-effect, see this.paintComponent()
+  private boolean isHovered;
 
   // parentObject passes down the address of the parent-object. It's used to
   // call the toggleButtonEventHandler(). The instances of this class itself
   // lack the information of each others selected property.
-  public ToggleButton(String iconPath, boolean selected, ToolBar parentObject) {
-    super(new ImageIcon(iconPath), selected);
+  public ToggleButton(String iconPath, String cursorName, ToolBar parentObject) {
+    super(new ImageIcon(iconPath), false);
+    this.setBorder(null);
     this.setFocusable(false);
+    
+    // Cursor
+    Toolkit toolkit = Toolkit.getDefaultToolkit();
+    ImageIcon cursorImg = new ImageIcon(iconPath);
+    customCursor = toolkit.createCustomCursor(cursorImg.getImage(),
+        new Point(Config.CURSOR_XY / 2, Config.CURSOR_XY / 2), cursorName);
 
-    /** Changes background color if the user hovers the mouse over the button */
-    // Inside the block below, this refers to the MouseAdapter instance
+    /** Changes background color if the user hovers the mouse over the button. */
     ToggleButton tmpThis = this;
     this.addMouseListener(new MouseAdapter() {
       public void mouseEntered(MouseEvent evt) {
-        setHovered(true);
+        isHovered = true;
       }
 
       public void mouseExited(MouseEvent evt) {
-        setHovered(false);
+        isHovered = false;
       }
 
-      public void mouseClicked(MouseEvent evt) {
-        if (isHovered)
-          isHovered = false;
-
+      public void mousePressed(MouseEvent evt) {
         parentObject.toggleButtonEventHandler(tmpThis);
       }
     });
   }
 
   @Override
-  public void paintComponent(Graphics g) {
-    if (isHovered) {
-      boolean saveSelection = this.isSelected();
-
-      this.setSelected(true);
-      super.paintComponent(g);
-      this.setSelected(saveSelection);
-    } else
-      super.paintComponent(g);
+  public void paintComponent(Graphics graphics) {
+    Graphics2D graphics2D = (Graphics2D) graphics;
+    
+    // Windows has a native hover and selection effect... mac in my current use not.
+    if (Platform.isMac()) {
+      // hover effect
+      if (this.isHovered) {
+        graphics2D.setColor(new Color(220, 220, 220));
+        graphics2D.fillRoundRect(0, 0, Config.TOOLBAR_ICON_WIDTH, Config.TOOLBAR_ICON_HEIGHT, 15, 15);
+      }
+      
+      // darken the area if selected
+      if (this.isSelected()) {
+        graphics2D.setColor(new Color(196, 196, 196));
+        graphics2D.fillRoundRect(0, 0, Config.TOOLBAR_ICON_WIDTH, Config.TOOLBAR_ICON_HEIGHT, 15, 15);
+      }
+    }
+    
+    super.paintComponent(graphics);
   }
-
-  public boolean isHovered() {
-    return isHovered;
-  }
-
-  public void setHovered(boolean isHovered) {
-    this.isHovered = isHovered;
+  
+  public Cursor getCustomCursor() {
+    return this.customCursor;
   }
 }

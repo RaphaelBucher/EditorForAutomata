@@ -5,138 +5,117 @@
  * */
 package editor;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.io.File;
 
-import javax.swing.BorderFactory;
 import javax.swing.JToolBar;
 
 public class ToolBar extends JToolBar {
   private static final long serialVersionUID = 1L;
-  private ToggleButton addStateButton;
-  private ToggleButton addStartStateButton;
-  private ToggleButton addEndStateButton;
-  private ToggleButton addTransitionButton;
+  private ToggleButton stateButton;
+  private ToggleButton startStateButton;
+  private ToggleButton endStateButton;
+  private ToggleButton startEndStateButton;
+  private ToggleButton transitionButton;
 
-  public ToolBar() {
-    this.setPreferredSize(new Dimension(Config.TOOLBAR_X, Config.TOOLBAR_Y));
+  public ToolBar(int minimal_height) {
+    this.setPreferredSize(new Dimension(Config.TOOLBAR_ICON_WIDTH, minimal_height));
     this.setDoubleBuffered(true);
     this.setFocusable(true);
-    this.setLayout(new FlowLayout());
+    this.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
 
     // Removes the weird standard-borders with 2 vertical lines on the left
-    this.setBorder(BorderFactory.createRaisedBevelBorder());
+    this.setBorder(null);
 
     String absolutePath = new File("").getAbsolutePath();
 
     // Normal state
-    addStateButton = new ToggleButton(absolutePath + Config.ADD_STATE_ICON_PATH, true, this);
-    this.add(addStateButton);
+    stateButton = new ToggleButton(absolutePath + Config.STATE_ICON_PATH, Config.Cursor_names.STATE_CURSOR, this);
+    this.add(stateButton);
 
     // Start state
-    addStartStateButton = new ToggleButton(absolutePath + Config.ADD_START_STATE_ICON_PATH, false, this);
-    this.add(addStartStateButton);
+    startStateButton = new ToggleButton(absolutePath + Config.START_STATE_ICON_PATH, 
+        Config.Cursor_names.START_STATE_CURSOR, this);
+    this.add(startStateButton);
 
     // End state
-    addEndStateButton = new ToggleButton(absolutePath + Config.ADD_END_STATE_ICON_PATH, false, this);
-    this.add(addEndStateButton);
+    endStateButton = new ToggleButton(absolutePath + Config.END_STATE_ICON_PATH, 
+        Config.Cursor_names.END_STATE_CURSOR, this);
+    this.add(endStateButton);
+    
+    // Start- and end-state
+    startEndStateButton = new ToggleButton(absolutePath + Config.START_END_STATE_ICON_PATH, 
+        Config.Cursor_names.START_END_STATE_CURSOR, this);
+    this.add(startEndStateButton);
 
     // Transition
-    addTransitionButton = new ToggleButton(absolutePath + Config.ADD_TRANSITION_ICON_PATH, false, this);
-    this.add(addTransitionButton);
+    transitionButton = new ToggleButton(absolutePath + Config.TRANSITION_ICON_PATH, 
+        Config.Cursor_names.TRANSITION_CURSOR, this);
+    this.add(transitionButton);
   }
 
   public void paint(Graphics graphics) {
     super.paint(graphics);
     Graphics2D graphics2D = (Graphics2D) graphics;
 
+    // In case it's running on windows, draw a black line below the menu-bar. Else the Menu and the drawablePanel
+    // would be both white.
+    if (Platform.isWindows()) {
+      graphics2D.drawLine(0, 0, this.getWidth(), 0);
+    }
+    
     graphics2D.dispose();
   }
 
-  // manages the logic constraints of the toggle-buttons. E.g. when
-  // addTransition is clicked,
-  // deselect all other toggle-buttons
+  // Called by the ToggleButtons itself. Deselects all buttons except the one being clicked. 
+  // Leaves this one untouched.
   protected void toggleButtonEventHandler(ToggleButton clickedButton) {
-    if (clickedButton.equals(addStateButton) || clickedButton.equals(addStartStateButton)
-        || clickedButton.equals(addEndStateButton)) {
-      // Handle the three state buttons separately
-      this.handleStateButtons(clickedButton);
-    } else
-      this.handleDefaultButtons(clickedButton);
-  }
-
-  // clickedButton is one of the three stateButtons
-  private void handleStateButtons(ToggleButton clickedButton) {
-    // Swing called setSelected() already. So e.g. when button was not selected
-    // and clicked,
-    // isSelected() returns true already.
-
-    // deselecting
+    // Update the cursor of the drawable panel. The API didn't update
+    // the selection state yet, so clickedButton.isSelected() getting false
+    // means the button has been selected...
     if (!clickedButton.isSelected()) {
-      // In case of addStateButton was deselected, desect StartStateButton and
-      // EndStateButton too
-      if (clickedButton.equals(addStateButton)) {
-        addStartStateButton.setSelected(false);
-        addEndStateButton.setSelected(false);
-      }
-    } else { // selecting
-      deselectNonStateButtons();
-
-      // select addStateButton in case the user clicked on StartButton or
-      // EndButton
-      if (clickedButton.equals(addStartStateButton) || clickedButton.equals(addEndStateButton)) {
-        addStateButton.setSelected(true);
-      }
+      // button was selected - set custum Cursor of the Button
+      Editor.getDrawablePanel().setCursor(clickedButton.getCustomCursor());
+    } else {
+      // button was deselected - set default Cursor
+      Editor.getDrawablePanel().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }
-  }
-
-  private void deselectNonStateButtons() {
-    addTransitionButton.setSelected(false);
-  }
-
-  // clickedButton is not one of the three state Buttons
-  private void handleDefaultButtons(ToggleButton clickedButton) {
-    // Swing called setSelected() already. So e.g. when button was not selected
-    // and clicked,
-    // isSelected() returns true already.
-
-    // Deselect all other buttons if click made deselected -> selected. In case
-    // of
-    // selected -> deselected, do nothing.
-    if (clickedButton.isSelected()) {
-      // not selected -> selected
-      deselectAllButtons(clickedButton);
-    }
-  }
-
-  // helper method to deselect all ToggleButton instances except the one passed
-  private void deselectAllButtons(ToggleButton clickedButton) {
-    addStateButton.setSelected(false);
-    addStartStateButton.setSelected(false);
-    addEndStateButton.setSelected(false);
-    addTransitionButton.setSelected(false);
-
-    // reselect the passed ToggleButton
-    clickedButton.setSelected(true);
+    
+    // Deselect all buttons except the one that was clicked.
+    if (!clickedButton.equals(stateButton) && stateButton.isSelected())
+      stateButton.doClick();
+    if (!clickedButton.equals(startStateButton) && startStateButton.isSelected())
+      startStateButton.doClick();
+    if (!clickedButton.equals(endStateButton) && endStateButton.isSelected())
+      endStateButton.doClick();
+    if (!clickedButton.equals(startEndStateButton) && startEndStateButton.isSelected())
+      startEndStateButton.doClick();
+    if (!clickedButton.equals(transitionButton) && transitionButton.isSelected())
+      transitionButton.doClick();
   }
 
   // Getters
-  public ToggleButton getAddStateButton() {
-    return this.addStateButton;
+  public ToggleButton getStateButton() {
+    return this.stateButton;
   }
 
-  public ToggleButton getAddStartStateButton() {
-    return this.addStartStateButton;
+  public ToggleButton getStartStateButton() {
+    return this.startStateButton;
   }
 
-  public ToggleButton getAddEndStateButton() {
-    return this.addEndStateButton;
+  public ToggleButton getEndStateButton() {
+    return this.endStateButton;
   }
 
-  public ToggleButton getAddTransitionButton() {
-    return this.addTransitionButton;
+  public ToggleButton getStartEndStateButton() {
+    return this.startEndStateButton;
+  }
+  
+  public ToggleButton getTransitionButton() {
+    return this.transitionButton;
   }
 }

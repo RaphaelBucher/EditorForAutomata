@@ -8,40 +8,38 @@ package editor;
 import java.awt.Color;
 
 public interface Config {
-  /** Drawable pixels */
-  int MINIMAL_FRAME_HEIGHT = 350; // adjust manually
-  
-  int DRAWABLE_PANEL_X = 1200, DRAWABLE_PANEL_Y = 800;
-  int DRAWABLE_PANEL_MINIMUM_X = 400;
+  int FPS = 30; // How many times the main loop calls update() and the repaint()
+                // functions.
 
-  int TOOLBAR_X = 60, TOOLBAR_Y = DRAWABLE_PANEL_Y;
-  int TOOLBAR_ICON_XY = 50;
-  int CURSOR_XY = TOOLBAR_ICON_XY; // The custom cursor width and height of
-                                   // DrawablePanel
+  // Frame will be initialized with these sizes. Can be enlarged.
+  int FRAME_PANEL_MIN_WIDTH = 600;
+
+  // Needs to be a bit bigger than the ToolBar needs. It also contains the
+  // frames menu-bar.
+  // The height initialization of everything depends on only this value.
+  int FRAME_PANEL_MIN_HEIGHT = 400;
+
+  // ToolBar
+  int TOOLBAR_ICON_WIDTH = 60;
+  int TOOLBAR_ICON_HEIGHT = 60;
+
+  // The custom cursor width and height of DrawablePanel
+  int CURSOR_XY = TOOLBAR_ICON_WIDTH;
+
   // In case of an end-state, the second circle is within the default one, the
   // diameter for normal
   // and end-states is the same. This eases the rendering.
   int STATE_DIAMETER = CURSOR_XY - 4; // make it slightly smaller
   int END_STATE_INNER_DIAMETER = STATE_DIAMETER - 6;
 
+  // Background-color of the drawablePanel
   Color BACKGROUND_COLOR = Color.WHITE;
 
-  String ADD_STATE_ICON_PATH = "/resources/Icons/addState.png";
-  // String ADD_STATE_HOVERED_ICON_PATH =
-  // "/resources/Icons/addStateHovered.png";
-  String ADD_START_STATE_ICON_PATH = "/resources/Icons/addStartState.png";
-  // String ADD_START_STATE_HOVERED_ICON_PATH =
-  // "/resources/Icons/addStartStateHovered.png";
-  String ADD_END_STATE_ICON_PATH = "/resources/Icons/addEndState.png";
-  // String ADD_END_STATE_HOVERED_ICON_PATH =
-  // "/resources/Icons/addEndStateHovered.png";
-  String ADD_TRANSITION_ICON_PATH = "/resources/Icons/addTransition.png";
-  // String ADD_TRANSITION_HOVERED_ICON_PATH =
-  // "/resources/Icons/addTransitionHovered.png";
-
-  String START_END_STATE_CURSOR_PATH = "/resources/Icons/startEndStateCursor.png";
-
-  int FPS = 30;
+  String STATE_ICON_PATH = "/resources/Icons/state.png";
+  String START_STATE_ICON_PATH = "/resources/Icons/startState.png";
+  String END_STATE_ICON_PATH = "/resources/Icons/endState.png";
+  String START_END_STATE_ICON_PATH = "/resources/Icons/startEndState.png";
+  String TRANSITION_ICON_PATH = "/resources/Icons/transition.png";
 
   interface Cursor_names {
     final String STATE_CURSOR = "stateCursor";
@@ -51,11 +49,7 @@ public interface Config {
     final String TRANSITION_CURSOR = "transitionCursor";
   }
 
-  // ErrorMessage
-  long ERROR_MESSAGE_DURATION_MILLIS = 3000; // How many millis until the
-                                             // message faded away completely
+  // How many millis until the Error-message fades away completely
+  long ERROR_MESSAGE_DURATION_MILLIS = 3000;
   int ERROR_MESSAGE_FONT_SIZE = 20;
-  
-  int BORDER_THICKNESS = 5; // The thickness of the FlowLayouts borders of Editors container
-  
 }

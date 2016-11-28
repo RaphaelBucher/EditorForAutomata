@@ -20,6 +20,7 @@ import javax.swing.JToggleButton;
 public class ToggleButton extends JToggleButton {
   private static final long serialVersionUID = 1L;
   private Cursor customCursor;
+  private ImageIcon image; // The Buttons image. There's no text displayed.
 
   // To simulate the hover-effect, see this.paintComponent()
   private boolean isHovered;
@@ -27,16 +28,17 @@ public class ToggleButton extends JToggleButton {
   // parentObject passes down the address of the parent-object. It's used to
   // call the toggleButtonEventHandler(). The instances of this class itself
   // lack the information of each others selected property.
-  public ToggleButton(String iconPath, String cursorName, ToolBar parentObject) {
+  public ToggleButton(String iconPath, String windowsCursorIconPath,
+      String cursorName, ToolBar parentObject) {
     super(new ImageIcon(iconPath), false);
     this.setBorder(null);
     this.setFocusable(false);
+
+    // The image of the button
+    image = new ImageIcon(iconPath);
     
     // Cursor
-    Toolkit toolkit = Toolkit.getDefaultToolkit();
-    ImageIcon cursorImg = new ImageIcon(iconPath);
-    customCursor = toolkit.createCustomCursor(cursorImg.getImage(),
-        new Point(Config.CURSOR_XY / 2, Config.CURSOR_XY / 2), cursorName);
+    createCustomCursor(iconPath, windowsCursorIconPath, cursorName);
 
     /** Changes background color if the user hovers the mouse over the button. */
     ToggleButton tmpThis = this;
@@ -54,13 +56,29 @@ public class ToggleButton extends JToggleButton {
       }
     });
   }
+  
+  /** Sets the drawableAreas cursor if the button is pressed. Mac and Windows have their own Icons
+   * due to Windows cursor size limitations of 32x32 pixels. */
+  private void createCustomCursor(String iconPath, String windowsCursorIconPath, String cursorName) {
+    Toolkit toolkit = Toolkit.getDefaultToolkit();
+    
+    if (!Platform.isWindows()) {
+      // Mac or Linux
+      customCursor = toolkit.createCustomCursor(image.getImage(),
+          new Point(Config.CURSOR_WIDTH / 2, Config.CURSOR_HEIGHT / 2), cursorName);
+    } else {
+      // Windows
+      customCursor = toolkit.createCustomCursor(new ImageIcon(windowsCursorIconPath).getImage(),
+          new Point(Config.WINDOWS_CURSOR_WIDTH / 2, Config.WINDOWS_CURSOR_HEIGHT / 2), cursorName);
+    }
+  }
 
   @Override
   public void paintComponent(Graphics graphics) {
     Graphics2D graphics2D = (Graphics2D) graphics;
     
     // Windows has a native hover and selection effect... mac in my current use not.
-    if (Platform.isMac()) {
+    if (!Platform.isWindows()) {
       // hover effect
       if (this.isHovered) {
         graphics2D.setColor(new Color(220, 220, 220));
@@ -79,5 +97,9 @@ public class ToggleButton extends JToggleButton {
   
   public Cursor getCustomCursor() {
     return this.customCursor;
+  }
+  
+  public ImageIcon getImageIcon() {
+    return this.image;
   }
 }

@@ -33,6 +33,8 @@ public class ErrorMessage {
       graphics2D.drawString(message,
           (int) drawableArea.getWidth() / 2 - message.length() * Config.ERROR_MESSAGE_FONT_SIZE / 5,
           (int) drawableArea.getHeight() / 2 - Config.ERROR_MESSAGE_FONT_SIZE / 2);
+      
+      graphics2D.setColor(Color.BLACK);
     }
   }
 

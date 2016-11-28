@@ -23,30 +23,49 @@ public interface Config {
   int TOOLBAR_ICON_WIDTH = 60;
   int TOOLBAR_ICON_HEIGHT = 60;
 
-  // The custom cursor width and height of DrawablePanel
-  int CURSOR_XY = TOOLBAR_ICON_WIDTH;
+  // The custom cursor width and height of DrawablePanel for mac and linux
+  int CURSOR_WIDTH = TOOLBAR_ICON_WIDTH;
+  int CURSOR_HEIGHT = TOOLBAR_ICON_HEIGHT;
+  
+  // Windows cursor width and height
+  int WINDOWS_CURSOR_WIDTH = 32;
+  int WINDOWS_CURSOR_HEIGHT = 32;
 
   // In case of an end-state, the second circle is within the default one, the
   // diameter for normal
   // and end-states is the same. This eases the rendering.
-  int STATE_DIAMETER = CURSOR_XY - 4; // make it slightly smaller
+  int STATE_DIAMETER = CURSOR_WIDTH - 4; // make it slightly smaller
   int END_STATE_INNER_DIAMETER = STATE_DIAMETER - 6;
 
   // Background-color of the drawablePanel
   Color BACKGROUND_COLOR = Color.WHITE;
 
-  String STATE_ICON_PATH = "/resources/Icons/state.png";
-  String START_STATE_ICON_PATH = "/resources/Icons/startState.png";
-  String END_STATE_ICON_PATH = "/resources/Icons/endState.png";
-  String START_END_STATE_ICON_PATH = "/resources/Icons/startEndState.png";
-  String TRANSITION_ICON_PATH = "/resources/Icons/transition.png";
+  /** Icons-paths for ToggleButtons and cursor on mac. */
+  interface Icon_paths {
+    String STATE = "/resources/Icons/state.png";
+    String START_STATE = "/resources/Icons/startState.png";
+    String END_STATE = "/resources/Icons/endState.png";
+    String START_END_STATE = "/resources/Icons/startEndState.png";
+    String TRANSITION = "/resources/Icons/transition.png";
+  }
+  
+  /** Icons-paths for ToggleButtons and cursor on mac. */
+  interface Windows_cursor_paths {
+    String STATE = "/resources/Icons/stateWindowsCursor.png";
+    String START_STATE = "/resources/Icons/startStateWindowsCursor.png";
+    String END_STATE = "/resources/Icons/endStateWindowsCursor.png";
+    String START_END_STATE = "/resources/Icons/startEndStateWindowsCursor.png";
+    String TRANSITION = "/resources/Icons/transitionWindowsCursor.png";
+  }
 
+   /** The same for mac and windows since only one cursor is set per ToggleButton. */
   interface Cursor_names {
-    final String STATE_CURSOR = "stateCursor";
-    final String START_STATE_CURSOR = "startStateCursor";
-    final String END_STATE_CURSOR = "endStateCursor";
+    String STATE_CURSOR = "stateCursor";
+    String START_STATE_CURSOR = "startStateCursor";
+    String END_STATE_CURSOR = "endStateCursor";
     final String START_END_STATE_CURSOR = "startEndStateCursor";
     final String TRANSITION_CURSOR = "transitionCursor";
+    final String WINDOWS_CURSOR = "stateWindowsCursor";
   }
 
   // How many millis until the Error-message fades away completely

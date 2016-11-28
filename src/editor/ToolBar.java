@@ -34,27 +34,28 @@ public class ToolBar extends JToolBar {
     String absolutePath = new File("").getAbsolutePath();
 
     // Normal state
-    stateButton = new ToggleButton(absolutePath + Config.STATE_ICON_PATH, Config.Cursor_names.STATE_CURSOR, this);
+    stateButton = new ToggleButton(absolutePath + Config.Icon_paths.STATE,
+        absolutePath + Config.Windows_cursor_paths.STATE, Config.Cursor_names.STATE_CURSOR, this);
     this.add(stateButton);
 
     // Start state
-    startStateButton = new ToggleButton(absolutePath + Config.START_STATE_ICON_PATH, 
-        Config.Cursor_names.START_STATE_CURSOR, this);
+    startStateButton = new ToggleButton(absolutePath + Config.Icon_paths.START_STATE,
+        absolutePath + Config.Windows_cursor_paths.START_STATE, Config.Cursor_names.START_STATE_CURSOR, this);
     this.add(startStateButton);
 
     // End state
-    endStateButton = new ToggleButton(absolutePath + Config.END_STATE_ICON_PATH, 
-        Config.Cursor_names.END_STATE_CURSOR, this);
+    endStateButton = new ToggleButton(absolutePath + Config.Icon_paths.END_STATE,
+        absolutePath + Config.Windows_cursor_paths.END_STATE, Config.Cursor_names.END_STATE_CURSOR, this);
     this.add(endStateButton);
     
     // Start- and end-state
-    startEndStateButton = new ToggleButton(absolutePath + Config.START_END_STATE_ICON_PATH, 
-        Config.Cursor_names.START_END_STATE_CURSOR, this);
+    startEndStateButton = new ToggleButton(absolutePath + Config.Icon_paths.START_END_STATE,
+        absolutePath + Config.Windows_cursor_paths.START_END_STATE, Config.Cursor_names.START_END_STATE_CURSOR, this);
     this.add(startEndStateButton);
 
     // Transition
-    transitionButton = new ToggleButton(absolutePath + Config.TRANSITION_ICON_PATH, 
-        Config.Cursor_names.TRANSITION_CURSOR, this);
+    transitionButton = new ToggleButton(absolutePath + Config.Icon_paths.TRANSITION,
+        absolutePath + Config.Windows_cursor_paths.TRANSITION, Config.Cursor_names.TRANSITION_CURSOR, this);
     this.add(transitionButton);
   }
 

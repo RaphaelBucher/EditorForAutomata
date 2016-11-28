@@ -45,7 +45,7 @@ public class Editor extends JFrame {
     container.add(toolBar, gridBagConstraints);
 
     // Toolbar
-    drawablePanel = new DrawablePanel();
+    drawablePanel = new DrawablePanel(toolBar);
     // Element is placed in the second grid on the first row
     gridBagConstraints.gridx = 1; // Element is placed in the first grid
     gridBagConstraints.gridy = 0; // Element is placed in the first grid

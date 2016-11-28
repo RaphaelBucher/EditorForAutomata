@@ -28,11 +28,11 @@ public class State {
         Config.STATE_DIAMETER);
 
     // draw the state and its index
-    graphics2D.setFont(new Font("Arial", Font.PLAIN, Config.CURSOR_XY / 2));
-    graphics2D.drawString("q", x - (int) (Config.CURSOR_XY / 3.5), y + Config.CURSOR_XY / 10);
+    graphics2D.setFont(new Font("Arial", Font.PLAIN, Config.CURSOR_WIDTH / 2));
+    graphics2D.drawString("q", x - (int) (Config.CURSOR_WIDTH / 3.5), y + Config.CURSOR_HEIGHT / 10);
 
-    graphics2D.setFont(new Font("Arial", Font.PLAIN, (int) (Config.CURSOR_XY / 3.2)));
-    graphics2D.drawString("" + this.getStateIndex(), x, y + Config.CURSOR_XY / 5);
+    graphics2D.setFont(new Font("Arial", Font.PLAIN, (int) (Config.CURSOR_WIDTH / 3.2)));
+    graphics2D.drawString("" + this.getStateIndex(), x, y + Config.CURSOR_WIDTH / 5);
   }
 
   public int getStateIndex() {

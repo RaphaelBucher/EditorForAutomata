@@ -11,16 +11,17 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.JPanel;
 
 /** The main-panel where the Editor is drawn into. */
-public class DrawablePanel extends JPanel {
+public class DrawablePanel extends JPanel implements MouseMotionListener {
   private static final long serialVersionUID = 1L;
-
+  
   private Automat automat;
 
-  public DrawablePanel() {
+  public DrawablePanel(ToolBar toolBarCopy) {
     // Initialized with minimal dimensions. This Panel is extended in both
     // directions to the full available space via the Editors GridBagLayout.
     this.setPreferredSize(new Dimension(1, 1));
@@ -29,6 +30,7 @@ public class DrawablePanel extends JPanel {
     this.setFocusable(true);
 
     addMouseListener();
+    addMouseMotionListener(this);
 
     automat = new Automat();
 
@@ -47,7 +49,15 @@ public class DrawablePanel extends JPanel {
   private void handleMouseClicked(MouseEvent evt) {
     automat.handleMouseClicked(evt, this.getCursor().getName());
   }
-
+  
+  /** MouseMotionListeners implementations. */
+  public void mouseMoved(MouseEvent e) {
+//    this.mouseX = e.getX();
+//    this.mouseY = e.getY();
+  }
+  
+  public void mouseDragged(MouseEvent e) {
+  }
 
   public void paint(Graphics graphics) {
     super.paint(graphics);

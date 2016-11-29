@@ -34,7 +34,7 @@ public interface Config {
   // In case of an end-state, the second circle is within the default one, the
   // diameter for normal
   // and end-states is the same. This eases the rendering.
-  int STATE_DIAMETER = CURSOR_WIDTH - 4; // make it slightly smaller
+  int STATE_DIAMETER = 50 - 4;
   int END_STATE_INNER_DIAMETER = STATE_DIAMETER - 6;
 
   // Background-color of the drawablePanel

@@ -9,6 +9,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -62,6 +63,7 @@ public class DrawablePanel extends JPanel implements MouseMotionListener {
   public void paint(Graphics graphics) {
     super.paint(graphics);
     Graphics2D graphics2D = (Graphics2D) graphics;
+    graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     
     automat.paint(graphics2D);
 

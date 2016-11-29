@@ -65,7 +65,7 @@ public class Editor extends JFrame {
 
   public static void main(String[] args) {
     Editor editor = new Editor(drawablePanel);
-    
+    System.out.println("yoletti");
     editor.run();
   }
 

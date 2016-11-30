@@ -11,7 +11,9 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class Automat {
-  ArrayList<State> states;
+  private ArrayList<State> states;
+  //A reference to the currently selected Shape. Null if none is selected.
+  private Shape selectedShape; 
 
   public Automat() {
     this.states = new ArrayList<State>();
@@ -27,11 +29,11 @@ public class Automat {
   public void handleMouseClicked(MouseEvent evt, String cursorName) {
     // Put the new state exactly where the cursor-image is
     int stateX = evt.getX();
-    int stateY = evt.getY() - 1;
+    int stateY = evt.getY() - 1; // little adjustment
     
     if (cursorName.equals(new Cursor(Cursor.DEFAULT_CURSOR).getName())) {
-      // Default arrow-cursor
-
+      // Default arrow-cursor. 
+      checkShapeSelection(evt);
     } else if (cursorName.equals(Config.Cursor_names.STATE_CURSOR)) {
       // Add state Cursor
       addState(new State(findNewStateIndex(), stateX, stateY));
@@ -46,6 +48,28 @@ public class Automat {
       addState(new StartEndState(findNewStateIndex(), stateX, stateY));
     } else if ((cursorName.equals(Config.Cursor_names.TRANSITION_CURSOR))) {
       // Transition cursor
+    }
+  }
+  
+  /** Did the mouseClick hit a Shape of the automat? E.g. a state, a transition etc. */
+  private void checkShapeSelection(MouseEvent evt) {
+    if (selectedShape != null)
+      selectedShape.setSelected(false);
+    selectedShape = null;
+    
+    // Traverse the automats states. Makes sure that only one or zero Shapes gets selected.
+    for (int i = 0; i < states.size(); i++) {
+      if (states.get(i).mouseClickHit(evt.getX(), evt.getY())) {
+        System.out.println("coll ocurred"); // delete
+        
+        // In case the click hit several objects, deselect the previously selected Shape
+        if (selectedShape != null)
+          selectedShape.setSelected(false);
+        
+        // Save the new Shape that reported a mouse-collision
+        this.selectedShape = states.get(i);
+        selectedShape.setSelected(true);
+      }
     }
   }
 

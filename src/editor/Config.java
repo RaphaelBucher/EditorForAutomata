@@ -8,8 +8,8 @@ package editor;
 import java.awt.Color;
 
 public interface Config {
-  int FPS = 30; // How many times the main loop calls update() and the repaint()
-                // functions.
+  //How many times the main loop calls update() and the repaint() functions.
+  int FPS = 30; 
 
   // Frame will be initialized with these sizes. Can be enlarged.
   int FRAME_PANEL_MIN_WIDTH = 600;
@@ -35,6 +35,7 @@ public interface Config {
   // diameter for normal and end-states is the same. This eases the rendering.
   int STATE_DIAMETER = 50 - 8;
   int END_STATE_INNER_DIAMETER = STATE_DIAMETER - 6;
+  Color SELECTED_STATE_COLOR = Color.BLUE;
 
   // Background-color of the drawablePanel
   Color BACKGROUND_COLOR = Color.WHITE;
@@ -69,6 +70,8 @@ public interface Config {
   
   // The start-state arrow that is drawn inside the drawablePanel
   String START_STATE_ARROW_ICON_PATH = "/resources/Icons/startStateArrow.png";
+  String START_STATE_ARROW_SELECTED_ICON_PATH = "/resources/Icons/startStateArrowSelected.png";
+  
 
   // How many millis until the Error-message fades away completely
   long ERROR_MESSAGE_DURATION_MILLIS = 3000;

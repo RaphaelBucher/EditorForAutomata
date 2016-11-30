@@ -134,8 +134,24 @@ public class Automat {
 
     return null;
   }
+  
+  /** Deletes a Shape (states, transitions...) from the automat. */
+  public void deleteShape() {
+    if (selectedShape == null)
+      return;
+    
+    if (selectedShape instanceof State) {
+      // todo later: remove all transitions from and to this state
+      
+      // Removes the State from the automat. The states own stateIndex is freed and
+      // can be retaken by newly added states again.
+      states.remove(selectedShape);
+    }
+    // todo: if (selectedShape instanceof Transition) ...
+  }
+  
 
-  // Currently only used for testing
+  // Currently only used for testing. Called in the DrawablePanel Constructor
   public void createExampleAutomat() {
     // Discard all current states.
     this.states = new ArrayList<State>();

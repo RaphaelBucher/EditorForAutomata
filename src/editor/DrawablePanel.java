@@ -28,13 +28,16 @@ public class DrawablePanel extends JPanel implements MouseMotionListener {
     this.setPreferredSize(new Dimension(1, 1));
     this.setBackground(Config.BACKGROUND_COLOR);
     this.setDoubleBuffered(true);
-    this.setFocusable(true);
+    this.setFocusable(true); // needed for the added KeyListener
 
     addMouseListener();
     addMouseMotionListener(this);
 
     automat = new Automat();
     
+    /* Listens for keyboard events. An instance of this class is added to the DrawablePanel instance. 
+     * It can only be added to a component that has called setFocusable(true). If two components called
+     * setFocusable(true), e.g. ToolBar instance and DrawablePanel instance, it doesn't work. */
     keyboardAdapter = new KeyboardAdapter();
     this.addKeyListener(keyboardAdapter);
     
@@ -87,5 +90,10 @@ public class DrawablePanel extends JPanel implements MouseMotionListener {
   // Changes the cursor according to what the user has selected in the toolBar
   public void setCustomCursor(Cursor cursor) {
     this.setCursor(cursor);
+  }
+  
+  // Getters
+  public Automat getAutomat() {
+    return this.automat;
   }
 }

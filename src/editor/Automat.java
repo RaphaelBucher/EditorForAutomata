@@ -60,8 +60,6 @@ public class Automat {
     // Traverse the automats states. Makes sure that only one or zero Shapes gets selected.
     for (int i = 0; i < states.size(); i++) {
       if (states.get(i).mouseClickHit(evt.getX(), evt.getY())) {
-        System.out.println("coll ocurred"); // delete
-        
         // In case the click hit several objects, deselect the previously selected Shape
         if (selectedShape != null)
           selectedShape.setSelected(false);

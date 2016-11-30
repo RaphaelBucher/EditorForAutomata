@@ -19,10 +19,10 @@ public class Editor extends JFrame {
   private static ToolBar toolBar;
   private static DrawablePanel drawablePanel;
 
-  public Editor(DrawablePanel editor) {
+  public Editor() {
     this.setTitle("Editor for Automata");
-    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // close Window =>
-                                                         // System.exit
+    // close Window => System.exit
+    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     this.setMinimumSize(new Dimension(Config.FRAME_PANEL_MIN_WIDTH, Config.FRAME_PANEL_MIN_HEIGHT));
 
     this.pack(); // Let the window expand to the minimal size specified above.
@@ -64,7 +64,7 @@ public class Editor extends JFrame {
   }
 
   public static void main(String[] args) {
-    Editor editor = new Editor(drawablePanel);
+    Editor editor = new Editor();
     editor.run();
   }
 

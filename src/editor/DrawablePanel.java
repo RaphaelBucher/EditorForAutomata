@@ -19,8 +19,8 @@ import javax.swing.JPanel;
 /** The main-panel where the Editor is drawn into. */
 public class DrawablePanel extends JPanel implements MouseMotionListener {
   private static final long serialVersionUID = 1L;
-  
   private Automat automat;
+  private KeyboardAdapter keyboardAdapter;
 
   public DrawablePanel(ToolBar toolBarCopy) {
     // Initialized with minimal dimensions. This Panel is extended in both
@@ -34,7 +34,10 @@ public class DrawablePanel extends JPanel implements MouseMotionListener {
     addMouseMotionListener(this);
 
     automat = new Automat();
-
+    
+    keyboardAdapter = new KeyboardAdapter();
+    this.addKeyListener(keyboardAdapter);
+    
     // delete, used for testing only
     // automat.createExampleAutomat();
   }

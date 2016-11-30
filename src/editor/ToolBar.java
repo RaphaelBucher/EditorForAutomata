@@ -25,7 +25,7 @@ public class ToolBar extends JToolBar {
   public ToolBar(int minimal_height) {
     this.setPreferredSize(new Dimension(Config.TOOLBAR_ICON_WIDTH, minimal_height));
     this.setDoubleBuffered(true);
-    this.setFocusable(true);
+    //this.setFocusable(true);
     this.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
 
     // Removes the weird standard-borders with 2 vertical lines on the left

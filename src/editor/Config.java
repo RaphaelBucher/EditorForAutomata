@@ -66,6 +66,9 @@ public interface Config {
     final String TRANSITION_CURSOR = "transitionCursor";
     final String WINDOWS_CURSOR = "stateWindowsCursor";
   }
+  
+  // The start-state arrow that is drawn inside the drawablePanel
+  String START_STATE_ARROW_ICON_PATH = "/resources/Icons/startStateArrow.png";
 
   // How many millis until the Error-message fades away completely
   long ERROR_MESSAGE_DURATION_MILLIS = 3000;

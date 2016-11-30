@@ -53,13 +53,11 @@ public class DrawablePanel extends JPanel implements MouseMotionListener {
   
   /** MouseMotionListeners implementations. */
   public void mouseMoved(MouseEvent e) {
-//    this.mouseX = e.getX();
-//    this.mouseY = e.getY();
   }
   
   public void mouseDragged(MouseEvent e) {
   }
-
+  
   public void paint(Graphics graphics) {
     super.paint(graphics);
     Graphics2D graphics2D = (Graphics2D) graphics;

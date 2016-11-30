@@ -25,21 +25,25 @@ public class Automat {
   }
 
   public void handleMouseClicked(MouseEvent evt, String cursorName) {
+    // Put the new state exactly where the cursor-image is
+    int stateX = evt.getX();
+    int stateY = evt.getY() - 1;
+    
     if (cursorName.equals(new Cursor(Cursor.DEFAULT_CURSOR).getName())) {
       // Default arrow-cursor
 
     } else if (cursorName.equals(Config.Cursor_names.STATE_CURSOR)) {
       // Add state Cursor
-      addState(new State(findNewStateIndex(), evt.getX(), evt.getY()));
+      addState(new State(findNewStateIndex(), stateX, stateY));
     } else if (cursorName.equals(Config.Cursor_names.START_STATE_CURSOR)) {
       // Add start state cursor
-      addState(new StartState(findNewStateIndex(), evt.getX(), evt.getY()));
+      addState(new StartState(findNewStateIndex(), stateX, stateY));
     } else if (cursorName.equals(Config.Cursor_names.END_STATE_CURSOR)) {
       // Add end state cursor
-      addState(new EndState(findNewStateIndex(), evt.getX(), evt.getY()));
+      addState(new EndState(findNewStateIndex(), stateX, stateY));
     } else if (cursorName.equals(Config.Cursor_names.START_END_STATE_CURSOR)) {
       // Add start-end state cursor
-      addState(new StartEndState(findNewStateIndex(), evt.getX(), evt.getY()));
+      addState(new StartEndState(findNewStateIndex(), stateX, stateY));
     } else if ((cursorName.equals(Config.Cursor_names.TRANSITION_CURSOR))) {
       // Transition cursor
     }

@@ -98,6 +98,22 @@ public class ToolBar extends JToolBar {
     if (!clickedButton.equals(transitionButton) && transitionButton.isSelected())
       transitionButton.doClick();
   }
+  
+  /** Returns the selected ToggleButton. Returns null if none is selected. */
+  public ToggleButton getSelectedButton() {
+    if (stateButton.isSelected())
+      return stateButton;
+    if (startStateButton.isSelected())
+      return startStateButton;
+    if (endStateButton.isSelected())
+      return endStateButton;
+    if (startEndStateButton.isSelected())
+      return startEndStateButton;
+    if (transitionButton.isSelected())
+      return transitionButton;
+    
+    return null; // No Button was selected
+  }
 
   // Getters
   public ToggleButton getStateButton() {

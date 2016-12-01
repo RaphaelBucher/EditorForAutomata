@@ -8,6 +8,9 @@ public abstract class Shape {
    * side) and the user does a mouse-click, did the click hit the Shape? */
   abstract public boolean mouseClickHit(int mouseX, int mouseY);
   
+  /** Display the appropriate Tooltip when the user selects a shape. */
+  abstract public void displaySelectedShapeTooltip(); 
+  
   // Getters and Setters
   public boolean isSelected() {
     return isSelected;

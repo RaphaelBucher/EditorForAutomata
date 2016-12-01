@@ -77,4 +77,13 @@ public interface Config {
   // How many millis until the Error-message fades away completely
   long ERROR_MESSAGE_DURATION_MILLIS = 3000;
   int ERROR_MESSAGE_FONT_SIZE = 20;
+  
+  // The Tooltips in the top left corner. E.g. hotkeys like backspace to delete states
+  long TOOLTIP_DURATION_MILLIS = 3000;
+  int TOOLTIP_FONT_SIZE = 16;
+  
+  /** Displayed Tooltips when the user selects a shape. */
+  interface ShapeTooltipMessages {
+    String state = "Backspace - delete State";
+  }
 }

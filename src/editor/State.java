@@ -57,4 +57,8 @@ public class State extends Shape {
     
     return false;
   }
+  
+  public void displaySelectedShapeTooltip() {
+    Tooltip.setMessage(Config.ShapeTooltipMessages.state);
+  }
 }

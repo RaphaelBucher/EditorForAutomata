@@ -65,8 +65,11 @@ public class Automat {
           selectedShape.setSelected(false);
         
         // Save the new Shape that reported a mouse-collision
-        this.selectedShape = states.get(i);
+        selectedShape = states.get(i);
         selectedShape.setSelected(true);
+        
+        // Display the appropriate Tooltip
+        selectedShape.displaySelectedShapeTooltip();
       }
     }
   }

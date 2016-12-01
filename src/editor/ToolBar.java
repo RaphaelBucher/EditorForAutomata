@@ -36,7 +36,7 @@ public class ToolBar extends JToolBar {
 
     // Selection Button (Default cursors normal arrow). Uses the default cursor.
     arrowButton = new ToggleButton(absolutePath + Config.Icon_paths.ARROW, new Cursor(Cursor.DEFAULT_CURSOR),
-        false, this);
+        true, this);
     this.add(arrowButton);
     
     // Normal state
@@ -44,10 +44,10 @@ public class ToolBar extends JToolBar {
         absolutePath + Config.Windows_cursor_paths.STATE, Config.Cursor_names.STATE_CURSOR, false, this);
     this.add(stateButton);
 
-    // Start state. Selected by default.
+    // Start state.
     startStateButton = new ToggleButton(absolutePath + Config.Icon_paths.START_STATE,
         absolutePath + Config.Windows_cursor_paths.START_STATE, Config.Cursor_names.START_STATE_CURSOR,
-        true, this);
+        false, this);
     this.add(startStateButton);
 
     // End state

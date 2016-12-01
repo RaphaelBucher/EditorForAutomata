@@ -72,6 +72,7 @@ public class DrawablePanel extends JPanel implements MouseMotionListener {
     automat.paint(graphics2D);
 
     ErrorMessage.paint(graphics2D);
+    Tooltip.paint(graphics2D);
     
     // In case it's running on windows, draw a black line below the menu-bar. Else the Menu and the drawablePanel
     // would be both white.
@@ -85,6 +86,7 @@ public class DrawablePanel extends JPanel implements MouseMotionListener {
   // called once per frame
   public void update(ToolBar toolBar) {
     ErrorMessage.update();
+    Tooltip.update();
   }
 
   // Changes the cursor according to what the user has selected in the toolBar

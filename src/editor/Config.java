@@ -17,7 +17,7 @@ public interface Config {
   // Needs to be a bit bigger than the ToolBar needs. It also contains the
   // frames menu-bar.
   // The height initialization of everything depends on only this value.
-  int FRAME_PANEL_MIN_HEIGHT = 400;
+  int FRAME_PANEL_MIN_HEIGHT = 450;
 
   // ToolBar
   int TOOLBAR_ICON_WIDTH = 60;
@@ -42,6 +42,7 @@ public interface Config {
 
   /** Icons-paths for ToggleButtons and cursor on mac. */
   interface Icon_paths {
+    String ARROW = "/resources/Icons/arrowCursorButton.png";
     String STATE = "/resources/Icons/state.png";
     String START_STATE = "/resources/Icons/startState.png";
     String END_STATE = "/resources/Icons/endState.png";

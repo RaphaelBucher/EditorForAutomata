@@ -16,6 +16,7 @@ import javax.swing.JToolBar;
 
 public class ToolBar extends JToolBar {
   private static final long serialVersionUID = 1L;
+  private ToggleButton arrowButton;
   private ToggleButton stateButton;
   private ToggleButton startStateButton;
   private ToggleButton endStateButton;
@@ -33,29 +34,38 @@ public class ToolBar extends JToolBar {
 
     String absolutePath = new File("").getAbsolutePath();
 
+    // Selection Button (Default cursors normal arrow). Uses the default cursor.
+    arrowButton = new ToggleButton(absolutePath + Config.Icon_paths.ARROW, new Cursor(Cursor.DEFAULT_CURSOR),
+        false, this);
+    this.add(arrowButton);
+    
     // Normal state
     stateButton = new ToggleButton(absolutePath + Config.Icon_paths.STATE,
-        absolutePath + Config.Windows_cursor_paths.STATE, Config.Cursor_names.STATE_CURSOR, this);
+        absolutePath + Config.Windows_cursor_paths.STATE, Config.Cursor_names.STATE_CURSOR, false, this);
     this.add(stateButton);
 
-    // Start state
+    // Start state. Selected by default.
     startStateButton = new ToggleButton(absolutePath + Config.Icon_paths.START_STATE,
-        absolutePath + Config.Windows_cursor_paths.START_STATE, Config.Cursor_names.START_STATE_CURSOR, this);
+        absolutePath + Config.Windows_cursor_paths.START_STATE, Config.Cursor_names.START_STATE_CURSOR,
+        true, this);
     this.add(startStateButton);
 
     // End state
     endStateButton = new ToggleButton(absolutePath + Config.Icon_paths.END_STATE,
-        absolutePath + Config.Windows_cursor_paths.END_STATE, Config.Cursor_names.END_STATE_CURSOR, this);
+        absolutePath + Config.Windows_cursor_paths.END_STATE, Config.Cursor_names.END_STATE_CURSOR,
+        false, this);
     this.add(endStateButton);
     
     // Start- and end-state
     startEndStateButton = new ToggleButton(absolutePath + Config.Icon_paths.START_END_STATE,
-        absolutePath + Config.Windows_cursor_paths.START_END_STATE, Config.Cursor_names.START_END_STATE_CURSOR, this);
+        absolutePath + Config.Windows_cursor_paths.START_END_STATE, Config.Cursor_names.START_END_STATE_CURSOR,
+        false, this);
     this.add(startEndStateButton);
 
     // Transition
     transitionButton = new ToggleButton(absolutePath + Config.Icon_paths.TRANSITION,
-        absolutePath + Config.Windows_cursor_paths.TRANSITION, Config.Cursor_names.TRANSITION_CURSOR, this);
+        absolutePath + Config.Windows_cursor_paths.TRANSITION, Config.Cursor_names.TRANSITION_CURSOR,
+        false, this);
     this.add(transitionButton);
   }
 
@@ -71,51 +81,53 @@ public class ToolBar extends JToolBar {
     
     graphics2D.dispose();
   }
-
-  // Called by the ToggleButtons itself. Deselects all buttons except the one being clicked. 
-  // Leaves this one untouched.
+  
+  /** Called by the ToggleButtons itself. Deselects all buttons and reselects the passed
+   * (= clicked Button). There's always exactly one button of the ToolBar selected. */
   protected void toggleButtonEventHandler(ToggleButton clickedButton) {
-    // Update the cursor of the drawable panel. The API didn't update
-    // the selection state yet, so clickedButton.isSelected() getting false
-    // means the button has been selected...
-    if (!clickedButton.isSelected()) {
-      // button was selected - set custum Cursor of the Button
-      Editor.getDrawablePanel().setCursor(clickedButton.getCustomCursor());
-    } else {
-      // button was deselected - set default Cursor
-      Editor.getDrawablePanel().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-    }
+    // Update the cursor of the drawable panel.
+    Editor.getDrawablePanel().setCursor(clickedButton.getCustomCursor());
     
-    // Deselect all buttons except the one that was clicked.
-    if (!clickedButton.equals(stateButton) && stateButton.isSelected())
-      stateButton.doClick();
-    if (!clickedButton.equals(startStateButton) && startStateButton.isSelected())
-      startStateButton.doClick();
-    if (!clickedButton.equals(endStateButton) && endStateButton.isSelected())
-      endStateButton.doClick();
-    if (!clickedButton.equals(startEndStateButton) && startEndStateButton.isSelected())
-      startEndStateButton.doClick();
-    if (!clickedButton.equals(transitionButton) && transitionButton.isSelected())
-      transitionButton.doClick();
+    // Deselect all buttons
+    this.deselectAllButtons();
+    
+    // When a click on a Button occur, this method is called first by the event-handler
+    // and secondly the button performs it's doClick()-method itself which switches the
+    // selected-flag. Thats why we don't have to manually reselect the clickedButton here.
   }
   
-  /** Returns the selected ToggleButton. Returns null if none is selected. */
+  /** Deselects all Button the ToolBar has. Sets only the selected boolean flag and doesn't
+   * perform the action event via doClick(). */
+  private void deselectAllButtons() {
+    arrowButton.setSelected(false);
+    stateButton.setSelected(false);
+    startStateButton.setSelected(false);
+    endStateButton.setSelected(false);
+    startEndStateButton.setSelected(false);
+    transitionButton.setSelected(false);
+  }
+  
+  /** Returns the currently selected ToggleButton. */
   public ToggleButton getSelectedButton() {
-    if (stateButton.isSelected())
+    if (arrowButton.isSelected())
+      return arrowButton;
+    else if (stateButton.isSelected())
       return stateButton;
-    if (startStateButton.isSelected())
+    else if (startStateButton.isSelected())
       return startStateButton;
-    if (endStateButton.isSelected())
+    else if (endStateButton.isSelected())
       return endStateButton;
-    if (startEndStateButton.isSelected())
+    else if (startEndStateButton.isSelected())
       return startEndStateButton;
-    if (transitionButton.isSelected())
+    else
       return transitionButton;
-    
-    return null; // No Button was selected
   }
 
   // Getters
+  public ToggleButton getArrowButton() {
+    return this.arrowButton;
+  }
+  
   public ToggleButton getStateButton() {
     return this.stateButton;
   }

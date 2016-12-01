@@ -39,13 +39,13 @@ public class Automat {
       addState(new State(findNewStateIndex(), stateX, stateY));
     } else if (cursorName.equals(Config.Cursor_names.START_STATE_CURSOR)) {
       // Add start state cursor
-      addState(new StartState(findNewStateIndex(), stateX, stateY));
+      addState(new StartState(0, stateX, stateY));
     } else if (cursorName.equals(Config.Cursor_names.END_STATE_CURSOR)) {
       // Add end state cursor
       addState(new EndState(findNewStateIndex(), stateX, stateY));
     } else if (cursorName.equals(Config.Cursor_names.START_END_STATE_CURSOR)) {
       // Add start-end state cursor
-      addState(new StartEndState(findNewStateIndex(), stateX, stateY));
+      addState(new StartEndState(0, stateX, stateY));
     } else if ((cursorName.equals(Config.Cursor_names.TRANSITION_CURSOR))) {
       // Transition cursor
     }
@@ -78,14 +78,9 @@ public class Automat {
 
   /**
    * Checks whether it's allowed to add the passed state-object to the Automat's
-   * ArrayList states. Reasons to prohibit are e.g. visual collision with
-   * another state, state is partly outside the drawable JPanel etc.
+   * ArrayList states.
    */
   private boolean addingStateAllowed(State state) {
-    // check if state is visually allowed to be added??? Write default checking
-    // method in class State and override it then in the subclasses when
-    // start-state is bigger on the left side for example???
-
     // checking for class-dependent rules
     if (state instanceof StartState || state instanceof StartEndState) {
       if (!addingStartStateAllowed()) {
@@ -97,6 +92,7 @@ public class Automat {
     return true;
   }
 
+  /** Returns true if the automat doesn't have a startState or startEndState yet, false otherwise. */
   private boolean addingStartStateAllowed() {
     if (hasStartState()) {
       ErrorMessage.setMessage("Has already a start state");
@@ -116,8 +112,9 @@ public class Automat {
     return false;
   }
 
+  /** Starts at 1, 0 is reserved for the start-state */
   private int findNewStateIndex() {
-    int i = 0;
+    int i = 1;
     while (getStateByStateIndex(i) != null) {
       i++;
     }

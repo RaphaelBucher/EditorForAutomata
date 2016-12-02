@@ -35,37 +35,36 @@ public class ToolBar extends JToolBar {
     String absolutePath = new File("").getAbsolutePath();
 
     // Selection Button (Default cursors normal arrow). Uses the default cursor.
-    arrowButton = new ToggleButton(absolutePath + Config.Icon_paths.ARROW, new Cursor(Cursor.DEFAULT_CURSOR),
+    arrowButton = new ToggleButton(absolutePath + Config.IconPaths.ARROW, new Cursor(Cursor.DEFAULT_CURSOR),
         true, this);
     this.add(arrowButton);
     
     // Normal state
-    stateButton = new ToggleButton(absolutePath + Config.Icon_paths.STATE,
-        absolutePath + Config.Windows_cursor_paths.STATE, Config.Cursor_names.STATE_CURSOR, false, this);
+    stateButton = new ToggleButton(absolutePath + Config.IconPaths.STATE,
+        absolutePath + Config.WindowsCursorPaths.STATE, Config.CursorNames.STATE_CURSOR, false, this);
     this.add(stateButton);
 
     // Start state.
-    startStateButton = new ToggleButton(absolutePath + Config.Icon_paths.START_STATE,
-        absolutePath + Config.Windows_cursor_paths.START_STATE, Config.Cursor_names.START_STATE_CURSOR,
+    startStateButton = new ToggleButton(absolutePath + Config.IconPaths.START_STATE,
+        absolutePath + Config.WindowsCursorPaths.START_STATE, Config.CursorNames.START_STATE_CURSOR,
         false, this);
     this.add(startStateButton);
 
     // End state
-    endStateButton = new ToggleButton(absolutePath + Config.Icon_paths.END_STATE,
-        absolutePath + Config.Windows_cursor_paths.END_STATE, Config.Cursor_names.END_STATE_CURSOR,
+    endStateButton = new ToggleButton(absolutePath + Config.IconPaths.END_STATE,
+        absolutePath + Config.WindowsCursorPaths.END_STATE, Config.CursorNames.END_STATE_CURSOR,
         false, this);
     this.add(endStateButton);
     
     // Start- and end-state
-    startEndStateButton = new ToggleButton(absolutePath + Config.Icon_paths.START_END_STATE,
-        absolutePath + Config.Windows_cursor_paths.START_END_STATE, Config.Cursor_names.START_END_STATE_CURSOR,
+    startEndStateButton = new ToggleButton(absolutePath + Config.IconPaths.START_END_STATE,
+        absolutePath + Config.WindowsCursorPaths.START_END_STATE, Config.CursorNames.START_END_STATE_CURSOR,
         false, this);
     this.add(startEndStateButton);
 
     // Transition
-    transitionButton = new ToggleButton(absolutePath + Config.Icon_paths.TRANSITION,
-        absolutePath + Config.Windows_cursor_paths.TRANSITION, Config.Cursor_names.TRANSITION_CURSOR,
-        false, this);
+    transitionButton = new ToggleButton(absolutePath + Config.IconPaths.TRANSITION,
+        new Cursor(Cursor.DEFAULT_CURSOR), false, this);
     this.add(transitionButton);
   }
 
@@ -85,8 +84,9 @@ public class ToolBar extends JToolBar {
   /** Called by the ToggleButtons itself. Deselects all buttons and reselects the passed
    * (= clicked Button). There's always exactly one button of the ToolBar selected. */
   protected void toggleButtonEventHandler(ToggleButton clickedButton) {
-    // Update the cursor of the drawable panel.
-    Editor.getDrawablePanel().setCursor(clickedButton.getCustomCursor());
+    // Switch the cursor and let the DrawablePanel perform the nescessary logic
+    // when the user selects a new ToolBar-Button
+    Editor.getDrawablePanel().toolBarButtonClicked(clickedButton);
     
     // Deselect all buttons
     this.deselectAllButtons();

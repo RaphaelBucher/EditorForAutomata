@@ -5,18 +5,23 @@
  * */
 package editor;
 
-import java.awt.Cursor;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class Automat {
   private ArrayList<State> states;
+  private ArrayList<Transition> transitions;
+  // The unfinished Transition that is currently being constructed by the user
+  // when he operates with the Transition tool. 
+  private Transition constructingTransition; 
   //A reference to the currently selected Shape. Null if none is selected.
   private Shape selectedShape; 
 
   public Automat() {
     this.states = new ArrayList<State>();
+    this.transitions = new ArrayList<Transition>();
   }
 
   /** Iterates over all added states and draws them. */
@@ -35,6 +40,10 @@ public class Automat {
     ToolBar toolBar = Editor.getToolBar();
     
     if (selectedButton.equals(toolBar.getArrowButton())) {
+      // TODO: delete later
+      printTransitions();
+      
+      
       // Default arrow-cursor. 
       checkShapeSelection(evt);
     } else if (selectedButton.equals(toolBar.getStateButton())) {
@@ -51,30 +60,135 @@ public class Automat {
       addState(new StartEndState(0, stateX, stateY));
     } else if (selectedButton.equals(toolBar.getTransitionButton())) {
       // Transition cursor
+      handleTransitionConstruction(evt);
     }
+  }
+  
+  
+  
+  /** Handles the construction of the constructingTransition */
+  private void handleTransitionConstruction(MouseEvent evt) {
+    // Distinguish the construction phases
+    
+    // 1. Phase: Did the user clicked a transitionStartState?
+    // constructingTransition = null
+    if (this.constructingTransition == null) {
+      Shape clickedShape = getClickedShape(evt);
+      if (clickedShape instanceof State) {
+        // The user clicked a State, save it and set it selected for visual feedback
+        this.constructingTransition = new Transition((State)clickedShape);
+        clickedShape.setSelected(true);
+        
+        // Display the tooltip to click the second state (ending state)
+        Tooltip.setMessage(Config.Tooltips.transitionSelectEndingState);
+      } else {
+        ErrorMessage.setMessage(Config.ErrorMessages.transitionStartNotClicked);
+      }
+      
+      return;
+    }
+    
+    // 2. Phase: Did the user clicked a transitionEndState?
+    // constructingTransition != null, transitionEnd = null
+    if (this.constructingTransition.getTransitionEnd() == null) {
+      Shape clickedShape = getClickedShape(evt);
+      if (clickedShape instanceof State) {
+        // The user clicked a State, save it and set it selected for visual feedback
+        this.constructingTransition.setTransitionEnd((State)clickedShape);
+        clickedShape.setSelected(true);
+        
+        // Display the tooltop to enter a symbol
+        Tooltip.setMessage(Config.Tooltips.transitionEnterSymbol);
+      } else {
+        // Set an ErrorMessage and return to phase 1
+        ErrorMessage.setMessage(Config.ErrorMessages.transitionEndNotClicked);
+        this.resetConstructingTransition();
+      }
+      
+      return;
+    }
+    
+    // 3. Phase. Transition-symbol entered by keyboard expected. If the user clicks
+    // the mouse, the transition construction process is being resetted.
+    this.resetConstructingTransition();
+    ErrorMessage.setMessage(Config.ErrorMessages.transitionNoSymbolEntered);
+  }
+  
+  /** Invoked by the KeyboardAdapter in case a key has been pressed. This method is needed
+   * for the third stadium of the transitions creation process when the user wants
+   * to add a symbol to the transition. */
+  public void handleKeyPressed(KeyEvent keyEvent) {
+    int key = keyEvent.getKeyCode();
+    
+    // Is the selection tool active
+    if (Editor.getToolBar().getArrowButton().isSelected()) {
+      if (key == KeyEvent.VK_BACK_SPACE) {
+        Editor.getDrawablePanel().getAutomat().deleteShape();
+      }
+    }
+    
+    // Is the transition tool selected?
+    if (Editor.getToolBar().getTransitionButton().isSelected()) {
+      // Are we in the 3. phase of the transition-construction?
+      if (this.constructingTransition != null) {
+        if (this.constructingTransition.getTransitionEnd() != null) {
+          // We are in the 3. phase of the transition construction
+          if (isTransitionSymbolValid(keyEvent.getKeyChar())) {
+            // Entered symbol is valid and being added to the transition
+            this.constructingTransition.addSymbol(keyEvent.getKeyChar());
+            
+            // Add the transition to the automats transitions
+            // TODO: check if theres a transition with same start- and endstate already. In this case,
+            // add only the symbol to the existing transition
+            transitions.add(constructingTransition);
+            
+            // Return to phase 1 for transition construction again
+            this.resetConstructingTransition();
+            
+            // TODO: delete later
+            printTransitions();
+          }
+        }
+      }
+    }
+  }
+  
+  /** Checks if the user entered a valid character for the transition being created. */
+  private boolean isTransitionSymbolValid(char symbol) {
+    return true; // change - todo
   }
   
   /** Did the mouseClick hit a Shape of the automat? E.g. a state, a transition etc. */
   private void checkShapeSelection(MouseEvent evt) {
+    // Deselect the previously selected Shape if any was selected
     if (selectedShape != null)
       selectedShape.setSelected(false);
-    selectedShape = null;
+    
+    // Get the newly clicked Shape if any was clicked. Gets null otherwise.
+    selectedShape = getClickedShape(evt);
+    
+    if (selectedShape != null) {
+      selectedShape.setSelected(true);
+      selectedShape.displaySelectedShapeTooltip();
+    }
+  }
+  
+  /** Returns the clicked Shape, or null if no Shape was hit by the mouse-click. Cannot return
+   * several Shapes. */
+  private Shape getClickedShape(MouseEvent evt) {
+    Shape hitShape = null;
     
     // Traverse the automats states. Makes sure that only one or zero Shapes gets selected.
     for (int i = 0; i < states.size(); i++) {
       if (states.get(i).mouseClickHit(evt.getX(), evt.getY())) {
-        // In case the click hit several objects, deselect the previously selected Shape
-        if (selectedShape != null)
-          selectedShape.setSelected(false);
-        
         // Save the new Shape that reported a mouse-collision
-        selectedShape = states.get(i);
-        selectedShape.setSelected(true);
-        
-        // Display the appropriate Tooltip
-        selectedShape.displaySelectedShapeTooltip();
+        hitShape = states.get(i);
       }
     }
+    
+    // Todo: Traverse the automats transitions
+    
+    return hitShape;
   }
 
   private void addState(State state) {
@@ -101,7 +215,7 @@ public class Automat {
   /** Returns true if the automat doesn't have a startState or startEndState yet, false otherwise. */
   private boolean addingStartStateAllowed() {
     if (hasStartState()) {
-      ErrorMessage.setMessage("Has already a start state");
+      ErrorMessage.setMessage(Config.ErrorMessages.cannotAddStartState);
       return false;
     }
 
@@ -153,8 +267,35 @@ public class Automat {
     // todo: if (selectedShape instanceof Transition) ...
   }
   
+  /** Deselect the currently selected shape if there is any. */
+  public void deselectSelectedShape() {
+    if (selectedShape != null) {
+      selectedShape.setSelected(false);
+      selectedShape = null;
+    }
+  }
+  
+  // Setters and Getters
+  /** Returns the currently selected shape. Returns null if none is selected. */
+  public Shape getSelectedShape() {
+    return this.selectedShape;
+  }
+  
+  /** Resets the constructingTransition object. Called when the user deselects the transition
+   * Button, the user enters invalid transition-Symbols etc. */
+  public void resetConstructingTransition() {
+    // Deselect states
+    if (this.constructingTransition != null) {
+      constructingTransition.getTransitionStart().setSelected(false);
+      
+      if (constructingTransition.getTransitionEnd() != null)
+        constructingTransition.getTransitionEnd().setSelected(false);
+    }
+    
+    this.constructingTransition = null;
+  }
 
-  // Currently only used for testing. Called in the DrawablePanel Constructor
+  // Currently only used for testing. Called in the DrawablePanel Constructor. TODO: delete later
   public void createExampleAutomat() {
     // Discard all current states.
     this.states = new ArrayList<State>();
@@ -170,5 +311,18 @@ public class Automat {
     states.add(new State(findNewStateIndex(), 600, 600));
     states.add(new State(findNewStateIndex(), 600, 600));
     // states.remove(2);
+  }
+  
+  // Currently used for debugin purpose. TODO: delete later
+  private void printTransitions() {
+    if (transitions.size() == 0)
+      System.out.println("no transitions yet.");
+    
+    for (int i = 0; i < transitions.size(); i++) {
+      System.out.println(transitions.get(i).getTransitionStart().getStateIndex() + " to " +
+          transitions.get(i).getTransitionEnd().getStateIndex() + " with " +
+          transitions.get(i).getSymbols().get(0));
+    }
+    System.out.println("");
   }
 }

@@ -10,14 +10,22 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 
 /** Atooltip message which is displayed in the top left corner of the drawable Panel. */
 public class Tooltip {
   // Only one Tooltip possible at a time. New invokations will override old ones.
   private static Message tooltip = new Message("", Config.TOOLTIP_DURATION_MILLIS);
+  
+  // Display tooltips only once, else they start to annoy.
+  private static ArrayList<String> displayedTooltips = new ArrayList<String>();
 
+  /** Displays a Tooltip. Will not display the same Tooltip anymore. */
   public static void setMessage(String message) {
-    tooltip.setMessage(message);
+    if (!displayedTooltips.contains(message)) {
+      tooltip.setMessage(message);
+      displayedTooltips.add(message);
+    }
   }
 
   // paints the message with a fading effect

@@ -46,6 +46,7 @@ public class State extends Shape {
     return this.stateIndex;
   }
   
+  @Override
   public boolean mouseClickHit(int mouseX, int mouseY) {
     int deltaX = mouseX - x;
     int deltaY = mouseY - y;
@@ -58,7 +59,8 @@ public class State extends Shape {
     return false;
   }
   
+  @Override
   public void displaySelectedShapeTooltip() {
-    Tooltip.setMessage(Config.ShapeTooltipMessages.state);
+    Tooltip.setMessage(Config.Tooltips.stateSelected);
   }
 }

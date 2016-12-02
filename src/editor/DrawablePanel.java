@@ -94,6 +94,29 @@ public class DrawablePanel extends JPanel implements MouseMotionListener {
     this.setCursor(cursor);
   }
   
+  /** Perform logic when a button is clicked, e.g. deselect a selected state when the user switches
+   * away from the selection tool, abort transition building if the user switches away from the transition
+   * button and the transition is not done building etc. */
+  public void toolBarButtonClicked(ToggleButton clickedButton) {
+    // Set the custom cursor of the selected ToggleButton
+    this.setCustomCursor(clickedButton.getCustomCursor());
+    
+    // Was something else than the selection tool (first button, the arrow) being clicked?
+    if (!clickedButton.equals(Editor.getToolBar().getArrowButton())) {
+      // Deselect a currently selected state / transition
+      this.automat.deselectSelectedShape();
+    }
+    
+    // Was something else than the transition Button being clicked?
+    if (!clickedButton.equals(Editor.getToolBar().getTransitionButton())) {
+      this.automat.resetConstructingTransition();
+    } else {
+      // Display the tooltip
+      Tooltip.setMessage(Config.Tooltips.transitionSelectStartingState);
+      this.automat.resetConstructingTransition();
+    }
+  }
+  
   // Getters
   public Automat getAutomat() {
     return this.automat;

@@ -8,10 +8,7 @@ import java.awt.event.KeyEvent;
  * setFocusable(true), e.g. ToolBar instance and DrawablePanel instance, it doesn't work. */
 public class KeyboardAdapter extends KeyAdapter {
   public void keyPressed(KeyEvent keyEvent) {
-    int key = keyEvent.getKeyCode();
-    
-    if (key == KeyEvent.VK_BACK_SPACE) {
-      Editor.getDrawablePanel().getAutomat().deleteShape();
-    }
+    // Does the automat need to take action?
+    Editor.getDrawablePanel().getAutomat().handleKeyPressed(keyEvent);
   }
 }

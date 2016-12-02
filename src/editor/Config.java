@@ -41,7 +41,7 @@ public interface Config {
   Color BACKGROUND_COLOR = Color.WHITE;
 
   /** Icons-paths for ToggleButtons and cursor on mac. */
-  interface Icon_paths {
+  interface IconPaths {
     String ARROW = "/resources/Icons/arrowCursorButton.png";
     String STATE = "/resources/Icons/state.png";
     String START_STATE = "/resources/Icons/startState.png";
@@ -51,7 +51,7 @@ public interface Config {
   }
   
   /** Icons-paths for ToggleButtons and cursor on mac. */
-  interface Windows_cursor_paths {
+  interface WindowsCursorPaths {
     String STATE = "/resources/Icons/stateWindowsCursor.png";
     String START_STATE = "/resources/Icons/startStateWindowsCursor.png";
     String END_STATE = "/resources/Icons/endStateWindowsCursor.png";
@@ -60,7 +60,7 @@ public interface Config {
   }
 
    /** The same for mac and windows since only one cursor is set per ToggleButton. */
-  interface Cursor_names {
+  interface CursorNames {
     String STATE_CURSOR = "stateCursor";
     String START_STATE_CURSOR = "startStateCursor";
     String END_STATE_CURSOR = "endStateCursor";
@@ -82,8 +82,23 @@ public interface Config {
   long TOOLTIP_DURATION_MILLIS = 3000;
   int TOOLTIP_FONT_SIZE = 16;
   
-  /** Displayed Tooltips when the user selects a shape. */
-  interface ShapeTooltipMessages {
-    String state = "Press Backspace to delete state";
+  /** Displayed Tooltips */
+  interface Tooltips {
+    String stateSelected = "Press Backspace to delete state";
+    
+    // Transition
+    String transitionSelectStartingState = "Please select a starting state";
+    String transitionSelectEndingState = "Please select an ending state";
+    String transitionEnterSymbol = "Please enter a symbol";
+  }
+  
+  /** Displayed ErrorMessages */
+  interface ErrorMessages {
+    String cannotAddStartState = "Has already a start state";
+    
+    // Transition
+    String transitionStartNotClicked = "Please select a starting state";
+    String transitionEndNotClicked = "Please select an ending state";
+    String transitionNoSymbolEntered = "Please enter a symbol";
   }
 }

@@ -26,27 +26,30 @@ public class Automat {
     }
   }
 
-  public void handleMouseClicked(MouseEvent evt, String cursorName) {
+  public void handleMouseClicked(MouseEvent evt) {
     // Put the new state exactly where the cursor-image is
     int stateX = evt.getX();
     int stateY = evt.getY() - 1; // little adjustment
     
-    if (cursorName.equals(new Cursor(Cursor.DEFAULT_CURSOR).getName())) {
+    ToggleButton selectedButton = Editor.getToolBar().getSelectedButton();
+    ToolBar toolBar = Editor.getToolBar();
+    
+    if (selectedButton.equals(toolBar.getArrowButton())) {
       // Default arrow-cursor. 
       checkShapeSelection(evt);
-    } else if (cursorName.equals(Config.Cursor_names.STATE_CURSOR)) {
+    } else if (selectedButton.equals(toolBar.getStateButton())) {
       // Add state Cursor
       addState(new State(findNewStateIndex(), stateX, stateY));
-    } else if (cursorName.equals(Config.Cursor_names.START_STATE_CURSOR)) {
+    } else if (selectedButton.equals(toolBar.getStartStateButton())) {
       // Add start state cursor
       addState(new StartState(0, stateX, stateY));
-    } else if (cursorName.equals(Config.Cursor_names.END_STATE_CURSOR)) {
+    } else if (selectedButton.equals(toolBar.getEndStateButton())) {
       // Add end state cursor
       addState(new EndState(findNewStateIndex(), stateX, stateY));
-    } else if (cursorName.equals(Config.Cursor_names.START_END_STATE_CURSOR)) {
+    } else if (selectedButton.equals(toolBar.getStartEndStateButton())) {
       // Add start-end state cursor
       addState(new StartEndState(0, stateX, stateY));
-    } else if ((cursorName.equals(Config.Cursor_names.TRANSITION_CURSOR))) {
+    } else if (selectedButton.equals(toolBar.getTransitionButton())) {
       // Transition cursor
     }
   }

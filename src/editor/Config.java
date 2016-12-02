@@ -84,6 +84,6 @@ public interface Config {
   
   /** Displayed Tooltips when the user selects a shape. */
   interface ShapeTooltipMessages {
-    String state = "Backspace - delete State";
+    String state = "Press Backspace to delete state";
   }
 }

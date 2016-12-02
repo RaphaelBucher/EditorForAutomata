@@ -54,7 +54,7 @@ public class DrawablePanel extends JPanel implements MouseMotionListener {
   }
 
   private void handleMouseClicked(MouseEvent evt) {
-    automat.handleMouseClicked(evt, this.getCursor().getName());
+    automat.handleMouseClicked(evt);
   }
   
   /** MouseMotionListeners implementations. */

@@ -107,7 +107,9 @@ public class ToolBar extends JToolBar {
     transitionButton.setSelected(false);
   }
   
-  /** Returns the currently selected ToggleButton. */
+  /** Returns the currently selected ToggleButton. Null if none is selected. This only happens
+   * if the user presses a ToggleButton and keeps the mouseButton pressed. Once the mouseButton
+   * is released again, this method returns the selected state again. */
   public ToggleButton getSelectedButton() {
     if (arrowButton.isSelected())
       return arrowButton;
@@ -119,8 +121,10 @@ public class ToolBar extends JToolBar {
       return endStateButton;
     else if (startEndStateButton.isSelected())
       return startEndStateButton;
-    else
+    else if (transitionButton.isSelected())
       return transitionButton;
+    
+    return null;
   }
 
   // Getters

@@ -63,4 +63,13 @@ public class State extends Shape {
   public void displaySelectedShapeTooltip() {
     Tooltip.setMessage(Config.Tooltips.stateSelected);
   }
+  
+  // Setters and Getters
+  public int getX() {
+    return this.x;
+  }
+  
+  public int getY() {
+    return this.y;
+  }
 }

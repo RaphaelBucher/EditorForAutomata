@@ -24,10 +24,16 @@ public class Automat {
     this.transitions = new ArrayList<Transition>();
   }
 
-  /** Iterates over all added states and draws them. */
+  /** Iterates over all added states, transitions and their symbols and draws them. */
   public void paint(Graphics2D graphics2D) {
+    // states
     for (int i = 0; i < states.size(); i++) {
       states.get(i).paint(graphics2D);
+    }
+    
+    // transitions
+    for (int i = 0; i < transitions.size(); i++) {
+      transitions.get(i).paint(graphics2D);
     }
   }
 
@@ -141,6 +147,7 @@ public class Automat {
             // Add the transition to the automats transitions.
             if (transition == null) {
               // The automat has no such transition yet, add the whole transition
+              constructingTransition.computePaintingCoordinates(transitions);
               transitions.add(constructingTransition);
             } else {
               // The automat has already a transition with these start- and end-indices.

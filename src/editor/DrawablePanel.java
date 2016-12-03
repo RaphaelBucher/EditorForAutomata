@@ -79,7 +79,7 @@ public class DrawablePanel extends JPanel implements MouseMotionListener {
     if (Platform.isWindows()) {
       graphics2D.drawLine(0, 0, this.getWidth(), 0);
     }
-
+    
     graphics2D.dispose();
   }
 

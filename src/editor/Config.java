@@ -101,4 +101,8 @@ public interface Config {
     String transitionEndNotClicked = "Please select an ending state";
     String transitionNoSymbolEntered = "Please enter a symbol";
   }
+  
+  // In case the Transition has a reverseTransition, how far it is away from
+  // the direct angle to its other state
+  double TRANSITION_PAINT_ANGLE_OFFSET = 18 / 180.0d * Math.PI;
 }

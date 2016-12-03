@@ -22,9 +22,40 @@ public class Transition extends Shape {
   public void displaySelectedShapeTooltip() {
   }
   
-  /** Adds a symbol the the transitions symbol-ArrayList */
+  /** Adds a symbol to the transitions symbol-ArrayList. If the symbol is already in the list,
+   * this method does nothing. */
   public void addSymbol(char symbol) {
-    symbols.add(new Character(symbol));
+    if (!containsSymbol(symbol))
+      symbols.add(new Character(symbol));
+  }
+  
+  /** Checks whether the passed character is already in the list.
+   * @return true if the character is in the list, false otherwise. */
+  private boolean containsSymbol(char symbol) {
+    for (int i = 0; i < symbols.size(); i++) {
+      if (symbols.get(i).compareTo(new Character(symbol)) == 0) {
+        // chars are equal
+        return true;
+      }
+    }
+    
+    return false;
+  }
+  
+  /** Checks whether this Transition is in the passed list of Transitions. Compares
+   * only by States stateIndex, not States.equal(...) since the States have a flag isSelected
+   * which would lead to wrong results. Returns the transition from the list in case it has
+   * the same indices, or null if the transition is not present in the list.  */
+  public Transition isInArrayList(ArrayList<Transition> transitions) {
+    for (int i = 0; i < transitions.size(); i++) {
+      // Same transitionStartIndex and same transitionEndIndex? Directions of the transition matters.
+      if (this.getTransitionStart().getStateIndex() == transitions.get(i).getTransitionStart().getStateIndex() &&
+          this.getTransitionEnd().getStateIndex() == transitions.get(i).getTransitionEnd().getStateIndex()) {
+        return transitions.get(i);
+      }
+    }
+    
+    return null; 
   }
   
   // Setters and Getters
@@ -43,4 +74,6 @@ public class Transition extends Shape {
   public ArrayList<Character> getSymbols() {
     return this.symbols;
   }
+  
+
 }

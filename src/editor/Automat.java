@@ -137,10 +137,16 @@ public class Automat {
             // Entered symbol is valid and being added to the transition
             this.constructingTransition.addSymbol(keyEvent.getKeyChar());
             
-            // Add the transition to the automats transitions
-            // TODO: check if theres a transition with same start- and endstate already. In this case,
-            // add only the symbol to the existing transition
-            transitions.add(constructingTransition);
+            Transition transition = constructingTransition.isInArrayList(transitions);
+            // Add the transition to the automats transitions.
+            if (transition == null) {
+              // The automat has no such transition yet, add the whole transition
+              transitions.add(constructingTransition);
+            } else {
+              // The automat has already a transition with these start- and end-indices.
+              // Add only the symbol of the constructingTransition to the existing transition.
+              transition.addSymbol(constructingTransition.getSymbols().get(0));
+            }
             
             // Return to phase 1 for transition construction again
             this.resetConstructingTransition();
@@ -152,6 +158,8 @@ public class Automat {
       }
     }
   }
+  
+  
   
   /** Checks if the user entered a valid character for the transition being created. */
   private boolean isTransitionSymbolValid(char symbol) {
@@ -319,9 +327,12 @@ public class Automat {
       System.out.println("no transitions yet.");
     
     for (int i = 0; i < transitions.size(); i++) {
-      System.out.println(transitions.get(i).getTransitionStart().getStateIndex() + " to " +
-          transitions.get(i).getTransitionEnd().getStateIndex() + " with " +
-          transitions.get(i).getSymbols().get(0));
+      System.out.print(transitions.get(i).getTransitionStart().getStateIndex() + " to " +
+          transitions.get(i).getTransitionEnd().getStateIndex() + " with ");
+      for (int j = 0; j < transitions.get(i).getSymbols().size(); j++) {
+        System.out.print(transitions.get(i).getSymbols().get(j) + " ");
+      }
+      System.out.println("");
     }
     System.out.println("");
   }

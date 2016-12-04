@@ -100,9 +100,13 @@ public interface Config {
     String transitionStartNotClicked = "Please select a starting state";
     String transitionEndNotClicked = "Please select an ending state";
     String transitionNoSymbolEntered = "Please enter a symbol";
+    String transitionInvalidSymbolEntered = "Valid symbols are 0,...,9 and a,...,z";
+    String transitionStateDeletionProhibited = "Please use the selection tool to delete states";
   }
   
   // In case the Transition has a reverseTransition, how far it is away from
   // the direct angle to its other state
   double TRANSITION_PAINT_ANGLE_OFFSET = 18 / 180.0d * Math.PI;
+  // A transition below this length will not be painted
+  int TRANSITION_MIN_LENGTH = 20;
 }

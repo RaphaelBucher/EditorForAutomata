@@ -129,17 +129,23 @@ public class Automat {
     // Is the selection tool active
     if (Editor.getToolBar().getArrowButton().isSelected()) {
       if (key == KeyEvent.VK_BACK_SPACE) {
-        Editor.getDrawablePanel().getAutomat().deleteShape();
+        deleteShape();
       }
     }
     
     // Is the transition tool selected?
     if (Editor.getToolBar().getTransitionButton().isSelected()) {
+      // Since the user has to select states with the transition tool, he might think
+      // he can delete states with this tool too. Display a hint.
+      if (key == KeyEvent.VK_BACK_SPACE) {
+        ErrorMessage.setMessage(Config.ErrorMessages.transitionStateDeletionProhibited);
+      }
+      
       // Are we in the 3. phase of the transition-construction?
       if (this.constructingTransition != null) {
         if (this.constructingTransition.getTransitionEnd() != null) {
           // We are in the 3. phase of the transition construction
-          if (isTransitionSymbolValid(keyEvent.getKeyChar())) {
+          if (Transition.isTransitionSymbolValid(keyEvent.getKeyChar())) {
             // Entered symbol is valid and being added to the transition
             this.constructingTransition.addSymbol(keyEvent.getKeyChar());
             
@@ -160,17 +166,11 @@ public class Automat {
             
             // TODO: delete later
             printTransitions();
-          }
+          } else
+            ErrorMessage.setMessage(Config.ErrorMessages.transitionInvalidSymbolEntered);
         }
       }
     }
-  }
-  
-  
-  
-  /** Checks if the user entered a valid character for the transition being created. */
-  private boolean isTransitionSymbolValid(char symbol) {
-    return true; // change - todo
   }
   
   /** Did the mouseClick hit a Shape of the automat? E.g. a state, a transition etc. */
@@ -272,12 +272,15 @@ public class Automat {
     if (selectedShape == null)
       return;
     
+    // Selected Shape is a State
     if (selectedShape instanceof State) {
-      // todo later: remove all transitions from and to this state
+      // Remove all transitions going to and coming from that State
+      ((State)selectedShape).deleteTransitions(transitions);
       
       // Removes the State from the automat. The states own stateIndex is freed and
       // can be retaken by newly added states again.
       states.remove(selectedShape);
+      selectedShape = null;
     }
     // todo: if (selectedShape instanceof Transition) ...
   }
@@ -328,7 +331,7 @@ public class Automat {
     // states.remove(2);
   }
   
-  // Currently used for debugin purpose. TODO: delete later
+  // Currently used for debuging purpose. TODO: delete later
   private void printTransitions() {
     if (transitions.size() == 0)
       System.out.println("no transitions yet.");

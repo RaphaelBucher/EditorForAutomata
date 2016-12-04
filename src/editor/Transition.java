@@ -3,6 +3,7 @@ package editor;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.util.ArrayList;
 
 public class Transition extends Shape {
@@ -11,15 +12,30 @@ public class Transition extends Shape {
   // A transition can have one or more symbols
   private ArrayList<Character> symbols;
   
-  // Painting information
+  // --- Painting information ---
+  private boolean isPainted;
+  
+  // Direction of the transition. Angle between 0 and 2 * Math.PI
+  private double directionAngle;
+  
+  // start- and end-point coordinates
   private int transitionStartX;
   private int transitionStartY;
   private int transitionEndX;
   private int transitionEndY;
-
+  
+  /** Transitions length based on the start- and end-point coordinates. */
+  private int length;
+  
+  // Arrow
+  private Point arrowPointOne;
+  private Point arrowPointTwo;
+  
   public Transition(State transitionStart) {
     this.transitionStart = transitionStart;
     symbols = new ArrayList<Character>();
+    arrowPointOne = new Point();
+    arrowPointTwo = new Point();
   }
   
   public Transition(State transitionStart, State transitionEnd) {
@@ -28,10 +44,15 @@ public class Transition extends Shape {
   }
   
   public void paint(Graphics2D graphics2D) {
-    // Transitions line
-    graphics2D.drawLine(transitionStartX, transitionStartY, transitionEndX, transitionEndY);
-    
-    // Transitions arrow
+    // Does the transition have the minimal length to be painted?
+    if (isPainted) {
+      // Transitions line
+      graphics2D.drawLine(transitionStartX, transitionStartY, transitionEndX, transitionEndY);
+      
+      // Transitions arrow
+      graphics2D.drawLine(transitionEndX, transitionEndY, arrowPointOne.x, arrowPointOne.y);
+      graphics2D.drawLine(transitionEndX, transitionEndY, arrowPointTwo.x, arrowPointTwo.y);
+    }
   }
   
   @Override
@@ -83,7 +104,9 @@ public class Transition extends Shape {
    * there's a Transition with the reverse direction already. */
   public void computePaintingCoordinates(ArrayList<Transition> transitions) {
     // computed in Radian
-    double startAngle = computeAngle();
+    this.directionAngle = computeAngle();
+    
+    double startAngle = directionAngle;
     // Ending angle = startAngle + 180°
     double endAngle = startAngle + Math.PI; 
     
@@ -104,8 +127,9 @@ public class Transition extends Shape {
   
   /** Computes the (x, y)-coordinates of the Transitions start- and end-point. */
   private void computePaintingCoordinates(double startAngle, double endAngle) {
-    // Radius of a state
-    double stateRadius = (double)Config.STATE_DIAMETER / 2;
+    // Radius of a state. Take a tiny bit more to ensure the lines don't reach into the 
+    // states circle.
+    double stateRadius = (double)Config.STATE_DIAMETER / 2 + 0.5d;
     
     // --- starting state ---
     transitionStartX = (int)(Math.round( transitionStart.getX() + Math.cos(startAngle) * stateRadius ));
@@ -115,10 +139,35 @@ public class Transition extends Shape {
     // --- ending state ---
     transitionEndX = (int)(Math.round( transitionEnd.getX() + Math.cos(endAngle) * stateRadius ));
     transitionEndY = (int)(Math.round( transitionEnd.getY() - Math.sin(endAngle) * stateRadius ));
+    
+    // The arrow
+    computeArrowPaintingCoordinates();
+    
+    // The length of the transition and based on this the flag is the transitions will be painted
+    computeLength();
+  }
+  
+  /** Computes the arrow painting information. */
+  private void computeArrowPaintingCoordinates() {
+    double arrowLength = 12.0d;
+    double arrowAngleOffset = 15 / 180.0d * Math.PI;
+    double reverseAngle = this.directionAngle + Math.PI;
+    
+    // First arrow Point. Y-Axis reversed to the Cartesian coordinate system.
+    this.arrowPointOne.x = (int)(Math.round(transitionEndX + 
+        Math.cos(reverseAngle + arrowAngleOffset) * arrowLength));
+    this.arrowPointOne.y = (int)(Math.round(transitionEndY - 
+        Math.sin(reverseAngle + arrowAngleOffset) * arrowLength));
+    
+    // Second arrow Point. Y-Axis reversed to the Cartesian coordinate system.
+    this.arrowPointTwo.x = (int)(Math.round(transitionEndX + 
+        Math.cos(reverseAngle - arrowAngleOffset) * arrowLength));
+    this.arrowPointTwo.y = (int)(Math.round(transitionEndY - 
+        Math.sin(reverseAngle - arrowAngleOffset) * arrowLength));
   }
   
   /** Computes the transitions angle between the start- and the end-state in radian. It 
-   * coputes the angle of the end-state in relation to the start-state. Returns a value 
+   * computes the angle of the end-state in relation to the start-state. Returns a value 
    * between 0 and 2 * Math.PI */
   private double computeAngle() {
     int deltaX = transitionEnd.getX() - transitionStart.getX();
@@ -137,6 +186,17 @@ public class Transition extends Shape {
     return angle;
   }
   
+  /** Computed the transitions exact length based on the start- and end-point coordinates.
+   * If the length surpasses the minimal length, it will be painted. */
+  private void computeLength() {
+    int deltaX = transitionEndX - transitionStartX;
+    int deltaY = transitionEndY - transitionStartY;
+    
+    this.length = (int)(Math.sqrt(deltaX * deltaX + deltaY * deltaY));
+    
+    this.isPainted = this.length >= Config.TRANSITION_MIN_LENGTH;
+  }
+  
   /** Checks whether the passed transition-list containes a transition with reverse direction,
    * start- and end-states switched.
    * @return Returns the reverseTransition, or null if the list doesn't contain it. */
@@ -146,6 +206,19 @@ public class Transition extends Shape {
     
     // Check if the reversed Transition is in the passed list
     return reverseTransition.isInArrayList(transitions);
+  }
+  
+  /** Checks if the user entered a valid character for the transition. Valid symbolas are single 
+   * digits and small letters. */
+  public static boolean isTransitionSymbolValid(char symbol) {
+    // Is the symbol a single digit?
+    if (symbol >= new Character('0') && symbol <= new Character('9'))
+      return true;
+    
+    if (symbol >= 'a' && symbol <= 'z')
+      return true;
+    
+    return false;
   }
   
   // Setters and Getters

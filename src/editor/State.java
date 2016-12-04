@@ -8,6 +8,7 @@ package editor;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 
 /** A state in an automat. */
 public class State extends Shape {
@@ -62,6 +63,32 @@ public class State extends Shape {
   @Override
   public void displaySelectedShapeTooltip() {
     Tooltip.setMessage(Config.Tooltips.stateSelected);
+  }
+  
+  /** Deletes all transitions from the list which come from or go to the state. */
+  public void deleteTransitions(ArrayList<Transition> transitions) {
+    // Gather all elements to be removed from the ArrayList first, no removal of ArrayLists
+    // elements while looped through that ArrayList
+    ArrayList<Transition> stateTransitions = getTransitions(transitions);
+    
+    // Remove them one-by-one
+    for (int i = 0; i < stateTransitions.size(); i++) {
+      transitions.remove(stateTransitions.get(i));
+    }
+  }
+  
+  /** Returns a list with all transitions that have the state as a start- or end-state. */
+  private ArrayList<Transition> getTransitions(ArrayList<Transition> transitions) {
+    ArrayList<Transition> stateTransitions = new ArrayList<Transition>();
+    
+    for (int i = 0; i < transitions.size(); i++) {
+      if (this.equals(transitions.get(i).getTransitionStart()) ||
+          this.equals(transitions.get(i).getTransitionEnd())) {
+        stateTransitions.add(transitions.get(i));
+      }
+    }
+    
+    return stateTransitions;
   }
   
   // Setters and Getters

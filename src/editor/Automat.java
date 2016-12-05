@@ -127,7 +127,6 @@ public class Automat {
     
     // Reset the trigger for the mouseDragged-handling
     this.moveToolOrigMouseEvent = null;
-    
     this.movedState.setSelected(false);
   }
   

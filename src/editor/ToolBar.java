@@ -17,6 +17,7 @@ import javax.swing.JToolBar;
 public class ToolBar extends JToolBar {
   private static final long serialVersionUID = 1L;
   private ToggleButton arrowButton;
+  private ToggleButton moveCursorButton;
   private ToggleButton stateButton;
   private ToggleButton startStateButton;
   private ToggleButton endStateButton;
@@ -38,6 +39,11 @@ public class ToolBar extends JToolBar {
     arrowButton = new ToggleButton(absolutePath + Config.IconPaths.ARROW, new Cursor(Cursor.DEFAULT_CURSOR),
         true, this);
     this.add(arrowButton);
+    
+    // Tool to move States
+    moveCursorButton = new ToggleButton(absolutePath + Config.IconPaths.MOVE_CURSOR,
+        new Cursor(Cursor.CROSSHAIR_CURSOR), false, this);
+    this.add(moveCursorButton);
     
     // Normal state
     stateButton = new ToggleButton(absolutePath + Config.IconPaths.STATE,
@@ -100,6 +106,7 @@ public class ToolBar extends JToolBar {
    * perform the action event via doClick(). */
   private void deselectAllButtons() {
     arrowButton.setSelected(false);
+    moveCursorButton.setSelected(false);
     stateButton.setSelected(false);
     startStateButton.setSelected(false);
     endStateButton.setSelected(false);
@@ -113,6 +120,8 @@ public class ToolBar extends JToolBar {
   public ToggleButton getSelectedButton() {
     if (arrowButton.isSelected())
       return arrowButton;
+    else if (moveCursorButton.isSelected())
+      return moveCursorButton;
     else if (stateButton.isSelected())
       return stateButton;
     else if (startStateButton.isSelected())
@@ -130,6 +139,10 @@ public class ToolBar extends JToolBar {
   // Getters
   public ToggleButton getArrowButton() {
     return this.arrowButton;
+  }
+  
+  public ToggleButton getMoveCursorButton() {
+    return this.moveCursorButton;
   }
   
   public ToggleButton getStateButton() {

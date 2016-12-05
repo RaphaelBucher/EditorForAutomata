@@ -78,7 +78,7 @@ public class State extends Shape {
   }
   
   /** Returns a list with all transitions that have the state as a start- or end-state. */
-  private ArrayList<Transition> getTransitions(ArrayList<Transition> transitions) {
+  public ArrayList<Transition> getTransitions(ArrayList<Transition> transitions) {
     ArrayList<Transition> stateTransitions = new ArrayList<Transition>();
     
     for (int i = 0; i < transitions.size(); i++) {
@@ -89,6 +89,12 @@ public class State extends Shape {
     }
     
     return stateTransitions;
+  }
+  
+  /** Moves the state to the passed coordinates. Doesn't update the states transitions. */
+  public void moveTo(int x, int y) {
+    this.x = x;
+    this.y = y;
   }
   
   // Setters and Getters

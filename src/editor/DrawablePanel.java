@@ -48,20 +48,30 @@ public class DrawablePanel extends JPanel implements MouseMotionListener {
   private void addMouseListener() {
     this.addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent evt) {
-        handleMouseClicked(evt);
+        handleMousePressed(evt);
+      }
+      
+      public void mouseReleased(MouseEvent evt) {
+        if (Editor.getToolBar().getMoveCursorButton().isSelected()) {
+          automat.handleMoveToolMouseReleased(evt);
+        }
       }
     });
   }
+  
+  @Override
+  public void mouseDragged(MouseEvent evt) {
+    if (Editor.getToolBar().getMoveCursorButton().isSelected()) {
+      automat.handleMoveToolMouseDragged(evt);
+    }
+  }
 
-  private void handleMouseClicked(MouseEvent evt) {
-    automat.handleMouseClicked(evt);
+  @Override
+  public void mouseMoved(MouseEvent evt) {
   }
-  
-  /** MouseMotionListeners implementations. */
-  public void mouseMoved(MouseEvent e) {
-  }
-  
-  public void mouseDragged(MouseEvent e) {
+
+  private void handleMousePressed(MouseEvent evt) {
+    automat.handleMousePressed(evt);
   }
   
   public void paint(Graphics graphics) {
@@ -105,6 +115,12 @@ public class DrawablePanel extends JPanel implements MouseMotionListener {
     if (!clickedButton.equals(Editor.getToolBar().getArrowButton())) {
       // Deselect a currently selected state / transition
       this.automat.deselectSelectedShape();
+    }
+    
+    // Was the moveTool clicked?
+    if (clickedButton.equals(Editor.getToolBar().getMoveCursorButton())) {
+      // Display tooltip
+      Tooltip.setMessage(Config.Tooltips.moveToolSelected);
     }
     
     // Was something else than the transition Button being clicked?

@@ -12,12 +12,12 @@ public interface Config {
   int FPS = 30; 
 
   // Frame will be initialized with these sizes. Can be enlarged.
-  int FRAME_PANEL_MIN_WIDTH = 600;
+  int FRAME_PANEL_MIN_WIDTH = 700;
 
   // Needs to be a bit bigger than the ToolBar needs. It also contains the
   // frames menu-bar.
   // The height initialization of everything depends on only this value.
-  int FRAME_PANEL_MIN_HEIGHT = 450;
+  int FRAME_PANEL_MIN_HEIGHT = 500;
 
   // ToolBar
   int TOOLBAR_ICON_WIDTH = 60;
@@ -43,6 +43,7 @@ public interface Config {
   /** Icons-paths for ToggleButtons and cursor on mac. */
   interface IconPaths {
     String ARROW = "/resources/Icons/arrowCursorButton.png";
+    String MOVE_CURSOR = "/resources/Icons/moveCursorButton.png";
     String STATE = "/resources/Icons/state.png";
     String START_STATE = "/resources/Icons/startState.png";
     String END_STATE = "/resources/Icons/endState.png";
@@ -85,6 +86,7 @@ public interface Config {
   /** Displayed Tooltips */
   interface Tooltips {
     String stateSelected = "Press Backspace to delete state";
+    String moveToolSelected = "Drag and Drop states";
     
     // Transition
     String transitionSelectStartingState = "Please select a starting state";

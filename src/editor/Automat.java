@@ -6,6 +6,7 @@
 package editor;
 
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -16,8 +17,13 @@ public class Automat {
   // The unfinished Transition that is currently being constructed by the user
   // when he operates with the Transition tool. 
   private Transition constructingTransition; 
-  //A reference to the currently selected Shape. Null if none is selected.
+  // A reference to the currently selected Shape. Null if none is selected.
   private Shape selectedShape; 
+  
+  // If the move-tool is selected and the mouseClick hit a state, save the original mouseEvent for positioning
+  private MouseEvent moveToolOrigMouseEvent;
+  private State movedState;
+  private Point movedStateOriginalLocation;
 
   public Automat() {
     this.states = new ArrayList<State>();
@@ -37,7 +43,7 @@ public class Automat {
     }
   }
 
-  public void handleMouseClicked(MouseEvent evt) {
+  public void handleMousePressed(MouseEvent evt) {
     // Put the new state exactly where the cursor-image is
     int stateX = evt.getX();
     int stateY = evt.getY() - 1; // little adjustment
@@ -46,12 +52,11 @@ public class Automat {
     ToolBar toolBar = Editor.getToolBar();
     
     if (selectedButton.equals(toolBar.getArrowButton())) {
-      // TODO: delete later
-      printTransitions();
-      
-      
       // Default arrow-cursor. 
       checkShapeSelection(evt);
+    } else if (selectedButton.equals(toolBar.getMoveCursorButton())) {
+      // Move tool
+      handleMoveToolMousePressed(evt);
     } else if (selectedButton.equals(toolBar.getStateButton())) {
       // Add state Cursor
       addState(new State(findNewStateIndex(), stateX, stateY));
@@ -70,7 +75,61 @@ public class Automat {
     }
   }
   
+  /** Is Invoked if the move tool was selected and the mouse pressed inside the drawable panel.
+   * This method checks if a state was selected by the mouse. */
+  private void handleMoveToolMousePressed(MouseEvent evt) {
+    // check if the click hit a state
+    Shape clickedShape = getClickedShape(evt);
+    if (clickedShape instanceof State) {
+      // mouseClick hit a state
+      this.movedState = (State)clickedShape;
+      this.movedState.setSelected(true);
+      this.movedStateOriginalLocation = new Point(movedState.getX(), movedState.getY());
+      this.moveToolOrigMouseEvent = evt;
+    }
+  }
   
+  /** In case a state was hit by the original mousePressed-Event, move this state around. */
+  public void handleMoveToolMouseDragged(MouseEvent evt) {
+    if (this.moveToolOrigMouseEvent != null) {
+      int stateOffsetX = evt.getX() - moveToolOrigMouseEvent.getX();
+      int stateOffsetY = evt.getY() - moveToolOrigMouseEvent.getY();
+      
+      // Move the state
+      this.movedState.moveTo(movedStateOriginalLocation.x + stateOffsetX,
+          movedStateOriginalLocation.y + stateOffsetY);
+      
+      // Update the painting coordinates of all transitions coming from or going to the state
+      updateStateTransitions(movedState);
+    }
+  }
+  
+  /** Updates the painting coordinates of all transitions coming from or going to the state. */
+  private void updateStateTransitions(State state) {
+    ArrayList<Transition> movedStateTransitions = state.getTransitions(transitions);
+    for (int i = 0; i < movedStateTransitions.size(); i++) {
+      movedStateTransitions.get(i).computePaintingCoordinates(transitions);
+    }
+  }
+  
+  /** Invoked if the move-tool is selected, the mouse pressed inside the drawable Panel 
+   * and then released somewhere (not nescessarily inside the drawable panel too!) */
+  public void handleMoveToolMouseReleased(MouseEvent evt) {
+    // Don't allow the use to move the state outside of the drawable Panel area
+    if (movedState.x <= 0 || movedState.y <= 0 || movedState.x >= Editor.getDrawablePanel().getWidth() ||
+        movedState.y >= Editor.getDrawablePanel().getHeight()) {
+      // Reset the moved State back to its original position before the dragging
+      movedState.moveTo(movedStateOriginalLocation.x, movedStateOriginalLocation.y);
+      
+      // Reset his transitions
+      updateStateTransitions(movedState);
+    }
+    
+    // Reset the trigger for the mouseDragged-handling
+    this.moveToolOrigMouseEvent = null;
+    
+    this.movedState.setSelected(false);
+  }
   
   /** Handles the construction of the constructingTransition */
   private void handleTransitionConstruction(MouseEvent evt) {
@@ -163,9 +222,6 @@ public class Automat {
             
             // Return to phase 1 for transition construction again
             this.resetConstructingTransition();
-            
-            // TODO: delete later
-            printTransitions();
           } else
             ErrorMessage.setMessage(Config.ErrorMessages.transitionInvalidSymbolEntered);
         }
@@ -332,6 +388,7 @@ public class Automat {
   }
   
   // Currently used for debuging purpose. TODO: delete later
+  @SuppressWarnings("unused")
   private void printTransitions() {
     if (transitions.size() == 0)
       System.out.println("no transitions yet.");

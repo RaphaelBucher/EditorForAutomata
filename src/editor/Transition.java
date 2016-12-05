@@ -1,7 +1,5 @@
 package editor;
 
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -101,7 +99,8 @@ public class Transition extends Shape {
   }
   
   /** Computes the (x, y)-coordinates of the Transitions start- and end-point. Distinguishes if
-   * there's a Transition with the reverse direction already. */
+   * there's a Transition with the reverse direction already. Also updates the coordinates
+   * of it's reverse-Transition if it has one. */
   public void computePaintingCoordinates(ArrayList<Transition> transitions) {
     // computed in Radian
     this.directionAngle = computeAngle();

@@ -14,9 +14,11 @@ import java.util.ArrayList;
 public class Automat {
   private ArrayList<State> states;
   private ArrayList<Transition> transitions;
-  // The unfinished Transition that is currently being constructed by the user
-  // when he operates with the Transition tool. 
-  private Transition constructingTransition; 
+  // The unfinished Transitions states that is currently being constructed by the user
+  // when he operates with the Transition tool.
+  private State constructingTransitionStartState;
+  private State constructingTransitionEndState;
+  private Transition constructingTransition;
   // A reference to the currently selected Shape. Null if none is selected.
   private Shape selectedShape; 
   
@@ -110,7 +112,43 @@ public class Automat {
     for (int i = 0; i < movedStateTransitions.size(); i++) {
       movedStateTransitions.get(i).computePaintingCoordinates(transitions);
     }
+    
+    /* Need to update all ArcTransitions of states that can be reached by only one
+     * transition FROM the state being moved around. This is because updating LineTransitions
+     * affect arcTransitions at BOTH ends. Even if an ArcTransition of the movedState
+     * itself was updated already, we update it here again to make sure it's updated
+     * AFTER all LineTransitions have been updated. This is to avoid visual artifacts. */
+    ArrayList<Transition> arcTransitions = getMovedStateNeighboursArcTransitions(state);
+    for (int i = 0; i < arcTransitions.size(); i++) {
+      arcTransitions.get(i).computePaintingCoordinates(transitions);
+    }
   }
+  
+  /** Retrieves all ArcTransitions of the moved State and its neighbour-states which
+   * can be reached by one transition. */
+  private ArrayList<Transition> getMovedStateNeighboursArcTransitions(State movedState) {
+    ArrayList<Transition> arcTransitions = new ArrayList<Transition>();
+    
+    // Get all transitions that have the movedState as a Start-State. Gets an ArcTransition
+    // of the movedState itself too if it has one
+    ArrayList<Transition> movedStateTransitions = Transition.getTransitionsByStartState(movedState,
+        transitions);
+    
+    // Iterate over end-states of the retrieved list and check if it has an ArcTransition
+    Transition arcTransition;
+    for (int i = 0; i < movedStateTransitions.size(); i++) {
+      // Add found ArcTransitions to the list. If the passed EndState has no arcTransition, we 
+      // get null and add this to the arrayList which has no effect.
+      arcTransition = Transition.isInArrayList(movedStateTransitions.get(i).getTransitionEnd().stateIndex,
+          movedStateTransitions.get(i).getTransitionEnd().stateIndex, transitions);
+      if (arcTransition != null)
+        arcTransitions.add(arcTransition);
+    }
+    
+    return arcTransitions;
+  }
+  
+  
   
   /** Invoked if the move-tool is selected, the mouse pressed inside the drawable Panel 
    * and then released somewhere (not nescessarily inside the drawable panel too!) */
@@ -130,17 +168,19 @@ public class Automat {
     this.movedState.setSelected(false);
   }
   
-  /** Handles the construction of the constructingTransition */
+  /** Handles the construction of the constructingTransition. Is invoked by mouseClicks. */
   private void handleTransitionConstruction(MouseEvent evt) {
-    // Distinguish the construction phases
+    // Did the mouseClick hit a Shape?
+    Shape clickedShape = getClickedShape(evt);
+    
+    // --- Distinguish the construction phases ---
     
     // 1. Phase: Did the user clicked a transitionStartState?
     // constructingTransition = null
-    if (this.constructingTransition == null) {
-      Shape clickedShape = getClickedShape(evt);
+    if (this.constructingTransitionStartState == null) {
       if (clickedShape instanceof State) {
         // The user clicked a State, save it and set it selected for visual feedback
-        this.constructingTransition = new Transition((State)clickedShape);
+        this.constructingTransitionStartState = ((State)clickedShape);
         clickedShape.setSelected(true);
         
         // Display the tooltip to click the second state (ending state)
@@ -153,12 +193,13 @@ public class Automat {
     }
     
     // 2. Phase: Did the user clicked a transitionEndState?
-    // constructingTransition != null, transitionEnd = null
-    if (this.constructingTransition.getTransitionEnd() == null) {
-      Shape clickedShape = getClickedShape(evt);
+    // constructingTransitioinStartState != null, constructingTransitioinEndState = null
+    if (this.constructingTransitionEndState == null) {
       if (clickedShape instanceof State) {
         // The user clicked a State, save it and set it selected for visual feedback
-        this.constructingTransition.setTransitionEnd((State)clickedShape);
+        this.constructingTransitionEndState = ((State)clickedShape);
+        this.constructingTransition = new Transition(constructingTransitionStartState,
+            constructingTransitionEndState);
         clickedShape.setSelected(true);
         
         // Display the tooltop to enter a symbol
@@ -172,10 +213,25 @@ public class Automat {
       return;
     }
     
-    // 3. Phase. Transition-symbol entered by keyboard expected. If the user clicks
-    // the mouse, the transition construction process is being resetted.
+    // 3. Phase. Transition-symbol entered by keyboard expected. 
+    // If the transition being constructed has no added symbols, display this ErrorMessage
+    if (this.constructingTransition.getSymbols().size() <= 0) 
+      ErrorMessage.setMessage(Config.ErrorMessages.transitionNoSymbolEntered);
+    
+    // If the user clicks the mouse somewhere, the transition construction process is being resetted.
     this.resetConstructingTransition();
-    ErrorMessage.setMessage(Config.ErrorMessages.transitionNoSymbolEntered);
+    
+    // This code is just reached if the constructingTransition had both start- and end-state
+    // at the start of this method, phase 3. This click just reseted the constructed state.
+    // If he also hit a state with click, enter phase 1 directly again.
+    if (clickedShape instanceof State) {
+      // The user clicked a State, save it and set it selected for visual feedback
+      this.constructingTransitionStartState = ((State)clickedShape);
+      clickedShape.setSelected(true);
+      
+      // Display the tooltip to click the second state (ending state)
+      Tooltip.setMessage(Config.Tooltips.transitionSelectEndingState);
+    }
   }
   
   /** Invoked by the KeyboardAdapter in case a key has been pressed. This method is needed
@@ -204,23 +260,32 @@ public class Automat {
         if (this.constructingTransition.getTransitionEnd() != null) {
           // We are in the 3. phase of the transition construction
           if (Transition.isTransitionSymbolValid(keyEvent.getKeyChar())) {
-            // Entered symbol is valid and being added to the transition
-            this.constructingTransition.addSymbol(keyEvent.getKeyChar());
+            // Entered symbol is valid and will be added to the automats transition.
             
+            // Does the automat already have such a transition?
             Transition transition = constructingTransition.isInArrayList(transitions);
-            // Add the transition to the automats transitions.
             if (transition == null) {
               // The automat has no such transition yet, add the whole transition
-              constructingTransition.computePaintingCoordinates(transitions);
               transitions.add(constructingTransition);
-            } else {
-              // The automat has already a transition with these start- and end-indices.
-              // Add only the symbol of the constructingTransition to the existing transition.
-              transition.addSymbol(constructingTransition.getSymbols().get(0));
-            }
+              
+              // Make sure that transition refers to the desired automats transitions after this block
+              transition = constructingTransition;
+            } 
             
-            // Return to phase 1 for transition construction again
-            this.resetConstructingTransition();
+            // Refers to the desired transition of the automat. Symbols can be directly added there.
+            // Multiple same symbols are filtered out.
+            transition.addSymbol(keyEvent.getKeyChar());
+            
+            // Update the transitions painting information. Called every time, even if only a symbol has
+            // been added.
+            transition.computePaintingCoordinates(transitions);
+            
+            // Add the symbol the the constructingTransition too. This won't affect the automats
+            // transition, it's a flag for displaying an ErrorMessage only
+            constructingTransition.addSymbol(keyEvent.getKeyChar());
+            
+            // TODO: delete later
+            //printTransitions();
           } else
             ErrorMessage.setMessage(Config.ErrorMessages.transitionInvalidSymbolEntered);
         }
@@ -358,13 +423,15 @@ public class Automat {
    * Button, the user enters invalid transition-Symbols etc. */
   public void resetConstructingTransition() {
     // Deselect states
-    if (this.constructingTransition != null) {
-      constructingTransition.getTransitionStart().setSelected(false);
-      
-      if (constructingTransition.getTransitionEnd() != null)
-        constructingTransition.getTransitionEnd().setSelected(false);
-    }
+    if (this.constructingTransitionStartState != null)
+      constructingTransitionStartState.setSelected(false);
     
+    if (this.constructingTransitionEndState != null)
+      constructingTransitionEndState.setSelected(false);
+    
+    // Reset the references
+    this.constructingTransitionStartState = null;
+    this.constructingTransitionEndState = null;
     this.constructingTransition = null;
   }
 
@@ -387,8 +454,7 @@ public class Automat {
   }
   
   // Currently used for debuging purpose. TODO: delete later
-  @SuppressWarnings("unused")
-  private void printTransitions() {
+  public void printTransitions() {
     if (transitions.size() == 0)
       System.out.println("no transitions yet.");
     

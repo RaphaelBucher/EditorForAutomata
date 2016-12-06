@@ -91,7 +91,7 @@ public interface Config {
     // Transition
     String transitionSelectStartingState = "Please select a starting state";
     String transitionSelectEndingState = "Please select an ending state";
-    String transitionEnterSymbol = "Please enter a symbol";
+    String transitionEnterSymbol = "Please enter one or more symbols";
   }
   
   /** Displayed ErrorMessages */

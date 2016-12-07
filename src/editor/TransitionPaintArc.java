@@ -1,6 +1,5 @@
 package editor;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -16,6 +15,10 @@ public class TransitionPaintArc extends TransitionPaint {
   // The angle from the hostState to the Transitions-Arc, between 0 and 2 * Math.PI
   private double arcAngle;
   
+  // parameters for Swings drawArc-method
+  private int arcX, arcY; // the upper-left corner of the rectangle the arc is drawn into
+  private int arcStartAngle; // in degrees
+  
   /** @params aggregateTransition The Transition which instantiated this TransitionPaintLine-object. */
   public TransitionPaintArc(Transition aggregateTransition) {
     super();
@@ -24,23 +27,36 @@ public class TransitionPaintArc extends TransitionPaint {
     this.hostState = aggregateTransition.getTransitionStart();
   }
   
-  
   @Override
   public void paint(Graphics2D graphics2D) {
-    graphics2D.setColor(Color.GREEN);
-    
-    graphics2D.drawLine(hostState.x, hostState.y, (int)(hostState.x + Math.cos(arcAngle) * 40.0d),
-        (int)(hostState.y - Math.sin(arcAngle) * 40.0d));
-    
-    graphics2D.setColor(Color.BLACK);
+    graphics2D.drawArc(arcX, arcY, Config.STATE_DIAMETER, Config.STATE_DIAMETER, arcStartAngle, 270);
   }
   
-  /** ... */
+  /** Entry-point for the painting information computation. */
   public void computePaintingCoordinates(ArrayList<Transition> transitions) {
     // Determine the middle of the biggest free area on the circle of the state.
     computeTransitionAngle(transitions);
     
+    // Compute the parameters for Swings drawArc-function
+    computeArc();
+  }
+  
+  /** Computes the parameters for Swings drawArc-method. */
+  private void computeArc() {
+    int radius = Config.STATE_DIAMETER / 2;
     
+    // distance from the hostStates middle to the Arcs middle. Make it slightly bigger
+    // with 0.5 so that the Arc never enters the states circle, but still has
+    // no white space between them too.
+    double distance = Math.sqrt(radius * radius + radius * radius) + 0.5d;
+    
+    // compute the upper left corner of the arcs bounding rectangle
+    this.arcX = hostState.x + (int)Math.round(Math.cos(arcAngle) * distance) - radius;
+    // Cartesian to Swings coordinate system
+    this.arcY = hostState.y - (int)Math.round(Math.sin(arcAngle) * distance) - radius;
+    
+    // Arcs startAngle in degrees
+    this.arcStartAngle = (int)Math.round(Math.toDegrees(arcAngle)) - 135;
   }
   
   /** Determine the middle of the biggest free area on the circle of the state */
@@ -105,8 +121,10 @@ public class TransitionPaintArc extends TransitionPaint {
   /** Computes the angle of the hostState in relation to the middle of the DrawablePanel. 
    * This is used for the Arc-computation if the hostState has no LineTransitions. */
   private double hostStateAngleToMiddle() {
-    // TODO: todotodotodo
-    return 0.0d; // todo
+    int drawablePanelMidX = Editor.getDrawablePanel().getWidth() / 2;
+    int drawablePanelMidY = Editor.getDrawablePanel().getHeight() / 2;
+    
+    return TransitionPaint.computeAngle(hostState.x - drawablePanelMidX, drawablePanelMidY - hostState.y);
   }
   
   /** Compute all the circlePoints angles in relation to the hostStates center.  */

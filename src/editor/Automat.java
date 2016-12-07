@@ -258,39 +258,49 @@ public class Automat {
       // Are we in the 3. phase of the transition-construction?
       if (this.constructingTransition != null) {
         if (this.constructingTransition.getTransitionEnd() != null) {
-          // We are in the 3. phase of the transition construction
-          if (Transition.isTransitionSymbolValid(keyEvent.getKeyChar())) {
-            // Entered symbol is valid and will be added to the automats transition.
-            
-            // Does the automat already have such a transition?
-            Transition transition = constructingTransition.isInArrayList(transitions);
-            if (transition == null) {
-              // The automat has no such transition yet, add the whole transition
-              transitions.add(constructingTransition);
-              
-              // Make sure that transition refers to the desired automats transitions after this block
-              transition = constructingTransition;
-            } 
-            
-            // Refers to the desired transition of the automat. Symbols can be directly added there.
-            // Multiple same symbols are filtered out.
-            transition.addSymbol(keyEvent.getKeyChar());
-            
-            // Update the transitions painting information. Called every time, even if only a symbol has
-            // been added.
-            transition.computePaintingCoordinates(transitions);
-            
-            // Add the symbol the the constructingTransition too. This won't affect the automats
-            // transition, it's a flag for displaying an ErrorMessage only
-            constructingTransition.addSymbol(keyEvent.getKeyChar());
-            
-            // TODO: delete later
-            //printTransitions();
-          } else
+          // Add the key pressed as a Symbol to the built transition
+          if (!constructingTransition.addSymbol(keyEvent.getKeyChar()))
             ErrorMessage.setMessage(Config.ErrorMessages.transitionInvalidSymbolEntered);
+          
+          // Add the Transition to the automat. The method decides itself what 
+          // still needs to be added, e.g. the whole transition or only a symbol
+          addTransition(constructingTransition);
         }
       }
     }
+  }
+  
+  /** Do not directly add Transitions to the transitions-ArrayList. Call this method instead,
+   * there is updating to perform when adding a Transition. Pass a Transition with a start-
+   * and end-state and with one or more symbols. They can be invalid, this method checks 
+   * itself for validation. Will add a COPY of the Transition to the arrayList to prevent
+   * direct manipulation with the passed reference. */
+  private void addTransition(Transition newTransition) {
+    // Is the Transition invalid?
+    if (newTransition == null || newTransition.getTransitionStart() == null ||
+        newTransition.getTransitionEnd() == null || newTransition.getSymbols().size() <= 0)
+      return;
+    
+    // Does the automat already have such a transition with such start-state and 
+    // end-state indices?
+    Transition transition = newTransition.isInArrayList(transitions);
+    if (transition == null) {
+      // Instantiate a new Transition with start- and end-state and no symbols yet
+      transition = new Transition(newTransition.getTransitionStart(),
+          newTransition.getTransitionEnd());
+      
+      // Add the transition to the automats transitions
+      transitions.add(transition);
+    }
+    
+    // Add all symbols
+    for (int i = 0; i < newTransition.getSymbols().size(); i++) {
+      transition.addSymbol(newTransition.getSymbols().get(i));
+    }
+      
+    // Update the transitions painting information. Called every time, even if only a symbol has
+    // been added.
+    transition.computePaintingCoordinates(transitions);
   }
   
   /** Did the mouseClick hit a Shape of the automat? E.g. a state, a transition etc. */
@@ -413,7 +423,6 @@ public class Automat {
     }
   }
   
-  // Setters and Getters
   /** Returns the currently selected shape. Returns null if none is selected. */
   public Shape getSelectedShape() {
     return this.selectedShape;
@@ -433,6 +442,11 @@ public class Automat {
     this.constructingTransitionStartState = null;
     this.constructingTransitionEndState = null;
     this.constructingTransition = null;
+  }
+  
+  // Setters and Getters
+  public ArrayList<Transition> getTransitions() {
+    return this.transitions;
   }
 
   // Currently only used for testing. Called in the DrawablePanel Constructor. TODO: delete later

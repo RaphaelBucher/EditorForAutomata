@@ -33,7 +33,7 @@ public interface Config {
 
   // In case of an end-state, the second circle is within the default one, the
   // diameter for normal and end-states is the same. This eases the rendering.
-  int STATE_DIAMETER = 50 - 8;
+  int STATE_DIAMETER = 50 - 8; // Should be even for more accurate visuals
   int END_STATE_INNER_DIAMETER = STATE_DIAMETER - 6;
   Color SELECTED_STATE_COLOR = Color.BLUE;
 

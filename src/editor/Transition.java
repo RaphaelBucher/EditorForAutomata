@@ -1,7 +1,6 @@
 package editor;
 
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.util.ArrayList;
 
 public class Transition extends Shape {
@@ -13,6 +12,7 @@ public class Transition extends Shape {
   // Painting information. Either a TransitionPaintLine or a TransitionPaintArc
   private TransitionPaint transitionPaint;
   
+  /** Only this constructor allowed, default-constructor not permitted. */
   public Transition(State transitionStart, State transitionEnd) {
     this.transitionStart = transitionStart;
     this.transitionEnd = transitionEnd;
@@ -38,10 +38,17 @@ public class Transition extends Shape {
   }
   
   /** Adds a symbol to the transitions symbol-ArrayList. If the symbol is already in the list,
-   * this method does nothing. */
-  public void addSymbol(char symbol) {
+   * this method does nothing.
+   * @return false if the symbol was invalid, true otherwise, even if the symbol was in the
+   * list already. */
+  public boolean addSymbol(char symbol) {
+    if (!Transition.isTransitionSymbolValid(symbol))
+      return false;
+    
     if (!containsSymbol(symbol))
       symbols.add(new Character(symbol));
+    
+    return true;
   }
   
   /** Checks whether the passed character is already in the list.

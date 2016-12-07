@@ -54,6 +54,22 @@ public class TransitionPaintLine extends TransitionPaint {
    * of it's reverse-Transition if it has one. */
   public void computePaintingCoordinates(ArrayList<Transition> transitions) {
     computePaintingCoordinatesLine(transitions);
+    
+    // If the two states of the aggregateTransition have ArcTransitions, update their 
+    // painting information.
+    // Does the Transitions startState has an ArcTransition?
+    Transition transition = Transition.isInArrayList(aggregateTransition.getTransitionStart().stateIndex,
+        aggregateTransition.getTransitionStart().stateIndex, transitions);
+    if (transition != null) {
+      transition.computePaintingCoordinates(transitions);
+    }
+    
+    // Does the Transitions endState has an ArcTransition?
+    transition = Transition.isInArrayList(aggregateTransition.getTransitionEnd().stateIndex,
+        aggregateTransition.getTransitionEnd().stateIndex, transitions);
+    if (transition != null) {
+      transition.computePaintingCoordinates(transitions);
+    }
   }
   
   /** The computational method for a transition with a different start- and end-point, resulting

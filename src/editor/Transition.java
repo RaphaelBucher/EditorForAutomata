@@ -51,7 +51,7 @@ public class Transition extends Shape {
       return false;
     
     if (!containsSymbol(symbol)) {
-      symbols.add(new Symbol(symbol));
+      symbols.add(new Symbol(this, symbol));
     }
     
     return true;
@@ -67,6 +67,19 @@ public class Transition extends Shape {
     }
     
     return false;
+  }
+  
+  /** Removes a symbol from the Transitions Symbol-list. */
+  public void removeSymbol(Symbol symbol) {
+    // Need to check on my own since the Symbols setSelected flag could cause trouble
+    // when just removing by Object-comparison. Comparison is done by char only, and their
+    // unique in the list by adding-constraints.
+    for (int i = 0; i < symbols.size(); i++) {
+      if (symbol.getSymbol() == symbols.get(i).getSymbol()) {
+        symbols.remove(i);
+        return;
+      }
+    }
   }
   
   /** Checks whether this Transition is in the passed list of Transitions. Compares

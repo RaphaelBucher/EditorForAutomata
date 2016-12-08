@@ -331,7 +331,19 @@ public class Automat {
       }
     }
     
-    // Todo: Traverse the automats transitions
+    // TODO: traverse the automats Transitions
+    
+    // Traverse the Transitions symbols
+    ArrayList<Symbol> symbols;
+    for (int i = 0; i < transitions.size(); i++) {
+      symbols = transitions.get(i).getSymbols();
+      
+      for (int j = 0; j < symbols.size(); j++) {
+        if (symbols.get(j).mouseClickHit(evt.getX(), evt.getY()))
+          // Save the new Shape that reported a mouse-collision
+          hitShape = symbols.get(j);
+      }
+    }
     
     return hitShape;
   }
@@ -412,7 +424,15 @@ public class Automat {
       states.remove(selectedShape);
       selectedShape = null;
     }
-    // todo: if (selectedShape instanceof Transition) ...
+    // TODO: if (selectedShape instanceof Transition) ...
+    
+    // Selected Shape is a Transition-Symbol
+    if (selectedShape instanceof Symbol) {
+      Transition hostTransition = ((Symbol) selectedShape).getHostTransition();
+      
+      hostTransition.removeSymbol((Symbol) selectedShape);
+      selectedShape = null;
+    }
   }
   
   /** Deselect the currently selected shape if there is any. */

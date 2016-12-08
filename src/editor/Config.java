@@ -35,7 +35,7 @@ public interface Config {
   // diameter for normal and end-states is the same. This eases the rendering.
   int STATE_DIAMETER = 50 - 8; // Should be even for more accurate visuals
   int END_STATE_INNER_DIAMETER = STATE_DIAMETER - 6;
-  Color SELECTED_STATE_COLOR = Color.BLUE;
+  Color SELECTED_STATE_COLOR = new Color(30, 150, 255);
 
   // Background-color of the drawablePanel
   Color BACKGROUND_COLOR = Color.WHITE;

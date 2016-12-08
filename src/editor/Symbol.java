@@ -7,6 +7,8 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 public class Symbol extends Shape {
+  /** A reference on the Transition the Symbol belongs to. */
+  private Transition hostTransition;
   private char symbol;
   private Point symbolPaintingMiddle;
   /** positive distance from symbolPaintingMiddle to the left border of the bounding box. Right
@@ -15,21 +17,29 @@ public class Symbol extends Shape {
   /** Box goes down for the same amount. */
   private static int boundingBoxUp; 
   
-  public Symbol(char symbol) {
+  public Symbol(Transition hostTransition, char symbol) {
+    this.hostTransition = hostTransition;
     this.symbol = symbol;
     symbolPaintingMiddle = new Point();
   }
   
   @Override
   public boolean mouseClickHit(int mouseX, int mouseY) {
-    // TODO Auto-generated method stub
+    // Simple Box collision. boundingBoxLeft is the same for the right side. Same with Up.
+    // Tolerate 1 pixel more for the horizontal collision, it's a better user experience.
+    if (mouseX >= symbolPaintingMiddle.x - boundingBoxLeft -1 &&
+        mouseX <= symbolPaintingMiddle.x + boundingBoxLeft + 1 &&
+        mouseY >= symbolPaintingMiddle.y - boundingBoxUp &&
+        mouseY <= symbolPaintingMiddle.y + boundingBoxUp) {
+      return true;
+    }
+    
     return false;
   }
 
   @Override
   public void displaySelectedShapeTooltip() {
     // TODO Auto-generated method stub
-    
   }
   
   /** Computes the middle of the symbols and paints them. direction = 1 mean the symbols
@@ -39,7 +49,6 @@ public class Symbol extends Shape {
   public static void paint(Graphics2D graphics2D, ArrayList<Symbol> symbols,
       Point symbolDockingPoint, int direction) {
     FontMetrics fontMetrics = graphics2D.getFontMetrics();
-    int fontOffsetY = fontMetrics.getAscent() / 3;
     boundingBoxUp = fontMetrics.getAscent() / 2 + 1;
     
     // Compute the bounding boxes
@@ -48,24 +57,33 @@ public class Symbol extends Shape {
     // Compute all middlePoints
     paintingMiddlePoints(fontMetrics, symbols, symbolDockingPoint, direction);
     
-    // TODO: remove
-    graphics2D.drawRect(symbolDockingPoint.x, symbolDockingPoint.y, 1, 1);
+    paint(graphics2D, symbols, fontMetrics);
+  }
+  
+  /** The actual painting. */
+  private static void paint(Graphics2D graphics2D, ArrayList<Symbol> symbols, FontMetrics fontMetrics) {
+    int fontOffsetY = fontMetrics.getAscent() / 3;
     
+    Symbol currentSymbol;
     for (int i = 0; i < symbols.size(); i++) {
-      String drawnString = "" + symbols.get(i).getSymbol();
+      currentSymbol = symbols.get(i);
+      // If the element is selected, paint a background-roundRect to hightlight it
+      if (currentSymbol.isSelected) {
+        graphics2D.setColor(new Color(190, 240, 255));
+        
+        graphics2D.fillRoundRect(currentSymbol.symbolPaintingMiddle.x - currentSymbol.boundingBoxLeft - 2,
+            currentSymbol.symbolPaintingMiddle.y - boundingBoxUp - 2, currentSymbol.boundingBoxLeft * 2 + 4,
+            boundingBoxUp * 2 + 4, 7, 7);
+        graphics2D.setColor(Color.BLACK);
+      }
+      
+      String drawnString = "" + currentSymbol.getSymbol();
       // Append a comma if its not the last symbol of the chain
       if (i < symbols.size() - 1)
         drawnString += ",";
       
-      graphics2D.drawString(drawnString, symbols.get(i).symbolPaintingMiddle.x -
-          symbols.get(i).boundingBoxLeft, symbols.get(i).symbolPaintingMiddle.y + fontOffsetY);
-      
-      // TODO: remove
-      graphics2D.setColor(Color.GREEN);
-      graphics2D.drawRect(symbols.get(i).symbolPaintingMiddle.x - symbols.get(i).boundingBoxLeft,
-          symbols.get(i).symbolPaintingMiddle.y - boundingBoxUp, symbols.get(i).boundingBoxLeft * 2,
-          boundingBoxUp * 2);
-      graphics2D.setColor(Color.BLACK);
+      graphics2D.drawString(drawnString, currentSymbol.symbolPaintingMiddle.x -
+          currentSymbol.boundingBoxLeft, currentSymbol.symbolPaintingMiddle.y + fontOffsetY);
     }
   }
   
@@ -138,5 +156,9 @@ public class Symbol extends Shape {
   
   public Point getSymbolPaintingMiddle() {
     return this.symbolPaintingMiddle;
+  }
+  
+  public Transition getHostTransition() {
+    return this.hostTransition;
   }
 }

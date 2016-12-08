@@ -258,6 +258,11 @@ public class TransitionPaintArc extends TransitionPaint {
       this.symbolDirection = 0; // Symbols centered
   }
   
+  /** Checks if the mouse hit this ArcTransition */
+  protected boolean mouseClickHit(Point mousePosition) {
+    return Math2D.arcTransitionClicked(mousePosition, new Point(arcX, arcY), arcAngle);
+  }
+  
   // Setters and Getters
   @Override
   public Point getSymbolDockingPoint() {

@@ -1,5 +1,6 @@
 package editor;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -42,12 +43,17 @@ public class TransitionPaintLine extends TransitionPaint {
   public void paint(Graphics2D graphics2D) {
     // Does the transition have the minimal length to be painted?
     if (isPainted) {
+      if (this.aggregateTransition.isSelected)
+        graphics2D.setColor(Config.SELECTED_STATE_COLOR);
+      
       // Transitions line
       graphics2D.drawLine(transitionStartX, transitionStartY, transitionEndX, transitionEndY);
       
       // Transitions arrow
       graphics2D.drawLine(transitionEndX, transitionEndY, arrowPointOne.x, arrowPointOne.y);
       graphics2D.drawLine(transitionEndX, transitionEndY, arrowPointTwo.x, arrowPointTwo.y);
+      
+      graphics2D.setColor(Color.BLACK);
     }
   }
   
@@ -203,6 +209,12 @@ public class TransitionPaintLine extends TransitionPaint {
       this.symbolDirection = 1;
     else
       this.symbolDirection = -1;
+  }
+  
+  /** Checks if the mouse hit this LineTransition */
+  protected boolean mouseClickHit(Point mousePosition) {
+    return Math2D.lineTransitionClicked(mousePosition, new Point(transitionStartX, transitionStartY),
+        new Point(transitionEndX, transitionEndY));
   }
 
   // Setters and Getters

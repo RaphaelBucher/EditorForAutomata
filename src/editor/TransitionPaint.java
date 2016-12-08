@@ -10,6 +10,7 @@ public abstract class TransitionPaint {
   public abstract void computeSymbolDockingPoint();
   public abstract Point getSymbolDockingPoint();
   public abstract int getSymbolDirection();
+  protected abstract boolean mouseClickHit(Point mousePosition);
   
   // A reference on the Transition which instantiated this TransitionPaintLine-Object
   protected Transition aggregateTransition;

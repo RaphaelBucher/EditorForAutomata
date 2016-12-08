@@ -295,7 +295,7 @@ public class Automat {
     
     // Add all symbols
     for (int i = 0; i < newTransition.getSymbols().size(); i++) {
-      transition.addSymbol(newTransition.getSymbols().get(i));
+      transition.addSymbol(newTransition.getSymbols().get(i).getSymbol());
     }
       
     // Update the transitions painting information. Called every time, even if only a symbol has

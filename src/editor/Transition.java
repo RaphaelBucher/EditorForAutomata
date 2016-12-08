@@ -7,7 +7,7 @@ public class Transition extends Shape {
   private State transitionStart;
   private State transitionEnd;
   // A transition can have one or more symbols
-  private ArrayList<Character> symbols;
+  private ArrayList<Symbol> symbols;
   
   // Painting information. Either a TransitionPaintLine or a TransitionPaintArc
   private TransitionPaint transitionPaint;
@@ -16,7 +16,7 @@ public class Transition extends Shape {
   public Transition(State transitionStart, State transitionEnd) {
     this.transitionStart = transitionStart;
     this.transitionEnd = transitionEnd;
-    symbols = new ArrayList<Character>();
+    symbols = new ArrayList<Symbol>();
     
     if (transitionStart.getStateIndex() == transitionEnd.getStateIndex())
       transitionPaint = new TransitionPaintArc(this);
@@ -25,7 +25,12 @@ public class Transition extends Shape {
   }
   
   public void paint(Graphics2D graphics2D) {
+    // Paint the Transitions, a Line or an Arc depending on its transitionPaints type
     transitionPaint.paint(graphics2D);
+    
+    // The symbols
+    Symbol.paint(graphics2D, symbols, transitionPaint.getSymbolDockingPoint(),
+        transitionPaint.getSymbolDirection());
   }
   
   @Override
@@ -42,11 +47,12 @@ public class Transition extends Shape {
    * @return false if the symbol was invalid, true otherwise, even if the symbol was in the
    * list already. */
   public boolean addSymbol(char symbol) {
-    if (!Transition.isTransitionSymbolValid(symbol))
+    if (!Symbol.isSymbolValid(symbol))
       return false;
     
-    if (!containsSymbol(symbol))
-      symbols.add(new Character(symbol));
+    if (!containsSymbol(symbol)) {
+      symbols.add(new Symbol(symbol));
+    }
     
     return true;
   }
@@ -55,8 +61,7 @@ public class Transition extends Shape {
    * @return true if the character is in the list, false otherwise. */
   private boolean containsSymbol(char symbol) {
     for (int i = 0; i < symbols.size(); i++) {
-      if (symbols.get(i).compareTo(new Character(symbol)) == 0) {
-        // chars are equal
+      if (symbols.get(i).getSymbol() == symbol) {
         return true;
       }
     }
@@ -108,19 +113,6 @@ public class Transition extends Shape {
     
     // Check if the reversed Transition is in the passed list
     return reverseTransition.isInArrayList(transitions);
-  }
-  
-  /** Checks if the user entered a valid character for the transition. Valid symbolas are single 
-   * digits and small letters. */
-  public static boolean isTransitionSymbolValid(char symbol) {
-    // Is the symbol a single digit?
-    if (symbol >= new Character('0') && symbol <= new Character('9'))
-      return true;
-    
-    if (symbol >= 'a' && symbol <= 'z')
-      return true;
-    
-    return false;
   }
   
   /** Returns all Transitions from a passed list that have the passed state as a start-state. */
@@ -186,7 +178,7 @@ public class Transition extends Shape {
     return this.transitionEnd;
   }
   
-  public ArrayList<Character> getSymbols() {
+  public ArrayList<Symbol> getSymbols() {
     return this.symbols;
   }
   

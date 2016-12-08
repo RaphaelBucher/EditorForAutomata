@@ -12,12 +12,16 @@ public class TransitionPaintArc extends TransitionPaint {
   // The state on which the ArcTransition is
   private State hostState;
   
-  // The angle from the hostState to the Transitions-Arc, between 0 and 2 * Math.PI
+  /** The angle from the hostState to the Transitions-Arc, between 0 and 2 * Math.PI */
   private double arcAngle;
   
   // parameters for Swings drawArc-method
   private int arcX, arcY; // the upper-left corner of the rectangle the arc is drawn into
   private int arcStartAngle; // in degrees
+  
+  private Point arrowCenter;
+  private Point arrowLineOne;
+  private Point arrowLineTwo;
   
   /** @params aggregateTransition The Transition which instantiated this TransitionPaintLine-object. */
   public TransitionPaintArc(Transition aggregateTransition) {
@@ -25,11 +29,22 @@ public class TransitionPaintArc extends TransitionPaint {
     
     this.aggregateTransition = aggregateTransition;
     this.hostState = aggregateTransition.getTransitionStart();
+    
+    arrowCenter = new Point();
+    arrowLineOne = new Point();
+    arrowLineTwo = new Point();
+    
+    symbolDockingPoint = new Point();
   }
   
   @Override
   public void paint(Graphics2D graphics2D) {
+    // The Arc
     graphics2D.drawArc(arcX, arcY, Config.STATE_DIAMETER, Config.STATE_DIAMETER, arcStartAngle, 270);
+    
+    // The Arrow
+    graphics2D.drawLine(arrowCenter.x, arrowCenter.y, arrowLineOne.x, arrowLineOne.y);
+    graphics2D.drawLine(arrowCenter.x, arrowCenter.y, arrowLineTwo.x, arrowLineTwo.y);
   }
   
   /** Entry-point for the painting information computation. */
@@ -39,6 +54,43 @@ public class TransitionPaintArc extends TransitionPaint {
     
     // Compute the parameters for Swings drawArc-function
     computeArc();
+    
+    // Computes the three Points for the arrow
+    computeArrow();
+    
+    // Compute the symbolDockingPoint
+    computeSymbolDockingPoint();
+  }
+  
+  /** Computes the three Points for the arrow */
+  private void computeArrow() {
+    // States radius
+    double radius = Config.STATE_DIAMETER / 2 + 0.6d;
+    
+    // Angle of the arrow Center point in relation to the hostStates middle
+    // A little correction to respect the Arc drawn by Swing
+    double arrowAngle = arcAngle - Math.toRadians(45.0d - 0.7d);
+    double arrowLength = 11.0d;
+    double arrowAngleOffset = Math.toRadians(25.0d);
+    // Its an Arc incoming, not a straight line. Rotate the Arrow slightly to the direction the
+    // Arc-Line comes in
+    double arrowCorrection = Math.toRadians(14.0d);
+    
+    // Arrow center point
+    arrowCenter.x = hostState.x + (int)Math.round(Math.cos(arrowAngle) * radius);
+    arrowCenter.y = hostState.y - (int)Math.round(Math.sin(arrowAngle) * radius);
+    
+    // Arrow point one
+    arrowLineOne.x = arrowCenter.x +
+        (int)Math.round(Math.cos(arrowAngle + arrowAngleOffset + arrowCorrection) * arrowLength);
+    arrowLineOne.y = arrowCenter.y -
+        (int)Math.round(Math.sin(arrowAngle + arrowAngleOffset + arrowCorrection) * arrowLength);
+    
+    // Arrow point two
+    arrowLineTwo.x = arrowCenter.x +
+        (int)Math.round(Math.cos(arrowAngle - arrowAngleOffset + arrowCorrection) * arrowLength);
+    arrowLineTwo.y = arrowCenter.y -
+        (int)Math.round(Math.sin(arrowAngle - arrowAngleOffset + arrowCorrection) * arrowLength);
   }
   
   /** Computes the parameters for Swings drawArc-method. */
@@ -173,5 +225,47 @@ public class TransitionPaintArc extends TransitionPaint {
     }
     
     return circlePoints;
+  }
+  
+  /** Computes the Point where the Transitions Symbols are painted. */
+  public void computeSymbolDockingPoint() {
+    int stateRadius = Config.STATE_DIAMETER / 2;
+    double dockingPointVectorLength = Math.sqrt(stateRadius * stateRadius + stateRadius * stateRadius) +
+        stateRadius + this.offsetVectorLength;
+    
+    // In Swings coordinates
+    this.symbolDockingPoint.x = hostState.x + (int)Math.round(Math.cos(arcAngle) *
+        dockingPointVectorLength);
+    this.symbolDockingPoint.y = hostState.y - (int)Math.round(Math.sin(arcAngle) *
+        dockingPointVectorLength);
+    
+    this.symbolDirection();
+  }
+  
+  /** symbolDirection is 1 if the Symbols are displayed into the right direction
+   * of their dockingPoint, -1 if they go to the left. Its 0 if they will
+   * be displayed centered. */
+  private void symbolDirection() {
+    // Symbols will be rendered centered for the top and bottom center * 2 degrees, e.g. 80°-100° etc.
+    double center = 15.0d;
+    
+    // most of Quadrants 1 and 4 => Display symbols to the right from the dockingPoint.
+    if (arcAngle <= Math.toRadians(90.0d - center) || arcAngle >= Math.toRadians(270.0d + center))
+      this.symbolDirection = 1;
+    else if (arcAngle >= Math.toRadians(90.0d + center) && arcAngle <= Math.toRadians(270.0d - center))
+      this.symbolDirection = -1;
+    else
+      this.symbolDirection = 0; // Symbols centered
+  }
+  
+  // Setters and Getters
+  @Override
+  public Point getSymbolDockingPoint() {
+    return this.symbolDockingPoint;
+  }
+
+  @Override
+  public int getSymbolDirection() {
+    return this.symbolDirection;
   }
 }

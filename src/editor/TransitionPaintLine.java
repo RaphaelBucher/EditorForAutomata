@@ -34,6 +34,8 @@ public class TransitionPaintLine extends TransitionPaint {
     
     arrowPointOne = new Point();
     arrowPointTwo = new Point();
+    
+    symbolDockingPoint = new Point();
   }
 
   @Override
@@ -49,9 +51,9 @@ public class TransitionPaintLine extends TransitionPaint {
     }
   }
   
-  /** Computes the (x, y)-coordinates of the Transitions start- and end-point. Distinguishes if
-   * there's a Transition with the reverse direction already. Also updates the coordinates
-   * of it's reverse-Transition if it has one. */
+  /** Entry point of the graphical computation. Computes the (x, y)-coordinates of the Transitions
+   * start- and end-point. Distinguishes if there's a Transition with the reverse direction already.
+   * Also updates the coordinates of it's reverse-Transition if it has one. */
   public void computePaintingCoordinates(ArrayList<Transition> transitions) {
     computePaintingCoordinatesLine(transitions);
     
@@ -69,6 +71,14 @@ public class TransitionPaintLine extends TransitionPaint {
         aggregateTransition.getTransitionEnd().stateIndex, transitions);
     if (transition != null) {
       transition.computePaintingCoordinates(transitions);
+    }
+    
+    // Update the symbol painting
+    this.computeSymbolDockingPoint();
+    
+    Transition reverseTransition = aggregateTransition.gotReverseTransition(transitions);
+    if (reverseTransition != null) {
+      reverseTransition.getTransitionPaint().computeSymbolDockingPoint();
     }
   }
   
@@ -169,6 +179,32 @@ public class TransitionPaintLine extends TransitionPaint {
     this.isPainted = this.length >= Config.TRANSITION_MIN_LENGTH;
   }
 
+  /** Computes the Point where the Transitions Symbols are painted. */
+  public void computeSymbolDockingPoint() {
+    // compute the middle of the Transition
+    double transitionMiddleX = transitionStartX + Math.cos(directionAngle) * length / 2;
+    double transitionMiddleY = transitionStartY - Math.sin(directionAngle) * length / 2;
+    
+    // In Swings coordinates
+    double offsetVectorX = Math.cos(directionAngle + Math.toRadians(90.0d)) * offsetVectorLength;
+    double offsetVectorY = - Math.sin(directionAngle + Math.toRadians(90.0d)) * offsetVectorLength;
+    
+    this.symbolDockingPoint.x = (int)Math.round(transitionMiddleX + offsetVectorX);
+    this.symbolDockingPoint.y = (int)Math.round(transitionMiddleY + offsetVectorY);
+    
+    this.symbolDirection();
+  }
+  
+  /** symbolDirection is 1 if the symbols will be displayed from left to right (the dockingPoint 
+   * is at the right side of the Transition), -1 otherwise. */
+  private void symbolDirection() {
+    // Quadrants 3 and 4 => Display symbols to the right from the dockingPoint.
+    if (directionAngle >= Math.PI)
+      this.symbolDirection = 1;
+    else
+      this.symbolDirection = -1;
+  }
+
   // Setters and Getters
   public int getTransitionStartX() {
     return transitionStartX;
@@ -184,5 +220,15 @@ public class TransitionPaintLine extends TransitionPaint {
 
   public int getTransitionEndY() {
     return transitionEndY;
+  }
+
+  @Override
+  public Point getSymbolDockingPoint() {
+    return this.symbolDockingPoint;
+  }
+
+  @Override
+  public int getSymbolDirection() {
+    return this.symbolDirection;
   }
 }

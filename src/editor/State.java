@@ -73,7 +73,7 @@ public class State extends Shape {
     
     // Remove them one-by-one
     for (int i = 0; i < stateTransitions.size(); i++) {
-      transitions.remove(stateTransitions.get(i));
+      Editor.getDrawablePanel().getAutomat().deleteTransition(stateTransitions.get(i));
     }
   }
   
@@ -95,6 +95,12 @@ public class State extends Shape {
   public void moveTo(int x, int y) {
     this.x = x;
     this.y = y;
+  }
+  
+  /** Checks whether this state has an ArcTransition.
+   * @return the ArcTransition or null if it has none. */
+  public Transition gotArcTransition(ArrayList<Transition> transitions) {
+    return Transition.isInArrayList(this.stateIndex, this.stateIndex, transitions);
   }
   
   // Setters and Getters

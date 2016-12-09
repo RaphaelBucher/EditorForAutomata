@@ -119,9 +119,12 @@ public class Transition extends Shape {
   }
   
   /** Checks whether the passed transition-list containes a transition with reverse direction,
-   * start- and end-states switched.
+   * start- and end-states switched. Returns null for ArcTransitions.
    * @return Returns the reverseTransition, or null if the list doesn't contain it. */
   public Transition gotReverseTransition(ArrayList<Transition> transitions) {
+    if (this.isArcTransition())
+      return null;
+    
     // Build a temporary transition with start- and end-states switched
     Transition reverseTransition = new Transition(this.transitionEnd, this.transitionStart);
     
@@ -175,7 +178,7 @@ public class Transition extends Shape {
   }
   
   /** Returns true if the transitions start- and end-states are the same (an ArcTransition). */
-  private boolean isArcTransition() {
+  public boolean isArcTransition() {
     return this.transitionStart.stateIndex == this.transitionEnd.stateIndex;
   }
   

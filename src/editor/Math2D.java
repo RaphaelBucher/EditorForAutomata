@@ -9,12 +9,11 @@ public class Math2D {
   public static boolean lineTransitionClicked(Point mousePosition, Point transitionStart,
       Point transitionEnd) {
     // Create the needed vectors in Cartesian coordinate system
-    Vector2D mouse = new Vector2D(mousePosition.getX(), - mousePosition.getY());
+    Vector2D mouse = new Vector2D(mousePosition.x, - mousePosition.y);
     // Straight line start point
-    Vector2D r1 = new Vector2D(transitionStart.getX(), - transitionStart.getY());
+    Vector2D r1 = new Vector2D(transitionStart.x, - transitionStart.y);
     // Straight line direction vector
-    Vector2D a = new Vector2D(transitionEnd.getX() - transitionStart.getX(),
-        - (transitionEnd.getY() - transitionStart.getY()));
+    Vector2D a = Vector2D.subtract(new Vector2D(transitionEnd.x, - transitionEnd.y), r1);
     
     double distanceToLine = pointDistanceToLine(mouse, r1, a);
     
@@ -27,8 +26,8 @@ public class Math2D {
   
   /** Computes the distance of a point to a straight line. */
   private static double pointDistanceToLine(Vector2D mouse, Vector2D r1, Vector2D a) {
-    double numerator = Math.abs(Vector2D.crossProduct(a, Vector2D.subtract(mouse, r1)));
-    double denominator = mouse.absolute();
+    double numerator = Math.abs(Vector2D.det(a, Vector2D.subtract(mouse, r1)));
+    double denominator = a.absolute();
     
     return numerator / denominator;
   }
@@ -36,7 +35,22 @@ public class Math2D {
   /** arcAngle is between 0 and 2 * Math.PI, its the angle of the vector from the Arcs
    * hostState to the Arcs Center. Arc radius is Config.STATE_DIAMETER / 2. */
   public static boolean arcTransitionClicked(Point mousePosition, Point arcCenter, double arcAngle) {
-    // TODO: check accuracy by painting a circle
-    return false;
+    Vector2D mouse = new Vector2D(mousePosition.x, - mousePosition.y);
+    Vector2D arc = new Vector2D(arcCenter.x, - arcCenter.y);
+    
+    double distance = Vector2D.distance(mouse, arc);
+    double stateRadius = Config.STATE_DIAMETER / 2;
+    
+    // The angle of the mouse in relation to the Arcs Center
+    double mouseAngle = Vector2D.computeAngle(mouse.x - arc.x, mouse.y - arc.y);
+    double reverseArcAngle = arcAngle + Math.PI; // ReverseArcAngle is between PI and 3 * PI
+    // Ensure that the angles are periodically as close as possible for easy comparison
+    if (reverseArcAngle - mouseAngle > Math.PI)
+      mouseAngle += 2 * Math.PI;
+    
+    boolean ret = distance > stateRadius - clickTolerance && distance < stateRadius + clickTolerance &&
+        Math.toDegrees(Math.abs(mouseAngle - reverseArcAngle)) > 45.0d;
+    
+    return ret;
   }
 }

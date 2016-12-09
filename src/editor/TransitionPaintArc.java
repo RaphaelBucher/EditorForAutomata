@@ -1,5 +1,6 @@
 package editor;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -39,12 +40,17 @@ public class TransitionPaintArc extends TransitionPaint {
   
   @Override
   public void paint(Graphics2D graphics2D) {
+    if (this.aggregateTransition.isSelected)
+      graphics2D.setColor(Config.SELECTED_STATE_COLOR);
+    
     // The Arc
     graphics2D.drawArc(arcX, arcY, Config.STATE_DIAMETER, Config.STATE_DIAMETER, arcStartAngle, 270);
     
     // The Arrow
     graphics2D.drawLine(arrowCenter.x, arrowCenter.y, arrowLineOne.x, arrowLineOne.y);
     graphics2D.drawLine(arrowCenter.x, arrowCenter.y, arrowLineTwo.x, arrowLineTwo.y);
+    
+    graphics2D.setColor(Color.BLACK);
   }
   
   /** Entry-point for the painting information computation. */
@@ -260,7 +266,8 @@ public class TransitionPaintArc extends TransitionPaint {
   
   /** Checks if the mouse hit this ArcTransition */
   protected boolean mouseClickHit(Point mousePosition) {
-    return Math2D.arcTransitionClicked(mousePosition, new Point(arcX, arcY), arcAngle);
+    return Math2D.arcTransitionClicked(mousePosition, new Point(arcX + Config.STATE_DIAMETER / 2,
+        arcY + Config.STATE_DIAMETER / 2), arcAngle);
   }
   
   // Setters and Getters

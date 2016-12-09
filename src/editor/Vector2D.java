@@ -14,7 +14,8 @@ public class Vector2D {
     return Math.sqrt(x * x + y * y);
   }
   
-  public static double crossProduct(Vector2D v1, Vector2D v2) {
+  /** Returns the determinant from the Matrix (v1, v2)*/
+  public static double det(Vector2D v1, Vector2D v2) {
     return v1.x * v2.y - v1.y * v2.x;
   }
   
@@ -25,5 +26,21 @@ public class Vector2D {
   
   public static double distance(Vector2D v1, Vector2D v2) {
     return Vector2D.subtract(v1, v2).absolute();
+  }
+  
+  /** Computes the transitions angle of the given Triangles Cathetes. Pass the deltaY-value
+   * in the Cartesian coordinate system not in Swings. Returns a value between 0 and 2 * Math.PI */
+  public static double computeAngle(double deltaX, double deltaY) {
+    // The Hypotenuse
+    double c = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+    // Sufficient if the vector is in quadrants 1 or 2
+    double angle = Math.acos(deltaX / c);
+    
+    // Make result valid for 360° and not only for 180° (quadrants 1 and 2)
+    if (deltaY < 0)
+      angle = Math.PI * 2 - angle;
+    
+    return angle;
   }
 }

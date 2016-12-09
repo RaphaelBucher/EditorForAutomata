@@ -422,24 +422,60 @@ public class Automat {
     
     // Selected Shape is a State
     if (selectedShape instanceof State) {
-      // Remove all transitions going to and coming from that State
-      ((State)selectedShape).deleteTransitions(transitions);
-      
       // Removes the State from the automat. The states own stateIndex is freed and
       // can be retaken by newly added states again.
-      states.remove(selectedShape);
-      selectedShape = null;
+      deleteState((State) selectedShape);
     }
     
-    // TODO: if (selectedShape instanceof Transition) ...
+    // Selected Shape is a Transition
+    if (selectedShape instanceof Transition) {
+      deleteTransition((Transition) selectedShape);
+    }
     
     // Selected Shape is a Transition-Symbol
     if (selectedShape instanceof Symbol) {
       Transition hostTransition = ((Symbol) selectedShape).getHostTransition();
       
       hostTransition.removeSymbol((Symbol) selectedShape);
-      selectedShape = null;
     }
+    
+    selectedShape = null;
+  }
+  
+  /** Deletes the Transition from the automat and performs the necessary painting updataes. */
+  public void deleteTransition(Transition transition) {
+    // Is the transition an ArcTransition?
+    if (transition.isArcTransition()) {
+      // Delete the transition. No further painting updating needed
+      transitions.remove(transition);
+      return;
+    }
+      
+    // Transition is a LineTransition. Save neighbor-Transitions that need to be updated
+    // after the deletion.
+    Transition reverseTransition = transition.gotReverseTransition(transitions);
+    Transition startStateArcTransition = transition.getTransitionStart().gotArcTransition(transitions);
+    Transition endStateArcTransition = transition.getTransitionEnd().gotArcTransition(transitions);
+    
+    // Delete the transition
+    transitions.remove(transition);
+    
+    // After the deleting the transition, update the neighbors painting stats
+    if (reverseTransition != null)
+      reverseTransition.computePaintingCoordinates(transitions);
+    if (startStateArcTransition != null)
+      startStateArcTransition.computePaintingCoordinates(transitions);
+    if (endStateArcTransition != null)
+      endStateArcTransition.computePaintingCoordinates(transitions);
+  }
+  
+  /** Deletes a state from the automats list and performs the necessary painting updating. */
+  private void deleteState(State state) {
+    // Remove all transitions going to and coming from that State
+    state.deleteTransitions(transitions);
+    
+    // Remove the state from the automat
+    states.remove(state);
   }
   
   /** Deselect the currently selected shape if there is any. */

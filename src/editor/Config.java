@@ -76,21 +76,31 @@ public interface Config {
   
 
   // How many millis until the Error-message fades away completely
-  long ERROR_MESSAGE_DURATION_MILLIS = 3000;
+  long ERROR_MESSAGE_DURATION_MILLIS = 2400;
   int ERROR_MESSAGE_FONT_SIZE = 20;
   
   // The Tooltips in the top left corner. E.g. hotkeys like backspace to delete states
-  long TOOLTIP_DURATION_MILLIS = 3000;
+  long TOOLTIP_DURATION_MILLIS = 3900;
   int TOOLTIP_FONT_SIZE = 16;
+  int TOOLTIP_TOOLBAR_DISPLAY_AMOUNT = 2;
+  int TOOLTIP_DRAWABLE_PANEL_DISPLAY_AMOUNT = 3;
+  
+  /** Displayed tooltips of the Toolbars ToggleButtons */
+  interface ToolbarTooltips {
+    String selectTool = "Please select States, Transitions and their Symbols";
+    String moveTool = "Please drag & drop states";
+    String transition = "Please select a start-state for the Transition";
+  }
   
   /** Displayed Tooltips */
   interface Tooltips {
-    String stateSelected = "Press Backspace to delete state";
-    String moveToolSelected = "Drag and Drop states";
+    String stateSelected = "Please press Backspace to delete the state";
+    String transitionSelected = "Please press Backspace to delete the transition";
+    String symbolSelected = "Please press Backspace to delete the symbol";
     
     // Transition
-    String transitionSelectStartingState = "Please select a starting state";
-    String transitionSelectEndingState = "Please select an ending state";
+    String transitionSelectStartingState = "Please select a start-state for the Transition";
+    String transitionSelectEndingState = "Please select an end-state for the Transition";
     String transitionEnterSymbol = "Please enter one or more symbols";
   }
   

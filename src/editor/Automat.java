@@ -148,11 +148,12 @@ public class Automat {
     return arcTransitions;
   }
   
-  
-  
   /** Invoked if the move-tool is selected, the mouse pressed inside the drawable Panel 
    * and then released somewhere (not nescessarily inside the drawable panel too!) */
   public void handleMoveToolMouseReleased(MouseEvent evt) {
+    if (movedState == null)
+      return;
+    
     // Don't allow the use to move the state outside of the drawable Panel area
     if (movedState.x <= 0 || movedState.y <= 0 || movedState.x >= Editor.getDrawablePanel().getWidth() ||
         movedState.y >= Editor.getDrawablePanel().getHeight()) {
@@ -184,9 +185,10 @@ public class Automat {
         clickedShape.setSelected(true);
         
         // Display the tooltip to click the second state (ending state)
-        Tooltip.setMessage(Config.Tooltips.transitionSelectEndingState);
+        Tooltip.setMessage(Config.Tooltips.transitionSelectEndingState,
+            Config.TOOLTIP_DRAWABLE_PANEL_DISPLAY_AMOUNT);
       } else {
-        ErrorMessage.setMessage(Config.ErrorMessages.transitionStartNotClicked);
+        Tooltip.setMessage(Config.Tooltips.transitionSelectStartingState, 0);
       }
       
       return;
@@ -203,7 +205,7 @@ public class Automat {
         clickedShape.setSelected(true);
         
         // Display the tooltop to enter a symbol
-        Tooltip.setMessage(Config.Tooltips.transitionEnterSymbol);
+        Tooltip.setMessage(Config.Tooltips.transitionEnterSymbol, Config.TOOLTIP_DRAWABLE_PANEL_DISPLAY_AMOUNT);
       } else {
         // Set an ErrorMessage and return to phase 1
         ErrorMessage.setMessage(Config.ErrorMessages.transitionEndNotClicked);
@@ -230,7 +232,8 @@ public class Automat {
       clickedShape.setSelected(true);
       
       // Display the tooltip to click the second state (ending state)
-      Tooltip.setMessage(Config.Tooltips.transitionSelectEndingState);
+      Tooltip.setMessage(Config.Tooltips.transitionSelectEndingState,
+          Config.TOOLTIP_DRAWABLE_PANEL_DISPLAY_AMOUNT);
     }
   }
   

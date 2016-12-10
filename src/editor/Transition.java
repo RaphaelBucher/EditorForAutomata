@@ -49,6 +49,7 @@ public class Transition extends Shape {
 
   @Override
   public void displaySelectedShapeTooltip() {
+    Tooltip.setMessage(Config.Tooltips.transitionSelected, Config.TOOLTIP_DRAWABLE_PANEL_DISPLAY_AMOUNT);
   }
   
   /** Adds a symbol to the transitions symbol-ArrayList. If the symbol is already in the list,

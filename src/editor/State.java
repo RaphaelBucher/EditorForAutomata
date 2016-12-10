@@ -62,7 +62,7 @@ public class State extends Shape {
   
   @Override
   public void displaySelectedShapeTooltip() {
-    Tooltip.setMessage(Config.Tooltips.stateSelected);
+    Tooltip.setMessage(Config.Tooltips.stateSelected, Config.TOOLTIP_DRAWABLE_PANEL_DISPLAY_AMOUNT);
   }
   
   /** Deletes all transitions from the list which come from or go to the state. */

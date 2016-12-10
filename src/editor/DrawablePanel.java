@@ -117,18 +117,10 @@ public class DrawablePanel extends JPanel implements MouseMotionListener {
       this.automat.deselectSelectedShape();
     }
     
-    // Was the moveTool clicked?
-    if (clickedButton.equals(Editor.getToolBar().getMoveCursorButton())) {
-      // Display tooltip
-      Tooltip.setMessage(Config.Tooltips.moveToolSelected);
-    }
-    
     // Was something else than the transition Button being clicked?
     if (!clickedButton.equals(Editor.getToolBar().getTransitionButton())) {
       this.automat.resetConstructingTransition();
     } else {
-      // Display the tooltip
-      Tooltip.setMessage(Config.Tooltips.transitionSelectStartingState);
       this.automat.resetConstructingTransition();
     }
   }

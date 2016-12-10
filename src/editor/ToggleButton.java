@@ -26,9 +26,13 @@ public class ToggleButton extends JToggleButton {
 
   // To simulate the hover-effect, see this.paintComponent()
   private boolean isHovered;
+  
+  // The buttons tooltip which is displayed once he is clicked
+  @SuppressWarnings("unused")
+  private String tooltip;
 
   /** Called by the two other constructors. */
-  private ToggleButton(String iconPath, boolean selected, ToolBar parentObject) {
+  private ToggleButton(String iconPath, boolean selected, ToolBar parentObject, String tooltip) {
     super(new ImageIcon(iconPath), false);
     this.setSelected(selected);
     this.setBorder(null);
@@ -36,6 +40,8 @@ public class ToggleButton extends JToggleButton {
     
     // The image of the button
     image = new ImageIcon(iconPath);
+    
+    this.tooltip = tooltip;
 
     /**
      * Changes background color if the user hovers the mouse over the button.
@@ -53,6 +59,10 @@ public class ToggleButton extends JToggleButton {
       /* mouseClicked() would only be triggered if the mouse is pressed down and released at
        * the exact same pixel within the component. */
       public void mousePressed(MouseEvent evt) {
+        Tooltip.setMessage(tooltip, Config.TOOLTIP_TOOLBAR_DISPLAY_AMOUNT);
+        
+        // Important: Do not replace parentObject with Editor.getToolbar() !!!!!
+        // During Swings component construction, this reference is not always valid already!
         parentObject.toggleButtonEventHandler(tmpThis);
       }
       
@@ -71,18 +81,19 @@ public class ToggleButton extends JToggleButton {
    * lack the information of each others selected property.
    * */
   public ToggleButton(String iconPath, String windowsCursorIconPath, String cursorName,
-      boolean selected, ToolBar parentObject) {
+      boolean selected, ToolBar parentObject, String tooltip) {
     // Calls the private helper constructor that contains default initialization
-    this(iconPath, selected, parentObject);
+    this(iconPath, selected, parentObject, tooltip);
     
     // Cursor
     createCustomCursor(iconPath, windowsCursorIconPath, cursorName);
   }
   
   /** Sets the passed cursor for both mac and windows. */
-  public ToggleButton(String iconPath, Cursor macWinCursor, boolean selected, ToolBar parentObject) {
+  public ToggleButton(String iconPath, Cursor macWinCursor, boolean selected, ToolBar parentObject,
+      String tooltip) {
     // Calls the private helper constructor that contains default initialization
-    this(iconPath, selected, parentObject);
+    this(iconPath, selected, parentObject, tooltip);
     
     customCursor = macWinCursor;
   }

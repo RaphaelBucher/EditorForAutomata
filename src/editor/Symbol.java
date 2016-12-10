@@ -39,7 +39,7 @@ public class Symbol extends Shape {
 
   @Override
   public void displaySelectedShapeTooltip() {
-    // TODO Auto-generated method stub
+    Tooltip.setMessage(Config.Tooltips.symbolSelected, Config.TOOLTIP_DRAWABLE_PANEL_DISPLAY_AMOUNT);
   }
   
   /** Computes the middle of the symbols and paints them. direction = 1 mean the symbols

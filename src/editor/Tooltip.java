@@ -20,12 +20,37 @@ public class Tooltip {
   // Display tooltips only once, else they start to annoy.
   private static ArrayList<String> displayedTooltips = new ArrayList<String>();
 
-  /** Displays a Tooltip. Will not display the same Tooltip anymore. */
-  public static void setMessage(String message) {
-    if (!displayedTooltips.contains(message)) {
+  /** Displays a Tooltip.
+   * @param message The message to be displayed.
+   * @param amount Will only display this message this many times. Pass 0 to always
+   * display the message. */
+  public static void setMessage(String message, int amount) {
+    if (message.equals(""))
+      return;
+    
+    if (amount == 0) {
+      tooltip.setMessage(message);
+      return;
+    }
+      
+    
+    if (contains(message) < amount) {
       tooltip.setMessage(message);
       displayedTooltips.add(message);
     }
+  }
+  
+  /** Checks how many times the passed message is in the Tooltips ArrayList already.
+   * Returns this amount. */
+  private static int contains(String message) {
+    int counter = 0;
+    for (int i = 0; i < displayedTooltips.size(); i++) {
+      if (message.equals(displayedTooltips.get(i))) {
+        counter++;
+      }
+    }
+    
+    return counter;
   }
 
   // paints the message with a fading effect
@@ -49,7 +74,7 @@ public class Tooltip {
           0, messageWidth + 2 * whiteSpace, messageHeight + whiteSpace * 2, 9, 9);
       
       // The black round Border around the filled white rectangle
-      graphics2D.setColor(new Color(0, 0, 0, tooltip.getFadeAlpha()));
+      graphics2D.setColor(new Color(0, 120, 0, tooltip.getFadeAlpha()));
       graphics2D.drawRoundRect(middleX - messageWidth / 2 - whiteSpace,
           0, messageWidth + 2 * whiteSpace, messageHeight + whiteSpace * 2, 9, 9);
       

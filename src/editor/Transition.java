@@ -29,6 +29,14 @@ public class Transition extends Shape {
     // Paint the Transitions, a Line or an Arc depending on its transitionPaints type
     transitionPaint.paint(graphics2D);
     
+    // In case of a LineTransition that is not painted (minimal distance not surpassed),
+    // don't paint the Transitions Symbols
+    if (transitionPaint instanceof TransitionPaintLine) {
+      if ( !((TransitionPaintLine) transitionPaint).isPainted() ) {
+        return;
+      }
+    }
+    
     // The symbols
     Symbol.paint(graphics2D, symbols, transitionPaint.getSymbolDockingPoint(),
         transitionPaint.getSymbolDirection());

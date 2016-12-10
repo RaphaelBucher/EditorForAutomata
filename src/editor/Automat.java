@@ -344,6 +344,13 @@ public class Automat {
     for (int i = 0; i < transitions.size(); i++) {
       symbols = transitions.get(i).getSymbols();
       
+      // Don't allow selecting symbols on a LineTransition which is not painted
+      if (transitions.get(i).getTransitionPaint() instanceof TransitionPaintLine) {
+        if ( !((TransitionPaintLine) transitions.get(i).getTransitionPaint()).isPainted() ) {
+          continue;
+        }
+      }
+      
       for (int j = 0; j < symbols.size(); j++) {
         if (symbols.get(j).mouseClickHit(evt.getX(), evt.getY()))
           // Save the new Symbol that reported a mouse-collision
@@ -437,6 +444,10 @@ public class Automat {
       Transition hostTransition = ((Symbol) selectedShape).getHostTransition();
       
       hostTransition.removeSymbol((Symbol) selectedShape);
+      
+      // Remove the hostTransition as well if it was the last Symbol
+      if (hostTransition.getSymbols().size() <= 0)
+        deleteTransition((Transition) hostTransition);
     }
     
     selectedShape = null;

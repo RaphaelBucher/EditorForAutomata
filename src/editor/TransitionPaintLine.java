@@ -182,7 +182,11 @@ public class TransitionPaintLine extends TransitionPaint {
     
     this.length = (int)(Math.sqrt(deltaX * deltaX + deltaY * deltaY));
     
-    this.isPainted = this.length >= Config.TRANSITION_MIN_LENGTH;
+    int hostStatesDistance = (int)Math.round(Math2D.distance(aggregateTransition.getTransitionEnd().x -
+        aggregateTransition.getTransitionStart().x, aggregateTransition.getTransitionEnd().y -
+        aggregateTransition.getTransitionStart().y));
+    
+    this.isPainted = hostStatesDistance >= Config.TRANSITION_MIN_LENGTH + Config.STATE_DIAMETER;
   }
 
   /** Computes the Point where the Transitions Symbols are painted. */
@@ -213,6 +217,10 @@ public class TransitionPaintLine extends TransitionPaint {
   
   /** Checks if the mouse hit this LineTransition */
   protected boolean mouseClickHit(Point mousePosition) {
+    // If this LineTransition isn't painted currently, don't allow selecting
+    if (!isPainted)
+      return false;
+    
     return Math2D.lineTransitionClicked(mousePosition, new Point(transitionStartX, transitionStartY),
         new Point(transitionEndX, transitionEndY));
   }
@@ -242,5 +250,9 @@ public class TransitionPaintLine extends TransitionPaint {
   @Override
   public int getSymbolDirection() {
     return this.symbolDirection;
+  }
+  
+  public boolean isPainted() {
+    return this.isPainted;
   }
 }

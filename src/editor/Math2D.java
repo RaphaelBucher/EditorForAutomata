@@ -53,4 +53,14 @@ public class Math2D {
     
     return ret;
   }
+  
+  /** Computes the distance between two Points. */
+  public static double distance(double deltaX, double deltaY) {
+    return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+  }
+  
+  /** Computes the distance between two Points. */
+  public static double distance(int deltaX, int deltaY) {
+    return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+  }
 }

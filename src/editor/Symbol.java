@@ -68,7 +68,7 @@ public class Symbol extends Shape {
     for (int i = 0; i < symbols.size(); i++) {
       currentSymbol = symbols.get(i);
       // If the element is selected, paint a background-roundRect to hightlight it
-      if (currentSymbol.isSelected) {
+      if (currentSymbol.isSelected || symbols.get(i).hostTransition.isSelected) {
         graphics2D.setColor(new Color(190, 240, 255));
         
         graphics2D.fillRoundRect(currentSymbol.symbolPaintingMiddle.x - currentSymbol.boundingBoxLeft - 2,

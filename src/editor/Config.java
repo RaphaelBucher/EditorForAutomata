@@ -1,7 +1,7 @@
 /* 
+ * Editor for Automata
  * Bachelor Thesis
- * Raphael Bucher
- * November 2016
+ * Raphael Bucher 2016 / 2017
  * */
 package editor;
 
@@ -73,7 +73,6 @@ public interface Config {
   // The start-state arrow that is drawn inside the drawablePanel
   String START_STATE_ARROW_ICON_PATH = "/resources/Icons/startStateArrow.png";
   String START_STATE_ARROW_SELECTED_ICON_PATH = "/resources/Icons/startStateArrowSelected.png";
-  
 
   // How many millis until the Error-message fades away completely
   long ERROR_MESSAGE_DURATION_MILLIS = 2400;

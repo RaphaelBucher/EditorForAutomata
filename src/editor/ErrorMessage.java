@@ -1,7 +1,7 @@
 /* 
+ * Editor for Automata
  * Bachelor Thesis
- * Raphael Bucher
- * November 2016
+ * Raphael Bucher 2016 / 2017
  * */
 package editor;
 

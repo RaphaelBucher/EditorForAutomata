@@ -1,7 +1,7 @@
 /* 
+ * Editor for Automata
  * Bachelor Thesis
- * Raphael Bucher
- * November 2016
+ * Raphael Bucher 2016 / 2017
  * */
 package editor;
 
@@ -271,6 +271,12 @@ public class Automat {
         }
       }
     }
+    
+    // Debug
+    // TODO: remove later
+    if (key == KeyEvent.VK_DOWN) {
+      Debug.printAutomat(this);
+    }
   }
   
   /** Do not directly add Transitions to the transitions-ArrayList. Call this method instead,
@@ -525,38 +531,8 @@ public class Automat {
   public ArrayList<Transition> getTransitions() {
     return this.transitions;
   }
-
-  // Currently only used for testing. Called in the DrawablePanel Constructor. TODO: delete later
-  public void createExampleAutomat() {
-    // Discard all current states.
-    this.states = new ArrayList<State>();
-
-    // add some states
-    states.add(new State(findNewStateIndex(), 100, 100));
-    // states.add(new StartState(200, 200));
-    states.add(new EndState(findNewStateIndex(), 300, 300));
-    states.add(new StartEndState(findNewStateIndex(), 400, 400));
-
-    // states.remove(1);
-
-    states.add(new State(findNewStateIndex(), 600, 600));
-    states.add(new State(findNewStateIndex(), 600, 600));
-    // states.remove(2);
-  }
   
-  // Currently used for debuging purpose. TODO: delete later
-  public void printTransitions() {
-    if (transitions.size() == 0)
-      System.out.println("no transitions yet.");
-    
-    for (int i = 0; i < transitions.size(); i++) {
-      System.out.print(transitions.get(i).getTransitionStart().getStateIndex() + " to " +
-          transitions.get(i).getTransitionEnd().getStateIndex() + " with ");
-      for (int j = 0; j < transitions.get(i).getSymbols().size(); j++) {
-        System.out.print(transitions.get(i).getSymbols().get(j) + " ");
-      }
-      System.out.println("");
-    }
-    System.out.println("");
+  public ArrayList<State> getStates() {
+    return this.states;
   }
 }

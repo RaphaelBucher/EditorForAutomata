@@ -1,3 +1,8 @@
+/* 
+ * Editor for Automata
+ * Bachelor Thesis
+ * Raphael Bucher 2016 / 2017
+ * */
 package editor;
 
 /** A shape of an object of the automat, e.g. a state, a transition, a symbol of a transition.  */

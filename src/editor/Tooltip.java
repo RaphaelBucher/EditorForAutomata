@@ -1,7 +1,7 @@
 /* 
+ * Editor for Automata
  * Bachelor Thesis
- * Raphael Bucher
- * November 2016
+ * Raphael Bucher 2016 / 2017
  * */
 package editor;
 
@@ -12,7 +12,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-/** Atooltip message which is displayed in the top left corner of the drawable Panel. */
+/** A tooltip message which is displayed in the top left corner of the drawable Panel. */
 public class Tooltip {
   // Only one Tooltip possible at a time. New invokations will override old ones.
   private static Message tooltip = new Message("", Config.TOOLTIP_DURATION_MILLIS);
@@ -32,7 +32,6 @@ public class Tooltip {
       tooltip.setMessage(message);
       return;
     }
-      
     
     if (contains(message) < amount) {
       tooltip.setMessage(message);

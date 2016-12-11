@@ -1,7 +1,7 @@
 /* 
+ * Editor for Automata
  * Bachelor Thesis
- * Raphael Bucher
- * November 2016
+ * Raphael Bucher 2016 / 2017
  * */
 package editor;
 
@@ -28,6 +28,8 @@ public class ToolBar extends JToolBar {
     this.setPreferredSize(new Dimension(Config.TOOLBAR_ICON_WIDTH, minimal_height));
     this.setDoubleBuffered(true);
     //this.setFocusable(true);
+    this.setFloatable(false);
+    
     this.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
 
     // Removes the weird standard-borders with 2 vertical lines on the left

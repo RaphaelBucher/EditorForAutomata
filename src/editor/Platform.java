@@ -1,3 +1,8 @@
+/* 
+ * Editor for Automata
+ * Bachelor Thesis
+ * Raphael Bucher 2016 / 2017
+ * */
 package editor;
 
 /** A Utility class to determine the platform the application is running on. */

@@ -1,3 +1,8 @@
+/* 
+ * Editor for Automata
+ * Bachelor Thesis
+ * Raphael Bucher 2016 / 2017
+ * */
 package editor;
 
 import java.awt.Point;
@@ -48,10 +53,8 @@ public class Math2D {
     if (reverseArcAngle - mouseAngle > Math.PI)
       mouseAngle += 2 * Math.PI;
     
-    boolean ret = distance > stateRadius - clickTolerance && distance < stateRadius + clickTolerance &&
+    return distance > stateRadius - clickTolerance && distance < stateRadius + clickTolerance &&
         Math.toDegrees(Math.abs(mouseAngle - reverseArcAngle)) > 45.0d;
-    
-    return ret;
   }
   
   /** Computes the distance between two Points. */

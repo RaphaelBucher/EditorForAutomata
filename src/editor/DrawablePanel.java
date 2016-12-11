@@ -1,7 +1,7 @@
 /* 
+ * Editor for Automata
  * Bachelor Thesis
- * Raphael Bucher
- * November 2016
+ * Raphael Bucher 2016 / 2017
  * */
 package editor;
 
@@ -32,7 +32,7 @@ public class DrawablePanel extends JPanel implements MouseMotionListener {
 
     addMouseListener();
     addMouseMotionListener(this);
-
+    
     automat = new Automat();
     
     /* Listens for keyboard events. An instance of this class is added to the DrawablePanel instance. 
@@ -40,9 +40,6 @@ public class DrawablePanel extends JPanel implements MouseMotionListener {
      * setFocusable(true), e.g. ToolBar instance and DrawablePanel instance, it doesn't work. */
     keyboardAdapter = new KeyboardAdapter();
     this.addKeyListener(keyboardAdapter);
-    
-    // delete, used for testing only
-    // automat.createExampleAutomat();
   }
 
   private void addMouseListener() {
@@ -64,6 +61,7 @@ public class DrawablePanel extends JPanel implements MouseMotionListener {
     if (Editor.getToolBar().getMoveCursorButton().isSelected()) {
       automat.handleMoveToolMouseDragged(evt);
     }
+    
   }
 
   @Override

@@ -1,7 +1,7 @@
 /* 
+ * Editor for Automata
  * Bachelor Thesis
- * Raphael Bucher
- * November 2016
+ * Raphael Bucher 2016 / 2017
  * */
 package editor;
 
@@ -34,7 +34,6 @@ public class StartEndState extends State {
     } else
       // Start arrow image
       graphics2D.drawImage(startArrowImage, x - 49, y - 11, null);
-    
 
     // draw the second inner oval of an end-state
     graphics2D.drawOval(x - (Config.END_STATE_INNER_DIAMETER / 2), y - (Config.END_STATE_INNER_DIAMETER / 2),

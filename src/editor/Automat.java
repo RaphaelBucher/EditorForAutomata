@@ -51,8 +51,17 @@ public class Automat {
     int stateX = evt.getX();
     int stateY = evt.getY() - 1; // little adjustment
     
-    ToggleButton selectedButton = Editor.getToolBar().getSelectedButton();
     ToolBar toolBar = Editor.getToolBar();
+    ToggleButton selectedButton = toolBar.getSelectedButton();
+    
+    /* In very rare cases, the mouseReleased-Event of DrawablePanel is NOT fired, which means
+     * that I end up with a toolbar with ZERO buttons selected, getting null here, leading
+     * to a nullPointerException aprox. 5 lines further. If no button is selected, just return
+     * and do nothing, the user needs to select a button again and we're fine again. */
+    if (selectedButton == null) {
+      System.out.println("was null");
+      return;
+    }
     
     if (selectedButton.equals(toolBar.getArrowButton())) {
       // Default arrow-cursor. 

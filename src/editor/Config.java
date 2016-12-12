@@ -113,6 +113,9 @@ public interface Config {
     String transitionNoSymbolEntered = "Please enter a symbol";
     String transitionInvalidSymbolEntered = "Valid symbols are 0,...,9 and a,...,z";
     String transitionStateDeletionProhibited = "Please use the selection tool to delete states";
+    
+    // XML-parsing errors
+    String xmlParsingError = "Invalid XML-File";
   }
   
   // In case the Transition has a reverseTransition, how far it is away from

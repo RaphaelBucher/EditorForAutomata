@@ -123,6 +123,11 @@ public class DrawablePanel extends JPanel implements MouseMotionListener {
     }
   }
   
+  /** Changes the automat. */
+  public void changeAutomat(Automat automat) {
+    this.automat = automat;
+  }
+  
   // Getters
   public Automat getAutomat() {
     return this.automat;

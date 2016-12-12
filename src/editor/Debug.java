@@ -11,7 +11,8 @@ public class Debug {
     System.out.println("--------- States ---------");
     
     for (int i = 0; i < automat.getStates().size(); i++) {
-      System.out.println("ArrayList Index " + i + " holds stateIndex " + automat.getStates().get(i).stateIndex);
+      System.out.println("ArrayList Index " + i + " holds stateIndex " + automat.getStates().get(i).stateIndex
+          + " at Position (" + automat.getStates().get(i).x + ", " + automat.getStates().get(i).y + ")");
     }
     
     System.out.println("");

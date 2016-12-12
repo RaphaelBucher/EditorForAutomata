@@ -18,6 +18,9 @@ public class Editor extends JFrame {
   private static Container container;
   private static ToolBar toolBar;
   private static DrawablePanel drawablePanel;
+  
+  /** The new Automat if the Editor needs to change its Automat, e.g. when loading one. */
+  private static Automat newAutomat;
 
   public Editor() {
     this.setTitle("Editor for Automata");
@@ -78,6 +81,12 @@ public class Editor extends JFrame {
       // not needed.
       startTime = System.currentTimeMillis();
 
+      /** Was setting a new Automat to the Editor requested? e.g. when loading one. */
+      if (newAutomat != null) {
+        drawablePanel.changeAutomat(newAutomat);
+        newAutomat = null;
+      }
+      
       // Updating
       drawablePanel.update(toolBar);
 
@@ -104,6 +113,12 @@ public class Editor extends JFrame {
       interruptedException.printStackTrace();
       System.err.println("Thread.sleep() failed.");
     }
+  }
+  
+  /** Changes the Editors Automat at a controlled stage of the main-loop. 
+   * @param automat the new automat to be set to the DrawablePanel. */
+  public static void changeAutonat(Automat automat) {
+    newAutomat = automat;
   }
   
   // Getter

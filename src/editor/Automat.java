@@ -273,7 +273,7 @@ public class Automat {
       }
     }
     
-    // Debug TODO: remove later
+    // Debug TODO: start of removing
     if (key == KeyEvent.VK_RIGHT) {
       Debug.printAutomat(this);
     }
@@ -281,6 +281,16 @@ public class Automat {
       XMLFileParser.writeAutomatToXMLFile(this, new File("").getAbsolutePath()
           + "/savedAutomats/automat1.xml");
     }
+    if (key == KeyEvent.VK_UP) {
+      Automat testAutomat = XMLFileParser.readAutomatFromXMLFile(new File("").getAbsolutePath()
+          + "/savedAutomats/automat1.xml");
+      if (testAutomat != null) {
+        Debug.printAutomat(testAutomat);
+        Editor.changeAutonat(testAutomat);
+      } else
+        ErrorMessage.setMessage(Config.ErrorMessages.xmlParsingError);
+    }
+    // TODO: end of removing
   }
   
   /** Do not directly add Transitions to the transitions-ArrayList. Call this method instead,
@@ -288,7 +298,7 @@ public class Automat {
    * and end-state and with one or more symbols. They can be invalid, this method checks 
    * itself for validation. Will add a COPY of the Transition to the arrayList to prevent
    * direct manipulation with the passed reference. */
-  private void addTransition(Transition newTransition) {
+  public void addTransition(Transition newTransition) {
     // Is the Transition invalid?
     if (newTransition == null || newTransition.getTransitionStart() == null ||
         newTransition.getTransitionEnd() == null || newTransition.getSymbols().size() <= 0)
@@ -426,7 +436,7 @@ public class Automat {
   }
 
   /** Returns the found state, or null otherwise. */
-  private State getStateByStateIndex(int stateIndex) {
+  public State getStateByStateIndex(int stateIndex) {
     for (int i = 0; i < states.size(); i++) {
       if (stateIndex == states.get(i).getStateIndex())
         return states.get(i);

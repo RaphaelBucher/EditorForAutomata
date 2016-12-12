@@ -12,30 +12,30 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-
-/** Files structure is:
- * <automat>
- *   <states>
- *     <state id="0"> // id is the stateIndex, not the ArrayLists index
- *       <type>state</type> // state, startState, endState, startEndState
- *     </state>
- *     
- *     
- *   </states>
- *  
- *   <transitions>
- *    
- *   </transitions>
- * </automat>
- * 
- *  
- *  
- *  
- *  */
+/* --- Files structure is ---
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<automat>
+    <states>
+        <state stateIndex="0" type="startState" x="96" y="188" />
+        <state stateIndex="1" type="state" x="232" y="142" />
+        <state stateIndex="2" type="endState" x="362" y="194" />
+    </states>
+    <transitions>
+        <transition endStateIndex="1" startStateIndex="0">
+            <symbols>abc</symbols>
+        </transition>
+        <transition endStateIndex="2" startStateIndex="2">
+            <symbols>123</symbols>
+        </transition>
+        <transition endStateIndex="1" startStateIndex="2">
+            <symbols>lbd</symbols>
+        </transition>
+    </transitions>
+</automat>
+*/
 public class XMLFileParser {
   
   public static void writeAutomatToXMLFile(Automat automat, String filePath) {
@@ -43,7 +43,7 @@ public class XMLFileParser {
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
-      // root element
+      // <automat> as root-element
       Document doc = docBuilder.newDocument();
       Element rootElement = doc.createElement("automat");
       doc.appendChild(rootElement);
@@ -53,23 +53,14 @@ public class XMLFileParser {
       
       // Append the transitions
       appendTransitions(automat.getTransitions(), doc, rootElement);
-
       
-      // write the content into xml file
+      // write the content into the XML file
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
       Transformer transformer = transformerFactory.newTransformer();
       DOMSource source = new DOMSource(doc);
       
-      
       StreamResult result = new StreamResult(new File(filePath));
-
-      // Output to console for testing
-      // StreamResult result = new StreamResult(System.out);
-
       transformer.transform(source, result);
-
-      System.out.println("File saved!"); //TODO: remove
-
     } catch (ParserConfigurationException pce) {
       pce.printStackTrace();
     } catch (TransformerException tfe) {
@@ -87,13 +78,13 @@ public class XMLFileParser {
     for (int i = 0; i < statesList.size(); i++) {
       // The state element
       Element state = doc.createElement("state");
-      state.setAttribute("stateIndex", "" + statesList.get(i).stateIndex);
-      states.appendChild(state);
       
-      // Child-nodes
-      Element type = doc.createElement("type");
-      type.appendChild(doc.createTextNode(getStateType(statesList.get(i))));
-      state.appendChild(type);
+      // Set the state attributes
+      state.setAttribute("stateIndex", "" + statesList.get(i).stateIndex);
+      state.setAttribute("type", "" + getStateType(statesList.get(i)));
+      state.setAttribute("x", "" + statesList.get(i).x);
+      state.setAttribute("y", "" + statesList.get(i).y);
+      states.appendChild(state);
     }
   }
   
@@ -122,11 +113,23 @@ public class XMLFileParser {
       // The transition element
       Element transition = doc.createElement("transition");
       transition.setAttribute("startStateIndex", "" + transitionsList.get(i).getTransitionStart().stateIndex);
+      transition.setAttribute("endStateIndex", "" + transitionsList.get(i).getTransitionEnd().stateIndex);
       transitions.appendChild(transition);
       
-      // Child-nodes
+      // Add all Symbols as a child-node
       Element symbols = doc.createElement("symbols");
+      symbols.appendChild(doc.createTextNode(symbolsToString(transitionsList.get(i).getSymbols())));
       transition.appendChild(symbols);
     }
+  }
+  
+  /** Returns all symbols of the passed list as a String without spaces. */
+  private static String symbolsToString(ArrayList<Symbol> symbols) {
+    String concatenatedSymbols = "";
+    for (int i = 0; i < symbols.size(); i++) {
+      concatenatedSymbols += symbols.get(i).getSymbol();
+    }
+    
+    return concatenatedSymbols;
   }
 }

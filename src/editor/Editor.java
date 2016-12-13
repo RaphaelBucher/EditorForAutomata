@@ -18,6 +18,7 @@ public class Editor extends JFrame {
   private static Container container;
   private static ToolBar toolBar;
   private static DrawablePanel drawablePanel;
+  private static MenuBar menuBar;
   
   /** The new Automat if the Editor needs to change its Automat, e.g. when loading one. */
   private static Automat newAutomat;
@@ -28,6 +29,10 @@ public class Editor extends JFrame {
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     this.setMinimumSize(new Dimension(Config.FRAME_PANEL_MIN_WIDTH, Config.FRAME_PANEL_MIN_HEIGHT));
 
+    // MenuBar
+    menuBar = new MenuBar();
+    this.setJMenuBar(menuBar);
+    
     this.pack(); // Let the window expand to the minimal size specified above.
     container = this.getContentPane();
     container.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
@@ -47,7 +52,7 @@ public class Editor extends JFrame {
     gridBagConstraints.fill = GridBagConstraints.VERTICAL;
     container.add(toolBar, gridBagConstraints);
 
-    // Toolbar
+    // Drawable Panel
     drawablePanel = new DrawablePanel(toolBar);
     // Element is placed in the second grid on the first row
     gridBagConstraints.gridx = 1; // Element is placed in the first grid

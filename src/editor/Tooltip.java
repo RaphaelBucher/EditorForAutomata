@@ -70,16 +70,16 @@ public class Tooltip {
       // The white round filled rectangle to "clear" up the area
       graphics2D.setColor(new Color(255, 255, 255, tooltip.getFadeAlpha()));
       graphics2D.fillRoundRect(middleX - messageWidth / 2 - whiteSpace,
-          0, messageWidth + 2 * whiteSpace, messageHeight + whiteSpace * 2, 9, 9);
+          10, messageWidth + 2 * whiteSpace, messageHeight + whiteSpace * 2, 9, 9);
       
       // The black round Border around the filled white rectangle
       graphics2D.setColor(new Color(0, 120, 0, tooltip.getFadeAlpha()));
       graphics2D.drawRoundRect(middleX - messageWidth / 2 - whiteSpace,
-          0, messageWidth + 2 * whiteSpace, messageHeight + whiteSpace * 2, 9, 9);
+          10, messageWidth + 2 * whiteSpace, messageHeight + whiteSpace * 2, 9, 9);
       
       // The passed y-coordinate is the BOTTOM of the first Letter, not the top.
       graphics2D.drawString(tooltip.getMessage(), middleX - messageWidth / 2,
-          messageHeight + fontMetrics.getDescent());
+          messageHeight + fontMetrics.getDescent() + 10);
       
       graphics2D.setColor(Color.BLACK); // restore the default color for further rendering
     }

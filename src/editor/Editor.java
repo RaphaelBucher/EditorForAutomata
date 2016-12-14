@@ -15,6 +15,7 @@ import javax.swing.JFrame;
 
 public class Editor extends JFrame {
   private static final long serialVersionUID = 1L;
+  private static Editor editor;
   private static Container container;
   private static ToolBar toolBar;
   private static DrawablePanel drawablePanel;
@@ -72,7 +73,7 @@ public class Editor extends JFrame {
   }
 
   public static void main(String[] args) {
-    Editor editor = new Editor();
+    editor = new Editor();
     editor.run();
   }
 
@@ -127,6 +128,10 @@ public class Editor extends JFrame {
   }
   
   // Getter
+  public static Editor getEditor() {
+    return editor;
+  }
+  
   public static DrawablePanel getDrawablePanel() {
     return drawablePanel;
   }

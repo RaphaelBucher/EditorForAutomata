@@ -9,7 +9,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.util.ArrayList;
 
 public class Automat {
@@ -285,19 +284,6 @@ public class Automat {
     // Debug TODO: start of removing
     if (key == KeyEvent.VK_RIGHT) {
       Debug.printAutomat(this);
-    }
-    if (key == KeyEvent.VK_DOWN) {
-      XMLFileParser.writeAutomatToXMLFile(this, new File("").getAbsolutePath()
-          + "/savedAutomats/automat1.xml");
-    }
-    if (key == KeyEvent.VK_UP) {
-      Automat testAutomat = XMLFileParser.readAutomatFromXMLFile(new File("").getAbsolutePath()
-          + "/savedAutomats/automat1.xml");
-      if (testAutomat != null) {
-        Debug.printAutomat(testAutomat);
-        Editor.changeAutonat(testAutomat);
-      } else
-        ErrorMessage.setMessage(Config.ErrorMessages.xmlParsingError);
     }
     // TODO: end of removing
   }

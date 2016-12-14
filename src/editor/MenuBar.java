@@ -2,11 +2,10 @@ package editor;
 
 import java.awt.Color;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
 
 import javax.swing.BorderFactory;
+import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
@@ -22,8 +21,22 @@ public class MenuBar extends JMenuBar {
   // automat-menu
   private JMenu automatMenu;
   
+  // file-chooser
+  private final CustomFileChooser fileChooser;
+  
+  // XML File-Filter
+  private final XMLFileFilter xmlFileFilter;
+  
   public MenuBar() {
     super();
+    
+    // Create a file chooser
+    fileChooser = new CustomFileChooser(new File("").getAbsolutePath() + "/savedAutomats/");
+    
+    // File-Filter
+    xmlFileFilter = new XMLFileFilter();
+    fileChooser.removeChoosableFileFilter(fileChooser.getFileFilter());
+    fileChooser.setFileFilter(xmlFileFilter);
     
     // --- file-menu ---
     fileMenu = new JMenu("file");
@@ -41,13 +54,7 @@ public class MenuBar extends JMenuBar {
     openAutomat = new MenuItem("open");
     openAutomat.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
-        Automat testAutomat = XMLFileParser.readAutomatFromXMLFile(new File("").getAbsolutePath()
-            + "/savedAutomats/automat1.xml");
-        if (testAutomat != null) {
-          Debug.printAutomat(testAutomat);
-          Editor.changeAutonat(testAutomat);
-        } else
-          ErrorMessage.setMessage(Config.ErrorMessages.xmlParsingError);
+        loadAutomat();
       }
     });
     fileMenu.add(openAutomat);
@@ -56,8 +63,7 @@ public class MenuBar extends JMenuBar {
     saveAutomat = new MenuItem("save");
     saveAutomat.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
-        XMLFileParser.writeAutomatToXMLFile(Editor.getDrawablePanel().getAutomat(),
-            new File("").getAbsolutePath() + "/savedAutomats/automat1.xml");
+        saveAutomat();
       }
     });
     fileMenu.add(saveAutomat);
@@ -69,5 +75,40 @@ public class MenuBar extends JMenuBar {
     this.add(automatMenu);
     
     this.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY));
+  }
+  
+  /** Saves an Automat to as an XML-File. */
+  private void saveAutomat() {
+    int returnVal = fileChooser.showSaveDialog(Editor.getEditor());
+    
+    // Did the user press the "save"-Button?
+    if (returnVal == JFileChooser.APPROVE_OPTION) {
+      File file = fileChooser.getSelectedFile();
+      String filePath = file.getAbsolutePath();
+      
+      // Add .xml extension in case the file doesn't end with this extension
+      if (!xmlFileFilter.getExtension(file).equals(XMLFileFilter.xml))
+        filePath += ".xml";
+      
+      XMLFileParser.writeAutomatToXMLFile(Editor.getDrawablePanel().getAutomat(), filePath);
+    }
+  }
+  
+  /** Loads an Automat from a chosen XML-File. */
+  private void loadAutomat() {
+    int returnVal = fileChooser.showOpenDialog(Editor.getEditor());
+    
+    // Did the user open a file?
+    if (returnVal == JFileChooser.APPROVE_OPTION) {
+      String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+
+      Automat testAutomat = XMLFileParser.readAutomatFromXMLFile(filePath);
+      
+      if (testAutomat != null) {
+        // Debug.printAutomat(testAutomat);
+        Editor.changeAutonat(testAutomat);
+      } else
+        ErrorMessage.setMessage(Config.ErrorMessages.xmlParsingError);
+    }
   }
 }

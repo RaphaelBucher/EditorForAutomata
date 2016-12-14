@@ -79,12 +79,6 @@ public class ToolBar extends JToolBar {
   public void paint(Graphics graphics) {
     super.paint(graphics);
     Graphics2D graphics2D = (Graphics2D) graphics;
-
-    // In case it's running on windows, draw a black line below the menu-bar. Else the Menu and the drawablePanel
-    // would be both white.
-    if (Platform.isWindows()) {
-      graphics2D.drawLine(0, 0, this.getWidth(), 0);
-    }
     
     graphics2D.dispose();
   }

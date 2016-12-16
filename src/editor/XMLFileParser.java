@@ -112,7 +112,7 @@ public class XMLFileParser {
       throw new Exception();
     
     // Add the built Transition to the Automat
-    automat.addTransition(constructedTransition);
+    automat.addTransition(constructedTransition, false);
   }
   
   /** Reads all symbols of the passed transition and adds them to the transition. */
@@ -121,7 +121,7 @@ public class XMLFileParser {
     
     // Iterate over all characters of the String
     for (int i = 0; i < symbolsConcatenated.length(); i++) {
-      constructedTransition.addSymbol(symbolsConcatenated.charAt(i));
+      constructedTransition.addSymbol(symbolsConcatenated.charAt(i), false);
     }
   }
   

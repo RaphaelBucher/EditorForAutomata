@@ -9,6 +9,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
+import controlFlow.UserAction;
+
 public class MenuBar extends JMenuBar {
   private static final long serialVersionUID = 1L;
   
@@ -17,6 +19,11 @@ public class MenuBar extends JMenuBar {
   private MenuItem newAutomat;
   private MenuItem openAutomat;
   private MenuItem saveAutomat;
+  
+  // edit-menu
+  private JMenu editMenu;
+  private MenuItem undo;
+  private MenuItem redo;
   
   // automat-menu
   private JMenu automatMenu;
@@ -38,6 +45,16 @@ public class MenuBar extends JMenuBar {
     fileChooser.removeChoosableFileFilter(fileChooser.getFileFilter());
     fileChooser.setFileFilter(xmlFileFilter);
     
+    // Init the Menus
+    initFileMenu();
+    initEditMenu();
+    initAutomatMenu();
+
+    this.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY));
+  }
+  
+  /** Helper method for the constructor */
+  private void initFileMenu() {
     // --- file-menu ---
     fileMenu = new JMenu("file");
     
@@ -69,12 +86,45 @@ public class MenuBar extends JMenuBar {
     fileMenu.add(saveAutomat);
 
     this.add(fileMenu);
+  }
+  
+  /** Helper method for the constructor */
+  private void initEditMenu() {
+    // --- edit-menu ---
+    editMenu = new JMenu("edit");
     
+    // undo
+    undo = new MenuItem("undo");
+    undo.addActionListener(new ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent e) {
+        Automat automat = Editor.getDrawablePanel().getAutomat();
+        automat.resetConstructingTransition();
+        automat.handleMoveToolMouseReleased();
+        automat.deselectSelectedShape();
+        // TODO ask for canUndo and grey out the Items text if answer is no
+        UserAction.undoAction();
+      }
+    });
+    editMenu.add(undo);
+    
+    // redo
+    redo = new MenuItem("redo");
+    redo.addActionListener(new ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent e) {
+        // TODO ask for canRedo and grey out the Items text if answer is no
+        UserAction.redoAction();
+      }
+    });
+    editMenu.add(redo);
+    
+    this.add(editMenu);
+  }
+  
+  /** Helper method for the constructor */
+  private void initAutomatMenu() {
     // --- Automat-menu ---
     automatMenu = new JMenu("automat");
     this.add(automatMenu);
-    
-    this.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY));
   }
   
   /** Saves an Automat to as an XML-File. */

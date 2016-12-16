@@ -50,7 +50,7 @@ public class DrawablePanel extends JPanel implements MouseMotionListener {
       
       public void mouseReleased(MouseEvent evt) {
         if (Editor.getToolBar().getMoveCursorButton().isSelected()) {
-          automat.handleMoveToolMouseReleased(evt);
+          automat.handleMoveToolMouseReleased();
         }
       }
     });

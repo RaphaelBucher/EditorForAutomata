@@ -11,6 +11,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+import controlFlow.AddedState;
+import controlFlow.AddedTransition;
+import controlFlow.RemovedState;
+import controlFlow.RemovedTransition;
+import controlFlow.UserAction;
+
 public class Automat {
   private ArrayList<State> states;
   private ArrayList<Transition> transitions;
@@ -58,7 +64,6 @@ public class Automat {
      * to a nullPointerException aprox. 5 lines further. If no button is selected, just return
      * and do nothing, the user needs to select a button again and we're fine again. */
     if (selectedButton == null) {
-      System.out.println("was null");
       return;
     }
     
@@ -70,16 +75,16 @@ public class Automat {
       handleMoveToolMousePressed(evt);
     } else if (selectedButton.equals(toolBar.getStateButton())) {
       // Add state Cursor
-      addState(new State(findNewStateIndex(), stateX, stateY));
+      addState(new State(findNewStateIndex(), stateX, stateY), true);
     } else if (selectedButton.equals(toolBar.getStartStateButton())) {
       // Add start state cursor
-      addState(new StartState(0, stateX, stateY));
+      addState(new StartState(0, stateX, stateY), true);
     } else if (selectedButton.equals(toolBar.getEndStateButton())) {
       // Add end state cursor
-      addState(new EndState(findNewStateIndex(), stateX, stateY));
+      addState(new EndState(findNewStateIndex(), stateX, stateY), true);
     } else if (selectedButton.equals(toolBar.getStartEndStateButton())) {
       // Add start-end state cursor
-      addState(new StartEndState(0, stateX, stateY));
+      addState(new StartEndState(0, stateX, stateY), true);
     } else if (selectedButton.equals(toolBar.getTransitionButton())) {
       // Transition cursor
       handleTransitionConstruction(evt);
@@ -90,14 +95,14 @@ public class Automat {
    * This method checks if a state was selected by the mouse. */
   private void handleMoveToolMousePressed(MouseEvent evt) {
     // check if the click hit a state
-    Shape clickedShape = getClickedShape(evt);
-    if (clickedShape instanceof State) {
-      // mouseClick hit a state
-      this.movedState = (State)clickedShape;
-      this.movedState.setSelected(true);
-      this.movedStateOriginalLocation = new Point(movedState.getX(), movedState.getY());
-      this.moveToolOrigMouseEvent = evt;
-    }
+    State clickedState = getClickedState(evt);
+    if (clickedState == null)
+      return;
+    
+    this.movedState = clickedState;
+    this.movedState.setSelected(true);
+    this.movedStateOriginalLocation = new Point(movedState.getX(), movedState.getY());
+    this.moveToolOrigMouseEvent = evt;
   }
   
   /** In case a state was hit by the original mousePressed-Event, move this state around. */
@@ -159,11 +164,11 @@ public class Automat {
   
   /** Invoked if the move-tool is selected, the mouse pressed inside the drawable Panel 
    * and then released somewhere (not nescessarily inside the drawable panel too!) */
-  public void handleMoveToolMouseReleased(MouseEvent evt) {
+  public void handleMoveToolMouseReleased() {
     if (movedState == null)
       return;
     
-    // Don't allow the use to move the state outside of the drawable Panel area
+    // Don't allow the user to move the state outside of the drawable Panel area
     if (movedState.x <= 0 || movedState.y <= 0 || movedState.x >= Editor.getDrawablePanel().getWidth() ||
         movedState.y >= Editor.getDrawablePanel().getHeight()) {
       // Reset the moved State back to its original position before the dragging
@@ -176,6 +181,8 @@ public class Automat {
     // Reset the trigger for the mouseDragged-handling
     this.moveToolOrigMouseEvent = null;
     this.movedState.setSelected(false);
+    
+    // TODO add the state-moving to the UserActions somewhere here
   }
   
   /** Handles the construction of the constructingTransition. Is invoked by mouseClicks. */
@@ -271,12 +278,12 @@ public class Automat {
       if (this.constructingTransition != null) {
         if (this.constructingTransition.getTransitionEnd() != null) {
           // Add the key pressed as a Symbol to the built transition
-          if (!constructingTransition.addSymbol(keyEvent.getKeyChar()))
+          if (!constructingTransition.addSymbol(keyEvent.getKeyChar(), false))
             ErrorMessage.setMessage(Config.ErrorMessages.transitionInvalidSymbolEntered);
           
           // Add the Transition to the automat. The method decides itself what 
           // still needs to be added, e.g. the whole transition or only a symbol
-          addTransition(constructingTransition);
+          addTransition(constructingTransition, true);
         }
       }
     }
@@ -292,8 +299,10 @@ public class Automat {
    * there is updating to perform when adding a Transition. Pass a Transition with a start-
    * and end-state and with one or more symbols. They can be invalid, this method checks 
    * itself for validation. Will add a COPY of the Transition to the arrayList to prevent
-   * direct manipulation with the passed reference. */
-  public void addTransition(Transition newTransition) {
+   * direct manipulation with the passed reference.
+   * @param addActionToControlFlow Pass true when the user is adding states himself, pass false if
+   * this method is just called from a redo / undo order. */
+  public void addTransition(Transition newTransition, boolean addActionToControlFlow) {
     // Is the Transition invalid?
     if (newTransition == null || newTransition.getTransitionStart() == null ||
         newTransition.getTransitionEnd() == null || newTransition.getSymbols().size() <= 0)
@@ -307,13 +316,19 @@ public class Automat {
       transition = new Transition(newTransition.getTransitionStart(),
           newTransition.getTransitionEnd());
       
-      // Add the transition to the automats transitions
+      // Add the transition to the automats transitions. newTransition can only
+      // have exactly one symbol at this stage
       transitions.add(transition);
+      
+      if (addActionToControlFlow) {
+        UserAction.addAction(new AddedTransition(newTransition));
+        addActionToControlFlow = false;
+      }
     }
     
     // Add all symbols
     for (int i = 0; i < newTransition.getSymbols().size(); i++) {
-      transition.addSymbol(newTransition.getSymbols().get(i).getSymbol());
+      transition.addSymbol(newTransition.getSymbols().get(i).getSymbol(), addActionToControlFlow);
     }
       
     // Update the transitions painting information. Called every time, even if only a symbol has
@@ -342,12 +357,7 @@ public class Automat {
     Shape hitShape = null;
     
     // Traverse the automats states. Makes sure that only one or zero Shapes gets selected.
-    for (int i = 0; i < states.size(); i++) {
-      if (states.get(i).mouseClickHit(evt.getX(), evt.getY())) {
-        // Save the new Shape that reported a mouse-collision
-        hitShape = states.get(i);
-      }
-    }
+    hitShape = getClickedState(evt);
     
     // Traverse the Transitions
     for (int i = 0; i < transitions.size(); i++) {
@@ -378,10 +388,34 @@ public class Automat {
     
     return hitShape;
   }
+  
+  /** Returns the clicked State, or null if no State was hit by the mouse-click. Cannot return
+   * several States. */
+  private State getClickedState(MouseEvent evt) {
+    State hitState = null;
+    
+    // Traverse the Automats states. Makes sure that only one or zero States gets selected.
+    for (int i = 0; i < states.size(); i++) {
+      if (states.get(i).mouseClickHit(evt.getX(), evt.getY())) {
+        // Save the new State that reported a mouse-collision
+        hitState = states.get(i);
+      }
+    }
+    
+    return hitState;
+  }
 
-  private void addState(State state) {
-    if (addingStateAllowed(state))
+  /** Adds a state to the autmats states-ArrayList.
+   * @param addActionToControlFlow Pass true when the user is adding states himself, pass false if
+   * this method is just called from a redo / undo order. */
+  public void addState(State state, boolean addActionToControlFlow) {
+    if (addingStateAllowed(state)) {
       states.add(state);
+      
+      // Add this action to the controlFlow if the flag is set
+      if (addActionToControlFlow)
+        UserAction.addAction(new AddedState(state));
+    }
   }
 
   /**
@@ -449,34 +483,42 @@ public class Automat {
     if (selectedShape instanceof State) {
       // Removes the State from the automat. The states own stateIndex is freed and
       // can be retaken by newly added states again.
-      deleteState((State) selectedShape);
+      deleteState((State) selectedShape, true);
     }
     
     // Selected Shape is a Transition
     if (selectedShape instanceof Transition) {
-      deleteTransition((Transition) selectedShape);
+      deleteTransition((Transition) selectedShape, true);
     }
     
     // Selected Shape is a Transition-Symbol
     if (selectedShape instanceof Symbol) {
       Transition hostTransition = ((Symbol) selectedShape).getHostTransition();
       
-      hostTransition.removeSymbol((Symbol) selectedShape);
-      
-      // Remove the hostTransition as well if it was the last Symbol
-      if (hostTransition.getSymbols().size() <= 0)
-        deleteTransition((Transition) hostTransition);
+      // Remove the hostTransition as well if it is the last Symbol. A RemoveTransition instance
+      // is added there to the ControlFlow
+      if (hostTransition.getSymbols().size() <= 1) {
+        deleteTransition((Transition) hostTransition, true);
+      } else {
+        // Remove only the selected symbol
+        hostTransition.removeSymbol(((Symbol) selectedShape).getSymbol(), true);
+      }
     }
     
     selectedShape = null;
   }
   
   /** Deletes the Transition from the automat and performs the necessary painting updataes. */
-  public void deleteTransition(Transition transition) {
+  public void deleteTransition(Transition transition, boolean addActionToControlFlow) {
     // Is the transition an ArcTransition?
     if (transition.isArcTransition()) {
       // Delete the transition. No further painting updating needed
       transitions.remove(transition);
+      
+      // Add this action to the controlFlow if the flag is set
+      if (addActionToControlFlow)
+        UserAction.addAction(new RemovedTransition(transition));
+      
       return;
     }
       
@@ -489,6 +531,10 @@ public class Automat {
     // Delete the transition
     transitions.remove(transition);
     
+    // Add this action to the controlFlow if the flag is set
+    if (addActionToControlFlow)
+      UserAction.addAction(new RemovedTransition(transition));
+    
     // After the deleting the transition, update the neighbors painting stats
     if (reverseTransition != null)
       reverseTransition.computePaintingCoordinates(transitions);
@@ -498,13 +544,19 @@ public class Automat {
       endStateArcTransition.computePaintingCoordinates(transitions);
   }
   
-  /** Deletes a state from the automats list and performs the necessary painting updating. */
-  private void deleteState(State state) {
+  /** Deletes a state from the automats list and performs the necessary painting updating. 
+   * @param addActionToControlFlow Pass true when the user is removing states himself, pass
+   * false if this method is just called from a redo / undo order. */
+  public void deleteState(State state, boolean addActionToControlFlow) {
     // Remove all transitions going to and coming from that State
-    state.deleteTransitions(transitions);
+    ArrayList<Transition> deletedTransitions = state.deleteTransitions(transitions);
     
     // Remove the state from the automat
     states.remove(state);
+    
+    // Add this action to the controlFlow if the flag is set
+    if (addActionToControlFlow)
+      UserAction.addAction(new RemovedState(state, deletedTransitions));
   }
   
   /** Deselect the currently selected shape if there is any. */

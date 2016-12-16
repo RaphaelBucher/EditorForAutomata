@@ -98,7 +98,7 @@ public interface Config {
     String symbolSelected = "Please press Backspace to delete the symbol";
     
     // Transition
-    String transitionSelectStartingState = "Please select aa initial state for the Transition";
+    String transitionSelectStartingState = "Please select an initial state for the Transition";
     String transitionSelectEndingState = "Please select the same or another destination state";
     String transitionEnterSymbol = "Please enter one or more symbols";
   }

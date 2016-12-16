@@ -65,16 +65,20 @@ public class State extends Shape {
     Tooltip.setMessage(Config.Tooltips.stateSelected, Config.TOOLTIP_DRAWABLE_PANEL_DISPLAY_AMOUNT);
   }
   
-  /** Deletes all transitions from the list which come from or go to the state. */
-  public void deleteTransitions(ArrayList<Transition> transitions) {
+  /** Deletes all transitions from the list which come from or go to the state.
+   * @return Returns all deleted (removed from automats transitions-ArrayList only)
+   * Transitions. */
+  public ArrayList<Transition> deleteTransitions(ArrayList<Transition> transitions) {
     // Gather all elements to be removed from the ArrayList first, no removal of ArrayLists
     // elements while looped through that ArrayList
     ArrayList<Transition> stateTransitions = getTransitions(transitions);
     
     // Remove them one-by-one
     for (int i = 0; i < stateTransitions.size(); i++) {
-      Editor.getDrawablePanel().getAutomat().deleteTransition(stateTransitions.get(i));
+      Editor.getDrawablePanel().getAutomat().deleteTransition(stateTransitions.get(i), false);
     }
+    
+    return stateTransitions;
   }
   
   /** Returns a list with all transitions that have the state as a start- or end-state. */

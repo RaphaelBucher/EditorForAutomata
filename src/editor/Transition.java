@@ -9,6 +9,10 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.ArrayList;
 
+import controlFlow.AddedSymbol;
+import controlFlow.RemovedSymbol;
+import controlFlow.UserAction;
+
 public class Transition extends Shape {
   private State transitionStart;
   private State transitionEnd;
@@ -61,12 +65,15 @@ public class Transition extends Shape {
    * this method does nothing.
    * @return false if the symbol was invalid, true otherwise, even if the symbol was in the
    * list already. */
-  public boolean addSymbol(char symbol) {
+  public boolean addSymbol(char symbol, boolean addActionToControlFlow) {
     if (!Symbol.isSymbolValid(symbol))
       return false;
     
     if (!containsSymbol(symbol)) {
       symbols.add(new Symbol(this, symbol));
+      
+      if (addActionToControlFlow)
+        UserAction.addAction(new AddedSymbol(symbol, this));
     }
     
     return true;
@@ -85,13 +92,17 @@ public class Transition extends Shape {
   }
   
   /** Removes a symbol from the Transitions Symbol-list. */
-  public void removeSymbol(Symbol symbol) {
+  public void removeSymbol(char symbol, boolean addActionToControlFlow) {
     // Need to check on my own since the Symbols setSelected flag could cause trouble
     // when just removing by Object-comparison. Comparison is done by char only, and their
     // unique in the list by adding-constraints.
     for (int i = 0; i < symbols.size(); i++) {
-      if (symbol.getSymbol() == symbols.get(i).getSymbol()) {
+      if (symbol == symbols.get(i).getSymbol()) {
         symbols.remove(i);
+        
+        if (addActionToControlFlow)
+          UserAction.addAction(new RemovedSymbol(symbol, this));
+        
         return;
       }
     }

@@ -23,4 +23,9 @@ public class AddedSymbol extends UserAction {
     Transition hostTransition = hostTransitionCopy.getOriginalTransition();
     hostTransition.addSymbol(symbol, false);
   }
+  
+  /** String representation for the Undo / Redo MenuItem */
+  public String toString() {
+    return "Add Symbol";
+  }
 }

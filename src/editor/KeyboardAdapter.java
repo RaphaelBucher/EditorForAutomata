@@ -5,6 +5,7 @@
  * */
 package editor;
 
+import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -14,6 +15,14 @@ import java.awt.event.KeyEvent;
 public class KeyboardAdapter extends KeyAdapter {
   public void keyPressed(KeyEvent keyEvent) {
     // Does the automat need to take action?
-    Editor.getDrawablePanel().getAutomat().handleKeyPressed(keyEvent);
+    if (!isTakenHotkey(keyEvent))
+      Editor.getDrawablePanel().getAutomat().handleKeyPressed(keyEvent);
+  }
+  
+  /** Returns true if its a taken hotkey such as cmd + z / ctrl + z, false otherwise. */
+  private boolean isTakenHotkey(KeyEvent keyEvent) {
+    // TODO if (keyEvent == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())
+    
+    return false;
   }
 }

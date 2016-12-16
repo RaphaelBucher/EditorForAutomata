@@ -15,6 +15,7 @@ import controlFlow.AddedState;
 import controlFlow.AddedTransition;
 import controlFlow.RemovedState;
 import controlFlow.RemovedTransition;
+import controlFlow.StateMoved;
 import controlFlow.UserAction;
 
 public class Automat {
@@ -121,7 +122,7 @@ public class Automat {
   }
   
   /** Updates the painting coordinates of all transitions coming from or going to the state. */
-  private void updateStateTransitions(State state) {
+  public void updateStateTransitions(State state) {
     ArrayList<Transition> movedStateTransitions = state.getTransitions(transitions);
     for (int i = 0; i < movedStateTransitions.size(); i++) {
       movedStateTransitions.get(i).computePaintingCoordinates(transitions);
@@ -165,24 +166,27 @@ public class Automat {
   /** Invoked if the move-tool is selected, the mouse pressed inside the drawable Panel 
    * and then released somewhere (not nescessarily inside the drawable panel too!) */
   public void handleMoveToolMouseReleased() {
-    if (movedState == null)
-      return;
-    
-    // Don't allow the user to move the state outside of the drawable Panel area
-    if (movedState.x <= 0 || movedState.y <= 0 || movedState.x >= Editor.getDrawablePanel().getWidth() ||
-        movedState.y >= Editor.getDrawablePanel().getHeight()) {
-      // Reset the moved State back to its original position before the dragging
-      movedState.moveTo(movedStateOriginalLocation.x, movedStateOriginalLocation.y);
+    // Was the state moved at all?
+    if (this.moveToolOrigMouseEvent != null) {
+      // Don't allow the user to move the state outside of the drawable Panel area
+      if (movedState.x <= 0 || movedState.y <= 0 || movedState.x >= Editor.getDrawablePanel().getWidth() ||
+          movedState.y >= Editor.getDrawablePanel().getHeight()) {
+        // Reset the moved State back to its original position before the dragging
+        movedState.moveTo(movedStateOriginalLocation.x, movedStateOriginalLocation.y);
+        
+        // Reset his transitions
+        updateStateTransitions(movedState);
+      } else {
+        // The state was moved to a valid location, therefore register the action to the Control-flow
+        UserAction.addAction(new StateMoved(movedState.stateIndex, 
+            new Point(movedStateOriginalLocation.x, movedStateOriginalLocation.y),
+            new Point(movedState.x, movedState.y)));
+      }
       
-      // Reset his transitions
-      updateStateTransitions(movedState);
+      // Reset the trigger for the mouseDragged-handling
+      this.moveToolOrigMouseEvent = null;
+      this.movedState.setSelected(false);
     }
-    
-    // Reset the trigger for the mouseDragged-handling
-    this.moveToolOrigMouseEvent = null;
-    this.movedState.setSelected(false);
-    
-    // TODO add the state-moving to the UserActions somewhere here
   }
   
   /** Handles the construction of the constructingTransition. Is invoked by mouseClicks. */

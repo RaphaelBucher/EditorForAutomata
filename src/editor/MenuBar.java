@@ -1,13 +1,19 @@
 package editor;
 
 import java.awt.Color;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.KeyStroke;
 
 import controlFlow.UserAction;
 
@@ -56,10 +62,10 @@ public class MenuBar extends JMenuBar {
   /** Helper method for the constructor */
   private void initFileMenu() {
     // --- file-menu ---
-    fileMenu = new JMenu("file");
+    fileMenu = new JMenu("File");
     
     // new
-    newAutomat = new MenuItem("new");
+    newAutomat = new MenuItem("New");
     newAutomat.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         Editor.changeAutonat(new Automat());
@@ -68,7 +74,7 @@ public class MenuBar extends JMenuBar {
     fileMenu.add(newAutomat);
     
     // open
-    openAutomat = new MenuItem("open");
+    openAutomat = new MenuItem("Open");
     openAutomat.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         loadAutomat();
@@ -77,7 +83,7 @@ public class MenuBar extends JMenuBar {
     fileMenu.add(openAutomat);
     
     // save
-    saveAutomat = new MenuItem("save");
+    saveAutomat = new MenuItem("Save");
     saveAutomat.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         saveAutomat();
@@ -91,39 +97,68 @@ public class MenuBar extends JMenuBar {
   /** Helper method for the constructor */
   private void initEditMenu() {
     // --- edit-menu ---
-    editMenu = new JMenu("edit");
+    editMenu = new JMenu("Edit");
     
     // undo
-    undo = new MenuItem("undo");
-    undo.addActionListener(new ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent e) {
+    undo = new MenuItem("Undo");
+    
+    Action undoAction = new AbstractAction("undoAction") {
+      private static final long serialVersionUID = 1L;
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
         Automat automat = Editor.getDrawablePanel().getAutomat();
         automat.resetConstructingTransition();
         automat.handleMoveToolMouseReleased();
         automat.deselectSelectedShape();
-        // TODO ask for canUndo and grey out the Items text if answer is no
+        
+        // perform the action
         UserAction.undoAction();
       }
-    });
+    };
+    
+    undoAction.putValue(Action.ACCELERATOR_KEY,
+        KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+    undo.setAction(undoAction);
     editMenu.add(undo);
     
     // redo
-    redo = new MenuItem("redo");
-    redo.addActionListener(new ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent e) {
-        // TODO ask for canRedo and grey out the Items text if answer is no
+    redo = new MenuItem("Redo");
+    
+    Action redoAction = new AbstractAction("redoAction") {
+      private static final long serialVersionUID = 1L;
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        // perform the action
         UserAction.redoAction();
       }
-    });
+    };
+    
+    redoAction.putValue(Action.ACCELERATOR_KEY,
+        KeyStroke.getKeyStroke(KeyEvent.VK_Y, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+    redo.setAction(redoAction);
     editMenu.add(redo);
     
+    // Update texts and hotkeys
+    updateUndoRedo(false, false, "Undo", "Redo");
+
     this.add(editMenu);
+  }
+  
+  /** Update Menus undo and redo (normal or unclickable greyed out) */
+  public void updateUndoRedo(boolean undoEnabled, boolean redoEnabled, String undoText, String redoText) {
+    undo.setEnabled(undoEnabled);
+    redo.setEnabled(redoEnabled);
+      
+    undo.setText(undoText);
+    redo.setText(redoText);
   }
   
   /** Helper method for the constructor */
   private void initAutomatMenu() {
     // --- Automat-menu ---
-    automatMenu = new JMenu("automat");
+    automatMenu = new JMenu("Automat");
     this.add(automatMenu);
   }
   

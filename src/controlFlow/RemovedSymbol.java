@@ -23,4 +23,9 @@ public class RemovedSymbol extends UserAction {
     Transition hostTransition = hostTransitionCopy.getOriginalTransition();
     hostTransition.removeSymbol(symbol, false);
   }
+  
+  /** String representation for the Undo / Redo MenuItem */
+  public String toString() {
+    return "Remove Symbol";
+  }
 }

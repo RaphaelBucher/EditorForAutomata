@@ -39,40 +39,41 @@ public class ToolBar extends JToolBar {
 
     // Selection Button (Default cursors normal arrow). Uses the default cursor.
     arrowButton = new ToggleButton(absolutePath + Config.IconPaths.ARROW, new Cursor(Cursor.DEFAULT_CURSOR),
-        true, this, Config.ToolbarTooltips.selectTool);
+        true, this, Config.ToolbarTooltips.selectTool, "Selection Tool");
     this.add(arrowButton);
     
     // Tool to move States
     moveCursorButton = new ToggleButton(absolutePath + Config.IconPaths.MOVE_CURSOR,
-        new Cursor(Cursor.CROSSHAIR_CURSOR), false, this, Config.ToolbarTooltips.moveTool);
+        new Cursor(Cursor.CROSSHAIR_CURSOR), false, this, Config.ToolbarTooltips.moveTool, "Move Tool");
     this.add(moveCursorButton);
     
     // Normal state
     stateButton = new ToggleButton(absolutePath + Config.IconPaths.STATE,
-        absolutePath + Config.WindowsCursorPaths.STATE, Config.CursorNames.STATE_CURSOR, false, this, "");
+        absolutePath + Config.WindowsCursorPaths.STATE, Config.CursorNames.STATE_CURSOR, false, this, "",
+        "Add State Tool");
     this.add(stateButton);
 
     // Start state.
     startStateButton = new ToggleButton(absolutePath + Config.IconPaths.START_STATE,
         absolutePath + Config.WindowsCursorPaths.START_STATE, Config.CursorNames.START_STATE_CURSOR,
-        false, this, "");
+        false, this, "", "Add Start State Tool");
     this.add(startStateButton);
 
     // End state
     endStateButton = new ToggleButton(absolutePath + Config.IconPaths.END_STATE,
         absolutePath + Config.WindowsCursorPaths.END_STATE, Config.CursorNames.END_STATE_CURSOR,
-        false, this, "");
+        false, this, "", "Add End State Tool");
     this.add(endStateButton);
     
     // Start- and end-state
     startEndStateButton = new ToggleButton(absolutePath + Config.IconPaths.START_END_STATE,
         absolutePath + Config.WindowsCursorPaths.START_END_STATE, Config.CursorNames.START_END_STATE_CURSOR,
-        false, this, "");
+        false, this, "", "Add Start & End State Tool");
     this.add(startEndStateButton);
 
     // Transition
     transitionButton = new ToggleButton(absolutePath + Config.IconPaths.TRANSITION,
-        new Cursor(Cursor.DEFAULT_CURSOR), false, this, Config.ToolbarTooltips.transition);
+        new Cursor(Cursor.DEFAULT_CURSOR), false, this, Config.ToolbarTooltips.transition, "Add Transition Tool");
     this.add(transitionButton);
   }
 

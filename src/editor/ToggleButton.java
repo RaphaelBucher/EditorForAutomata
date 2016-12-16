@@ -32,11 +32,13 @@ public class ToggleButton extends JToggleButton {
   private String tooltip;
 
   /** Called by the two other constructors. */
-  private ToggleButton(String iconPath, boolean selected, ToolBar parentObject, String tooltip) {
+  private ToggleButton(String iconPath, boolean selected, ToolBar parentObject, String tooltip,
+      String hoverTooltip) {
     super(new ImageIcon(iconPath), false);
     this.setSelected(selected);
     this.setBorder(null);
     this.setFocusable(false);
+    this.setToolTipText(hoverTooltip);
     
     // The image of the button
     image = new ImageIcon(iconPath);
@@ -81,9 +83,9 @@ public class ToggleButton extends JToggleButton {
    * lack the information of each others selected property.
    * */
   public ToggleButton(String iconPath, String windowsCursorIconPath, String cursorName,
-      boolean selected, ToolBar parentObject, String tooltip) {
+      boolean selected, ToolBar parentObject, String tooltip, String hoverTooltip) {
     // Calls the private helper constructor that contains default initialization
-    this(iconPath, selected, parentObject, tooltip);
+    this(iconPath, selected, parentObject, tooltip, hoverTooltip);
     
     // Cursor
     createCustomCursor(iconPath, windowsCursorIconPath, cursorName);
@@ -91,9 +93,9 @@ public class ToggleButton extends JToggleButton {
   
   /** Sets the passed cursor for both mac and windows. */
   public ToggleButton(String iconPath, Cursor macWinCursor, boolean selected, ToolBar parentObject,
-      String tooltip) {
+      String tooltip, String hoverTooltip) {
     // Calls the private helper constructor that contains default initialization
-    this(iconPath, selected, parentObject, tooltip);
+    this(iconPath, selected, parentObject, tooltip, hoverTooltip);
     
     customCursor = macWinCursor;
   }

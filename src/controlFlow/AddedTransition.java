@@ -33,4 +33,9 @@ public class AddedTransition extends UserAction {
     
     automat.addTransition(restoredTransition, false);
   }
+  
+  /** String representation for the Undo / Redo MenuItem */
+  public String toString() {
+    return "Add Transition";
+  }
 }

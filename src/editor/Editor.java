@@ -139,4 +139,9 @@ public class Editor extends JFrame {
   public static ToolBar getToolBar() {
     return toolBar;
   }
+  
+  /** getMenuBar() is taken by the framework. */
+  public static MenuBar getCustomMenuBar() {
+    return menuBar;
+  }
 }

@@ -33,4 +33,9 @@ public class RemovedTransition extends UserAction {
     Automat automat = Editor.getDrawablePanel().getAutomat();
     automat.deleteTransition(transitionCopy.getOriginalTransition(), false);
   }
+  
+  /** String representation for the Undo / Redo MenuItem */
+  public String toString() {
+    return "Remove Transition";
+  }
 }

@@ -73,4 +73,9 @@ public class RemovedState extends UserAction {
     Automat automat = Editor.getDrawablePanel().getAutomat();
     automat.deleteState(automat.getStateByStateIndex(stateIndex), false);
   }
+  
+  /** String representation for the Undo / Redo MenuItem */
+  public String toString() {
+    return "Remove State";
+  }
 }

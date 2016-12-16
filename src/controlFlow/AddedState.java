@@ -45,4 +45,9 @@ public class AddedState extends UserAction {
     // Call addState(), but don't let this action get registered as a new UserAction
     Editor.getDrawablePanel().getAutomat().addState(state, false);
   }
+  
+  /** String representation for the Undo / Redo MenuItem */
+  public String toString() {
+    return "Add State";
+  }
 }

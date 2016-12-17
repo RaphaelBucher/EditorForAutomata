@@ -7,7 +7,7 @@ import editor.Editor;
 /** Represents a reversible user-action. Used for the undo/redo functionality. */
 public abstract class UserAction {
   /** How many actions will be stored for undoing / redoing. */
-  private static final int listSize = 15; //TODO increase after its been tested
+  private static final int listSize = 30; //TODO increase after its been tested
   /** An index for the list iteration. Undoing decrements, redoing increments. */
   private static int currentListIndex = -1;
   private static LinkedList<UserAction> userActions = new LinkedList<UserAction>();
@@ -87,5 +87,15 @@ public abstract class UserAction {
     
     // Update the MenuBar
     Editor.getCustomMenuBar().updateUndoRedo(canUndo(), canRedo(), undoText, redoText);
+  }
+  
+  /** Deletes all added Actions from the list and sets the currentListIndex to the initial value. 
+   * This method is called when loading an automat / starting a new automat. */
+  public static void resetActions() {
+    userActions.clear();
+    currentListIndex = -1;
+    
+    // Update the MenuBar
+    updateUndoRedo();
   }
 }

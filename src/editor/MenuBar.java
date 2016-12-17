@@ -68,6 +68,7 @@ public class MenuBar extends JMenuBar {
     newAutomat = new MenuItem("New");
     newAutomat.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
+        UserAction.resetActions();
         Editor.changeAutonat(new Automat());
       }
     });
@@ -77,6 +78,7 @@ public class MenuBar extends JMenuBar {
     openAutomat = new MenuItem("Open");
     openAutomat.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
+        UserAction.resetActions();
         loadAutomat();
       }
     });

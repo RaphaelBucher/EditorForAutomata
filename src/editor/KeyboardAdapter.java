@@ -21,7 +21,15 @@ public class KeyboardAdapter extends KeyAdapter {
   
   /** Returns true if its a taken hotkey such as cmd + z / ctrl + z, false otherwise. */
   private boolean isTakenHotkey(KeyEvent keyEvent) {
-    // TODO if (keyEvent == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())
+    int keyCode = keyEvent.getKeyCode();
+    int modifiers = keyEvent.getModifiers();
+    
+    // This is cmd for mac, ctrl for windows
+    if (modifiers == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())
+      return true;
+    
+    if (keyCode == KeyEvent.VK_CONTROL)
+      return true;
     
     return false;
   }

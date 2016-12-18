@@ -7,9 +7,16 @@ import javax.swing.JOptionPane;
 
 public class CustomFileChooser extends JFileChooser {
   private static final long serialVersionUID = 1L;
+  private CustomFileFilter fileFilter;
 
-  public CustomFileChooser(String currentDirectoryPath) {
+  /** @param The file-extension to be set in lowerCase, e.g. xml, png */
+  public CustomFileChooser(String extension, String currentDirectoryPath) {
     super(currentDirectoryPath);
+    
+    fileFilter = new CustomFileFilter(extension);
+    
+    this.removeChoosableFileFilter(this.getFileFilter());
+    this.setFileFilter(fileFilter);
   }
   
   @Override
@@ -21,12 +28,12 @@ public class CustomFileChooser extends JFileChooser {
         return;
       
       String fileName = selectedFile.getName();
-      // Check also if the user omitted the xml-extension
-      File noExtension = new File(selectedFile.getAbsolutePath() + ".xml");
+      // Check also if the user omitted the extension
+      File noExtension = new File(selectedFile.getAbsolutePath() + "." + fileFilter.getExtension());
       
       if (selectedFile.exists() || noExtension.exists()) {
         if (noExtension.exists())
-          fileName += ".xml";
+          fileName += "." + fileFilter.getExtension();
         
         int response = JOptionPane.showConfirmDialog(this,
           "'" + fileName + "' already exists. Do you want to replace it?",
@@ -38,5 +45,10 @@ public class CustomFileChooser extends JFileChooser {
     }
 
     super.approveSelection();
+  }
+  
+  // Setters and Getters
+  public CustomFileFilter getCustomFileFilter() {
+    return this.fileFilter;
   }
 }

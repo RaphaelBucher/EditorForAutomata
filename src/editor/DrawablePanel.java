@@ -13,7 +13,11 @@ import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 /** The main-panel where the Editor is drawn into. */
@@ -21,6 +25,9 @@ public class DrawablePanel extends JPanel implements MouseMotionListener {
   private static final long serialVersionUID = 1L;
   private Automat automat;
   private KeyboardAdapter keyboardAdapter;
+  
+  // Always set on true, hide them only for the image-export
+  private boolean paintMessages;
 
   public DrawablePanel(ToolBar toolBarCopy) {
     // Initialized with minimal dimensions. This Panel is extended in both
@@ -29,11 +36,12 @@ public class DrawablePanel extends JPanel implements MouseMotionListener {
     this.setBackground(Config.BACKGROUND_COLOR);
     this.setDoubleBuffered(true);
     this.setFocusable(true); // needed for the added KeyListener
-
+    
     addMouseListener();
     addMouseMotionListener(this);
     
     automat = new Automat();
+    paintMessages = true;
     
     /* Listens for keyboard events. An instance of this class is added to the DrawablePanel instance. 
      * It can only be added to a component that has called setFocusable(true). If two components called
@@ -79,8 +87,10 @@ public class DrawablePanel extends JPanel implements MouseMotionListener {
     
     automat.paint(graphics2D);
 
-    ErrorMessage.paint(graphics2D);
-    Tooltip.paint(graphics2D);
+    if (paintMessages) {
+      ErrorMessage.paint(graphics2D);
+      Tooltip.paint(graphics2D);
+    }
     
     graphics2D.dispose();
   }
@@ -120,6 +130,37 @@ public class DrawablePanel extends JPanel implements MouseMotionListener {
   /** Changes the automat. */
   public void changeAutomat(Automat automat) {
     this.automat = automat;
+  }
+  
+  /** Exports this JPanel into an image and saves it on the file-system. */
+  public void imageExport(String filePath) {
+    int scale = 2; // Needed for image-quality...
+    BufferedImage image = new BufferedImage(getWidth() * scale, getHeight() * scale, BufferedImage.TYPE_INT_ARGB);
+    Graphics2D g = image.createGraphics();
+    
+    g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+    g.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
+    g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+    g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+    g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+    g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+    
+    g.scale(scale, scale); // Needed for image quality...
+    
+    // Hide ErrorMessages and Tooltips if some are currently displayed
+    paintMessages = false;
+    printAll(g);
+    g.dispose();
+    paintMessages = true; // restore the default-value
+    
+    // Write the image into the file
+    try { 
+        ImageIO.write(image, "png", new File(filePath)); 
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
   }
   
   // Getters

@@ -25,6 +25,7 @@ public class MenuBar extends JMenuBar {
   private MenuItem newAutomat;
   private MenuItem openAutomat;
   private MenuItem saveAutomat;
+  private MenuItem imageExport;
   
   // edit-menu
   private JMenu editMenu;
@@ -34,22 +35,16 @@ public class MenuBar extends JMenuBar {
   // automat-menu
   private JMenu automatMenu;
   
-  // file-chooser
-  private final CustomFileChooser fileChooser;
-  
-  // XML File-Filter
-  private final XMLFileFilter xmlFileFilter;
+  // file-choosers
+  private final CustomFileChooser xmlFileChooser;
+  private final CustomFileChooser pngFileChooser;
   
   public MenuBar() {
     super();
     
-    // Create a file chooser
-    fileChooser = new CustomFileChooser(new File("").getAbsolutePath() + "/savedAutomats/");
-    
-    // File-Filter
-    xmlFileFilter = new XMLFileFilter();
-    fileChooser.removeChoosableFileFilter(fileChooser.getFileFilter());
-    fileChooser.setFileFilter(xmlFileFilter);
+    // Create the file choosers
+    xmlFileChooser = new CustomFileChooser("xml", new File("").getAbsolutePath() + "/savedAutomats/");
+    pngFileChooser = new CustomFileChooser("png", new File("").getAbsolutePath() + "/exportedImages/");
     
     // Init the Menus
     initFileMenu();
@@ -92,6 +87,17 @@ public class MenuBar extends JMenuBar {
       }
     });
     fileMenu.add(saveAutomat);
+    
+    fileMenu.addSeparator();
+    
+    // image export
+    imageExport = new MenuItem("Image Export");
+    imageExport.addActionListener(new ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent e) {
+        exportImage();
+      }
+    });
+    fileMenu.add(imageExport);
 
     this.add(fileMenu);
   }
@@ -166,16 +172,17 @@ public class MenuBar extends JMenuBar {
   
   /** Saves an Automat to as an XML-File. */
   private void saveAutomat() {
-    int returnVal = fileChooser.showSaveDialog(Editor.getEditor());
+    int returnVal = xmlFileChooser.showSaveDialog(Editor.getEditor());
     
     // Did the user press the "save"-Button?
     if (returnVal == JFileChooser.APPROVE_OPTION) {
-      File file = fileChooser.getSelectedFile();
+      File file = xmlFileChooser.getSelectedFile();
       String filePath = file.getAbsolutePath();
       
       // Add .xml extension in case the file doesn't end with this extension
-      if (!xmlFileFilter.getExtension(file).equals(XMLFileFilter.xml))
-        filePath += ".xml";
+      CustomFileFilter xmlFileFilter = xmlFileChooser.getCustomFileFilter();
+      if (!xmlFileFilter.getExtension(file).equals(xmlFileFilter.getExtension()))
+        filePath += "." + xmlFileFilter.getExtension();
       
       XMLFileParser.writeAutomatToXMLFile(Editor.getDrawablePanel().getAutomat(), filePath);
     }
@@ -183,11 +190,11 @@ public class MenuBar extends JMenuBar {
   
   /** Loads an Automat from a chosen XML-File. */
   private void loadAutomat() {
-    int returnVal = fileChooser.showOpenDialog(Editor.getEditor());
+    int returnVal = xmlFileChooser.showOpenDialog(Editor.getEditor());
     
     // Did the user open a file?
     if (returnVal == JFileChooser.APPROVE_OPTION) {
-      String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+      String filePath = xmlFileChooser.getSelectedFile().getAbsolutePath();
 
       Automat testAutomat = XMLFileParser.readAutomatFromXMLFile(filePath);
       
@@ -196,6 +203,24 @@ public class MenuBar extends JMenuBar {
         Editor.changeAutonat(testAutomat);
       } else
         ErrorMessage.setMessage(Config.ErrorMessages.xmlParsingError);
+    }
+  }
+  
+  /** Exports the Automat as a png-file. */
+  private void exportImage() {
+    int returnVal = pngFileChooser.showSaveDialog(Editor.getEditor());
+    
+    // Did the user press the "save"-Button?
+    if (returnVal == JFileChooser.APPROVE_OPTION) {
+      File file = pngFileChooser.getSelectedFile();
+      String filePath = file.getAbsolutePath();
+      
+      // Add .png extension in case the file doesn't end with this extension
+      CustomFileFilter pngFileFilter = pngFileChooser.getCustomFileFilter();
+      if (!pngFileFilter.getExtension(file).equals(pngFileFilter.getExtension()))
+        filePath += "." + pngFileFilter.getExtension();
+      
+      Editor.getDrawablePanel().imageExport(filePath);
     }
   }
 }

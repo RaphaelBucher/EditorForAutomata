@@ -62,12 +62,18 @@ public class Symbol extends Shape {
     // Compute all middlePoints
     paintingMiddlePoints(fontMetrics, symbols, symbolDockingPoint, direction);
     
-    paint(graphics2D, symbols, fontMetrics);
+    paint(graphics2D, symbols, fontMetrics, symbolDockingPoint);
   }
   
   /** The actual painting. */
-  private static void paint(Graphics2D graphics2D, ArrayList<Symbol> symbols, FontMetrics fontMetrics) {
+  private static void paint(Graphics2D graphics2D, ArrayList<Symbol> symbols, FontMetrics fontMetrics,
+      Point symbolDockingPoint) {
     int fontOffsetY = fontMetrics.getAscent() / 3;
+    
+    // In case its an Epsilon-Transition, paint only the epsilon-sign at the docking-point
+    if (symbols.size() <= 0) {
+      graphics2D.drawString("\u03B5", symbolDockingPoint.x - 3, symbolDockingPoint.y + fontOffsetY);
+    }
     
     Symbol currentSymbol;
     for (int i = 0; i < symbols.size(); i++) {
@@ -95,6 +101,10 @@ public class Symbol extends Shape {
   /** Computes the symbols middlePoints according to the bounding boxes. */
   private static void paintingMiddlePoints(FontMetrics fontMetrics, ArrayList<Symbol> symbols,
       Point symbolDockingPoint, int direction) {
+    // Epsilon-transitions need to compute nothing here
+    if (symbols.size() <= 0)
+      return;
+    
     // total length of the symbol-chain
     int totalLength = 0;
     int commaWidth = fontMetrics.stringWidth(",");

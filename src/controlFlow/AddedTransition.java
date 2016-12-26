@@ -29,8 +29,6 @@ public class AddedTransition extends UserAction {
         automat.getStateByStateIndex(transitionCopy.getStartStateIndex()),
         automat.getStateByStateIndex(transitionCopy.getEndStateIndex()));
     
-    restoredTransition.addSymbol(transitionCopy.getSymbols().get(0), false);
-    
     automat.addTransition(restoredTransition, false);
   }
   

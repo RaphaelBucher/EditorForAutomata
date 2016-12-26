@@ -110,7 +110,6 @@ public interface Config {
     // Transition
     String transitionStartNotClicked = "Please select a starting state";
     String transitionEndNotClicked = "Please select an ending state";
-    String transitionNoSymbolEntered = "Please enter a symbol";
     String transitionInvalidSymbolEntered = "Valid symbols are 0,...,9 and a,...,z";
     String transitionStateDeletionProhibited = "Please use the selection tool to delete states";
     

@@ -107,9 +107,6 @@ public class XMLFileParser {
     
     // Read all symbols and add them to the constructed Transition
     readSymbols(transition, constructedTransition);
-    // Needs at least one valid symbol, empty Transitions are permitted
-    if (constructedTransition.getSymbols().size() <= 0)
-      throw new Exception();
     
     // Add the built Transition to the Automat
     automat.addTransition(constructedTransition, false);

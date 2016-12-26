@@ -196,7 +196,7 @@ public class Automat {
     
     // --- Distinguish the construction phases ---
     
-    // 1. Phase: Did the user clicked a transitionStartState?
+    // 1. Phase: Did the user click a transitionStartState?
     // constructingTransition = null
     if (this.constructingTransitionStartState == null) {
       if (clickedShape instanceof State) {
@@ -214,7 +214,7 @@ public class Automat {
       return;
     }
     
-    // 2. Phase: Did the user clicked a transitionEndState?
+    // 2. Phase: Did the user click a transitionEndState?
     // constructingTransitioinStartState != null, constructingTransitioinEndState = null
     if (this.constructingTransitionEndState == null) {
       if (clickedShape instanceof State) {
@@ -223,6 +223,8 @@ public class Automat {
         this.constructingTransition = new Transition(constructingTransitionStartState,
             constructingTransitionEndState);
         clickedShape.setSelected(true);
+        
+        addTransition(constructingTransition, true);
         
         // Display the tooltop to enter a symbol
         Tooltip.setMessage(Config.Tooltips.transitionEnterSymbol, Config.TOOLTIP_DRAWABLE_PANEL_DISPLAY_AMOUNT);
@@ -236,14 +238,11 @@ public class Automat {
     }
     
     // 3. Phase. Transition-symbol entered by keyboard expected. 
-    // If the transition being constructed has no added symbols, display this ErrorMessage
-    if (this.constructingTransition.getSymbols().size() <= 0) 
-      ErrorMessage.setMessage(Config.ErrorMessages.transitionNoSymbolEntered);
     
     // If the user clicks the mouse somewhere, the transition construction process is being resetted.
     this.resetConstructingTransition();
     
-    // This code is just reached if the constructingTransition had both start- and end-state
+    // This code is just reached if the constructing-Transition had both start- and end-state
     // at the start of this method, phase 3. This click just reseted the constructed state.
     // If he also hit a state with click, enter phase 1 directly again.
     if (clickedShape instanceof State) {
@@ -309,7 +308,7 @@ public class Automat {
   public void addTransition(Transition newTransition, boolean addActionToControlFlow) {
     // Is the Transition invalid?
     if (newTransition == null || newTransition.getTransitionStart() == null ||
-        newTransition.getTransitionEnd() == null || newTransition.getSymbols().size() <= 0)
+        newTransition.getTransitionEnd() == null)
       return;
     
     // Does the automat already have such a transition with such start-state and 
@@ -320,8 +319,7 @@ public class Automat {
       transition = new Transition(newTransition.getTransitionStart(),
           newTransition.getTransitionEnd());
       
-      // Add the transition to the automats transitions. newTransition can only
-      // have exactly one symbol at this stage
+      // Add the transition to the automats transitions.
       transitions.add(transition);
       
       if (addActionToControlFlow) {
@@ -498,15 +496,9 @@ public class Automat {
     // Selected Shape is a Transition-Symbol
     if (selectedShape instanceof Symbol) {
       Transition hostTransition = ((Symbol) selectedShape).getHostTransition();
-      
-      // Remove the hostTransition as well if it is the last Symbol. A RemoveTransition instance
-      // is added there to the ControlFlow
-      if (hostTransition.getSymbols().size() <= 1) {
-        deleteTransition((Transition) hostTransition, true);
-      } else {
-        // Remove only the selected symbol
-        hostTransition.removeSymbol(((Symbol) selectedShape).getSymbol(), true);
-      }
+     
+      // Remove the selected symbol
+      hostTransition.removeSymbol(((Symbol) selectedShape).getSymbol(), true);
     }
     
     selectedShape = null;

@@ -17,6 +17,7 @@ import controlFlow.RemovedState;
 import controlFlow.RemovedTransition;
 import controlFlow.StateMoved;
 import controlFlow.UserAction;
+import transformation.Util;
 
 public class Automat {
   private ArrayList<State> states;
@@ -294,6 +295,8 @@ public class Automat {
     // Debug TODO: start of removing
     if (key == KeyEvent.VK_RIGHT) {
       Debug.printAutomat(this);
+    }
+    if (key == KeyEvent.VK_LEFT) {
     }
     // TODO: end of removing
   }

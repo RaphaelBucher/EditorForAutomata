@@ -1,6 +1,7 @@
 package editor;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +17,7 @@ import javax.swing.JMenuBar;
 import javax.swing.KeyStroke;
 
 import controlFlow.UserAction;
+import transformation.Util;
 
 public class MenuBar extends JMenuBar {
   private static final long serialVersionUID = 1L;
@@ -34,6 +36,7 @@ public class MenuBar extends JMenuBar {
   
   // automat-menu
   private JMenu automatMenu;
+  private MenuItem info;
   
   // file-choosers
   private final CustomFileChooser xmlFileChooser;
@@ -167,6 +170,19 @@ public class MenuBar extends JMenuBar {
   private void initAutomatMenu() {
     // --- Automat-menu ---
     automatMenu = new JMenu("Automat");
+    
+    // info
+    info = new MenuItem("Info");
+    info.addActionListener(new ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent e) {
+        String info = Util.automatInfo(Editor.getDrawablePanel().getAutomat());
+        new TextFrame("Automat Info", new Dimension(500, 300), info);
+      }
+    });
+    automatMenu.add(info);
+    
+    automatMenu.addSeparator();
+    
     this.add(automatMenu);
   }
   

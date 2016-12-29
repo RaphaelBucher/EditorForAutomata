@@ -1,10 +1,12 @@
 package editor;
 
+import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.border.MatteBorder;
 
 public class TextFrame extends JFrame {
   private static final long serialVersionUID = 1L;
@@ -20,6 +22,7 @@ public class TextFrame extends JFrame {
     textArea.setPreferredSize(size);
     textArea.setLineWrap(true);
     textArea.setEditable(false);
+    textArea.setBorder(new MatteBorder(12, 12, 12, 12, Color.WHITE));
 
     JScrollPane scrollPane = new JScrollPane(textArea);
     scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);

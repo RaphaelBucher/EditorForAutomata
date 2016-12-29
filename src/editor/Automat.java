@@ -17,7 +17,6 @@ import controlFlow.RemovedState;
 import controlFlow.RemovedTransition;
 import controlFlow.StateMoved;
 import controlFlow.UserAction;
-import transformation.Util;
 
 public class Automat {
   private ArrayList<State> states;
@@ -585,6 +584,18 @@ public class Automat {
     this.constructingTransitionStartState = null;
     this.constructingTransitionEndState = null;
     this.constructingTransition = null;
+  }
+  
+  /** @return An ArrayList of all EndStates (EndStates and StartEndStates) */
+  public ArrayList<State> getEndStates() {
+    ArrayList<State> endStates = new ArrayList<State>();
+    
+    for (int i = 0; i < states.size(); i++) {
+      if (states.get(i) instanceof EndState || states.get(i) instanceof StartEndState)
+        endStates.add(states.get(i));
+    }
+    
+    return endStates;
   }
   
   // Setters and Getters

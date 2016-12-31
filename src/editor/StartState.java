@@ -37,4 +37,10 @@ public class StartState extends State {
     
     graphics2D.setColor(Color.BLACK);
   }
+  
+  /** Returns a deep copy of the State. */
+  public State copy() {
+    State state = new StartState(stateIndex, x, y);
+    return state;
+  }
 }

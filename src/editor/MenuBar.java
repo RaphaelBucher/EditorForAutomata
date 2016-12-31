@@ -17,6 +17,7 @@ import javax.swing.JMenuBar;
 import javax.swing.KeyStroke;
 
 import controlFlow.UserAction;
+import transformation.Layout;
 import transformation.Util;
 
 public class MenuBar extends JMenuBar {
@@ -37,6 +38,7 @@ public class MenuBar extends JMenuBar {
   // automat-menu
   private JMenu automatMenu;
   private MenuItem info;
+  private MenuItem layout;
   
   // file-choosers
   private final CustomFileChooser xmlFileChooser;
@@ -182,6 +184,18 @@ public class MenuBar extends JMenuBar {
     automatMenu.add(info);
     
     automatMenu.addSeparator();
+    
+    // layout
+    layout = new MenuItem("Layout");
+    layout.addActionListener(new ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent e) {
+        // TODO control flow (save references of old and new automat)
+        Automat automatDeepCopy = Editor.getDrawablePanel().getAutomat().copy();
+        Layout.layoutAutomat(automatDeepCopy);
+        Editor.changeAutonat(automatDeepCopy);
+      }
+    });
+    automatMenu.add(layout);
     
     this.add(automatMenu);
   }

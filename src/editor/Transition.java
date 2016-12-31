@@ -207,6 +207,20 @@ public class Transition extends Shape {
     return this.transitionStart.stateIndex == this.transitionEnd.stateIndex;
   }
   
+  /** Returns a deep copy of the Transition. Copies the transitions symbols as well. 
+   * @param The automat on which the transitions states should refer to. */
+  public Transition copy(Automat automat) {
+    Transition transition = new Transition(automat.getStateByStateIndex(transitionStart.stateIndex),
+        automat.getStateByStateIndex(transitionEnd.stateIndex));
+    
+    // Copy the symbols
+    for (int i = 0; i < symbols.size(); i++) {
+      transition.symbols.add(symbols.get(i).copy(transition));
+    }
+    
+    return transition;
+  }
+  
   // Setters and Getters
   public State getTransitionStart() {
     return this.transitionStart;

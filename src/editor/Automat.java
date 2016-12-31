@@ -296,6 +296,9 @@ public class Automat {
       Debug.printAutomat(this);
     }
     if (key == KeyEvent.VK_LEFT) {
+      Automat testAutomat = this.copy();
+      Editor.changeAutonat(testAutomat);
+      testAutomat.updatePainting();
     }
     // TODO: end of removing
   }
@@ -597,6 +600,33 @@ public class Automat {
     
     return endStates;
   }
+  
+  /** Returns a deep copy of the automat. Doesn't perform painting computation of the transitions. 
+   * @return a deep copy of the automat with all new references on the automat itself,
+   * its states, transitions etc. */
+  public Automat copy() {
+    Automat automat = new Automat();
+    
+    // States
+    for (int i = 0; i < states.size(); i++) {
+      automat.states.add(states.get(i).copy());
+    }
+    
+    // Transitions
+    for (int i = 0; i < transitions.size(); i++) {
+      automat.transitions.add(transitions.get(i).copy(automat));
+    }
+    
+    return automat;
+  }
+  
+  /** Updates all painting coordinates of all the transitions the automat has. */
+  public void updatePainting() {
+    for (int i = 0; i < transitions.size(); i++) {
+      transitions.get(i).computePaintingCoordinates(transitions);
+    }
+  }
+  
   
   // Setters and Getters
   public ArrayList<Transition> getTransitions() {

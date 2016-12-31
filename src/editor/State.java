@@ -9,6 +9,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /** A state in an automat. */
 public class State extends Shape {
@@ -17,6 +19,10 @@ public class State extends Shape {
   // Coordinates where the state is drawn into the canvas. This is the center of
   // the circle, not the top-left of the rendered area of the state.
   protected int x, y;
+  
+  /** Used for the Layout. Is not updated automatically due to performance reasons. Call
+   * State.updateNeighborAmounts() to compute it. */
+  protected int neighborAmount;
 
   public State(int stateIndex, int x, int y) {
     this.stateIndex = stateIndex;
@@ -101,11 +107,44 @@ public class State extends Shape {
     this.y = y;
   }
   
+  /** Moves the state by the passed values deltaX and deltaY. */
+  public void moveDelta(int deltaX, int deltaY) {
+    this.x += deltaX;
+    this.y += deltaY;
+  }
+  
   /** Checks whether this state has an ArcTransition.
    * @return the ArcTransition or null if it has none. */
   public Transition gotArcTransition(ArrayList<Transition> transitions) {
     return Transition.isInArrayList(this.stateIndex, this.stateIndex, transitions);
   }
+  
+  /** Returns a deep copy of the State. */
+  public State copy() {
+    State state = new State(stateIndex, x, y);
+    return state;
+  }
+  
+  /** Computes the amount of neighbor-states the state has transitions to.
+   * Used for the Layout. Is not updated automatically due to performance reasons. */
+  public static void updateNeighborAmounts(Automat automat) {
+    for (int i = 0; i < automat.getStates().size(); i++) {
+      State state = automat.getStates().get(i);
+      ArrayList<Transition> stateLineTransitions =
+          Transition.getLineTransitionsByState(state, automat.getTransitions());
+
+      Set<Integer> neighbors = new HashSet<Integer>();
+      
+      for (int j = 0; j < stateLineTransitions.size(); j++) {
+        neighbors.add(stateLineTransitions.get(j).getTransitionStart().getStateIndex());
+        neighbors.add(stateLineTransitions.get(j).getTransitionEnd().getStateIndex());
+      }
+      
+      neighbors.remove(state.getStateIndex());
+      state.neighborAmount = neighbors.size();
+    }
+  }
+  
   
   // Setters and Getters
   public int getX() {
@@ -114,5 +153,17 @@ public class State extends Shape {
   
   public int getY() {
     return this.y;
+  }
+  
+  public void setX(int x) {
+    this.x = x;
+  }
+  
+  public void setY(int y) {
+    this.y = y;
+  }
+  
+  public int getNeighborAmount() {
+    return this.neighborAmount;
   }
 }

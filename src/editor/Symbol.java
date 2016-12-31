@@ -164,6 +164,12 @@ public class Symbol extends Shape {
     return false;
   }
   
+  /** Returns a deep copy of the Symbol. */
+  public Symbol copy(Transition hostTransition) {
+    Symbol newSymbol = new Symbol(hostTransition, symbol);
+    return newSymbol;
+  }
+  
   // Setters and Getters
   public char getSymbol() {
     return symbol;

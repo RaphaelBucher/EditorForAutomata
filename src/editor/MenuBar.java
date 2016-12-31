@@ -69,7 +69,7 @@ public class MenuBar extends JMenuBar {
     newAutomat.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         UserAction.resetActions();
-        Editor.changeAutonat(new Automat());
+        Editor.changeAutonat(new Automat(), false);
       }
     });
     fileMenu.add(newAutomat);
@@ -192,7 +192,7 @@ public class MenuBar extends JMenuBar {
         // TODO control flow (save references of old and new automat)
         Automat automatDeepCopy = Editor.getDrawablePanel().getAutomat().copy();
         Layout.layoutAutomat(automatDeepCopy);
-        Editor.changeAutonat(automatDeepCopy);
+        Editor.changeAutonat(automatDeepCopy, true);
       }
     });
     automatMenu.add(layout);
@@ -229,8 +229,7 @@ public class MenuBar extends JMenuBar {
       Automat testAutomat = XMLFileParser.readAutomatFromXMLFile(filePath);
       
       if (testAutomat != null) {
-        // Debug.printAutomat(testAutomat);
-        Editor.changeAutonat(testAutomat);
+        Editor.changeAutonat(testAutomat, false);
       } else
         ErrorMessage.setMessage(Config.ErrorMessages.xmlParsingError);
     }

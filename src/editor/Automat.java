@@ -296,9 +296,6 @@ public class Automat {
       Debug.printAutomat(this);
     }
     if (key == KeyEvent.VK_LEFT) {
-      Automat testAutomat = this.copy();
-      Editor.changeAutonat(testAutomat);
-      testAutomat.updatePainting();
     }
     // TODO: end of removing
   }

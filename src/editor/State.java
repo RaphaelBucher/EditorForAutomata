@@ -101,6 +101,12 @@ public class State extends Shape {
     return stateTransitions;
   }
   
+  /** Checks whether this state has an Transition to the destination State.
+   * @return the Transition or null if it has none. */
+  public Transition gotTransitionTo(State destinationState, ArrayList<Transition> transitions) {
+    return Transition.isInArrayList(this.stateIndex, destinationState.stateIndex, transitions);
+  }
+  
   /** Moves the state to the passed coordinates. Doesn't update the states transitions. */
   public void moveTo(int x, int y) {
     this.x = x;

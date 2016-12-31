@@ -13,6 +13,9 @@ import java.awt.GridBagLayout;
 
 import javax.swing.JFrame;
 
+import controlFlow.ChangedAutomat;
+import controlFlow.UserAction;
+
 public class Editor extends JFrame {
   private static final long serialVersionUID = 1L;
   private static Editor editor;
@@ -123,8 +126,12 @@ public class Editor extends JFrame {
   
   /** Changes the Editors Automat at a controlled stage of the main-loop. 
    * @param automat the new automat to be set to the DrawablePanel. */
-  public static void changeAutonat(Automat automat) {
+  public static void changeAutonat(Automat automat, boolean addActionToControlFlow) {
     newAutomat = automat;
+    
+    if (addActionToControlFlow) {
+      UserAction.addAction(new ChangedAutomat(Editor.getDrawablePanel().getAutomat(), automat));
+    }
   }
   
   // Getter

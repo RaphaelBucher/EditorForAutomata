@@ -18,7 +18,7 @@ public class Layout {
   
   protected static LayoutCircle[] layoutCircles;
   
-  /** Performas a layout-algorithm on the passed automat. It doesn't matter whether the
+  /** Performas an own layout-algorithm on the passed automat. It doesn't matter whether the
    * states coordinates are uninitialized (0, 0) or not. Will call automats updatePainting-method
    * which updates all the painting informations of all the automats transitions. 
    * The Editors automat should not be passed directly, but a copy of it since the method 
@@ -33,7 +33,7 @@ public class Layout {
     initLayoutCircles(automat);
     
     // Let the states take a position in the according LayoutCircle
-    takePositions();
+    takePositions(automat);
     
     translateAndScale();
     
@@ -41,10 +41,9 @@ public class Layout {
     automat.updatePainting();
   }
   
-  private static void takePositions() {
-    // TODO to be changed
+  private static void takePositions(Automat automat) {
     for (int i = 0; i < layoutCircles.length; i++) {
-      layoutCircles[i].takePositions(layoutCircles);
+      layoutCircles[i].takePositions(layoutCircles, automat);
     }
   }
   

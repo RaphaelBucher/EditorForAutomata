@@ -125,12 +125,15 @@ public class Editor extends JFrame {
   }
   
   /** Changes the Editors Automat at a controlled stage of the main-loop. 
-   * @param automat the new automat to be set to the DrawablePanel. */
-  public static void changeAutonat(Automat automat, boolean addActionToControlFlow) {
+   * @param automat the new automat to be set to the DrawablePanel.
+   * @param undoRedoText in case addActionToControlFlow was passed true, pass a String that
+   * will be used for the Menu-Entry in undo-redo. In case the flag was false, pass anything
+   * (it's unused) */
+  public static void changeAutonat(Automat automat, boolean addActionToControlFlow, String undoRedoText) {
     newAutomat = automat;
     
     if (addActionToControlFlow) {
-      UserAction.addAction(new ChangedAutomat(Editor.getDrawablePanel().getAutomat(), automat));
+      UserAction.addAction(new ChangedAutomat(Editor.getDrawablePanel().getAutomat(), automat, undoRedoText));
     }
   }
   

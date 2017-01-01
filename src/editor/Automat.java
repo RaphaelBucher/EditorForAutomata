@@ -17,6 +17,7 @@ import controlFlow.RemovedState;
 import controlFlow.RemovedTransition;
 import controlFlow.StateMoved;
 import controlFlow.UserAction;
+import transformation.Util;
 
 public class Automat {
   private ArrayList<State> states;
@@ -296,6 +297,8 @@ public class Automat {
       Debug.printAutomat(this);
     }
     if (key == KeyEvent.VK_LEFT) {
+      // gets a nullpointer if the automat has no startState
+      Util.getReachableStates(this, getStateByStateIndex(0));
     }
     // TODO: end of removing
   }
@@ -470,12 +473,7 @@ public class Automat {
 
   /** Returns the found state, or null otherwise. */
   public State getStateByStateIndex(int stateIndex) {
-    for (int i = 0; i < states.size(); i++) {
-      if (stateIndex == states.get(i).getStateIndex())
-        return states.get(i);
-    }
-
-    return null;
+    return State.getStateByStateIndex(stateIndex, states);
   }
   
   /** Deletes a Shape (states, transitions...) from the automat. */
@@ -547,7 +545,7 @@ public class Automat {
    * false if this method is just called from a redo / undo order. */
   public void deleteState(State state, boolean addActionToControlFlow) {
     // Remove all transitions going to and coming from that State
-    ArrayList<Transition> deletedTransitions = state.deleteTransitions(transitions);
+    ArrayList<Transition> deletedTransitions = state.deleteTransitions(this);
     
     // Remove the state from the automat
     states.remove(state);
@@ -555,6 +553,15 @@ public class Automat {
     // Add this action to the controlFlow if the flag is set
     if (addActionToControlFlow)
       UserAction.addAction(new RemovedState(state, deletedTransitions));
+  }
+  
+  /** Deletes all passed states from the automats list and performs the necessary painting updating. 
+   * @param addActionToControlFlow Pass true when the user is removing states himself, pass
+   * false if this method is just called from a redo / undo order. */
+  public void deleteStates(ArrayList<State> statesToRemove, boolean addActionToControlFlow) {
+    for (int i = 0; i < statesToRemove.size(); i++) {
+      deleteState(getStateByStateIndex(statesToRemove.get(i).getStateIndex()), addActionToControlFlow);
+    }
   }
   
   /** Deselect the currently selected shape if there is any. */

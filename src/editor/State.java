@@ -23,6 +23,9 @@ public class State extends Shape {
   /** Used for the Layout. Is not updated automatically due to performance reasons. Call
    * State.updateNeighborAmounts() to compute it. */
   protected int neighborAmount;
+  
+  /** For graph traversation only. */
+  private boolean marked;
 
   public State(int stateIndex, int x, int y) {
     this.stateIndex = stateIndex;
@@ -74,14 +77,14 @@ public class State extends Shape {
   /** Deletes all transitions from the list which come from or go to the state.
    * @return Returns all deleted (removed from automats transitions-ArrayList only)
    * Transitions. */
-  public ArrayList<Transition> deleteTransitions(ArrayList<Transition> transitions) {
+  public ArrayList<Transition> deleteTransitions(Automat automat) {
     // Gather all elements to be removed from the ArrayList first, no removal of ArrayLists
     // elements while looped through that ArrayList
-    ArrayList<Transition> stateTransitions = getTransitions(transitions);
+    ArrayList<Transition> stateTransitions = getTransitions(automat.getTransitions());
     
     // Remove them one-by-one
     for (int i = 0; i < stateTransitions.size(); i++) {
-      Editor.getDrawablePanel().getAutomat().deleteTransition(stateTransitions.get(i), false);
+      automat.deleteTransition(stateTransitions.get(i), false);
     }
     
     return stateTransitions;
@@ -151,6 +154,23 @@ public class State extends Shape {
     }
   }
   
+  /** Sets the marked flag to false for all states in the passed list.*/
+  public static void unmarkStates(ArrayList<State> states) {
+    for (int i = 0; i < states.size(); i++) {
+      states.get(i).marked = false;
+    }
+  }
+  
+  /** Returns the found state, or null otherwise. */
+  public static State getStateByStateIndex(int stateIndex, ArrayList<State> states) {
+    for (int i = 0; i < states.size(); i++) {
+      if (stateIndex == states.get(i).getStateIndex())
+        return states.get(i);
+    }
+
+    return null;
+  }
+  
   
   // Setters and Getters
   public int getX() {
@@ -171,5 +191,13 @@ public class State extends Shape {
   
   public int getNeighborAmount() {
     return this.neighborAmount;
+  }
+  
+  public boolean isMarked() {
+    return this.marked;
+  }
+  
+  public void setMarked(boolean marked) {
+    this.marked = marked;
   }
 }

@@ -296,6 +296,80 @@ public class Util {
       }
     });
   }
+  
+  
+  /** Returns an ArrayList of all States that are reachable by moving along 
+   * transitions (only in their direction!). Includes the passed starting state as well.
+   * Uses recursion. The startingState can be any state of the automat, not just the real
+   * StartState of the automat. */
+  public static ArrayList<State> getReachableStates(Automat automat, State startingState) {
+    ArrayList<State> states = new ArrayList<State>();
+    State.unmarkStates(automat.getStates());
+    
+    // If the startingState is null, no state can be reached and all states of the automat will be removed
+    // This can occur if the user removes unreachable states of an automat without a starting state.
+    if (startingState != null)
+      markReachableNeighborStates(automat, startingState);
+    
+    // Add all marked (reachable) states to the list
+    for (int i = 0; i < automat.getStates().size(); i++) {
+      State state = automat.getStates().get(i);
+      if (state.isMarked())
+        states.add(state);
+    }
+    
+    return states;
+  }
+  
+  /** Returns an ArrayList of all States that are unreachable by moving along 
+   * transitions (only in their direction!). Uses recursion. The startingState can
+   * be any state of the automat, not just the real StartState of the automat. */
+  public static ArrayList<State> getUnreachableStates(Automat automat, State startingState) {
+    ArrayList<State> reachableStates = getReachableStates(automat, startingState);
+    
+    ArrayList<State> unreachableStates = setComplement(reachableStates, automat.getStates());
+    
+    return unreachableStates;
+  }
+  
+  /** Returns all states that are in the superSet but not in the complementFrom-set.
+   * Compares them be stateIndices only, not be their references. */
+  public static ArrayList<State> setComplement(ArrayList<State> complementFrom, ArrayList<State> superSet) {
+    ArrayList<State> complement = new ArrayList<State>();
+    
+    for (int i = 0; i < superSet.size(); i++) {
+      if (State.getStateByStateIndex(superSet.get(i).getStateIndex(), complementFrom) == null) {
+        complement.add(superSet.get(i));
+      }
+    }
+    
+    return complement;
+  }
+  
+  /** Deletes all States that are unreachable by moving along 
+   * transitions (only in their direction!). Uses recursion. The startingState can
+   * be any state of the automat, not just the real StartState of the automat. */
+  public static void deleteUnreachableStates(Automat automat, State startingState) {
+    ArrayList<State> unreachableStates = getUnreachableStates(automat, startingState);
+    
+    automat.deleteStates(unreachableStates, false);
+  }
+  
+  /** Recursive method that calls itself for all unmarked neighbor-states of that passed state that
+   * can be reached by one transition. */
+  private static void markReachableNeighborStates(Automat automat, State state) {
+    state.setMarked(true);
+    
+    // Get all reachable Neighbor states
+    ArrayList<Transition> outgoingTransitions = Transition.getTransitionsByStartState(state,
+        automat.getTransitions());
+    
+    for (int i = 0; i < outgoingTransitions.size(); i++) {
+      if (!outgoingTransitions.get(i).getTransitionEnd().isMarked()) {
+        markReachableNeighborStates(automat, outgoingTransitions.get(i).getTransitionEnd());
+      }
+    }
+  }
 }
 
 

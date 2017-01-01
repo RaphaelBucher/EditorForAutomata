@@ -39,6 +39,7 @@ public class MenuBar extends JMenuBar {
   private JMenu automatMenu;
   private MenuItem info;
   private MenuItem layout;
+  private MenuItem removeUnreachableStates;
   
   // file-choosers
   private final CustomFileChooser xmlFileChooser;
@@ -69,7 +70,7 @@ public class MenuBar extends JMenuBar {
     newAutomat.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         UserAction.resetActions();
-        Editor.changeAutonat(new Automat(), false);
+        Editor.changeAutonat(new Automat(), false, "");
       }
     });
     fileMenu.add(newAutomat);
@@ -182,21 +183,36 @@ public class MenuBar extends JMenuBar {
       }
     });
     automatMenu.add(info);
-    
     automatMenu.addSeparator();
     
     // layout
     layout = new MenuItem("Layout");
     layout.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
-        // TODO control flow (save references of old and new automat)
         Automat automatDeepCopy = Editor.getDrawablePanel().getAutomat().copy();
         Layout.layoutAutomat(automatDeepCopy);
-        Editor.changeAutonat(automatDeepCopy, true);
+        Editor.changeAutonat(automatDeepCopy, true, "Layout");
       }
     });
     automatMenu.add(layout);
+    automatMenu.addSeparator();
     
+    // remove unreachable states
+    removeUnreachableStates = new MenuItem("Remove unreachable states");
+    removeUnreachableStates.addActionListener(new ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent e) {
+        Automat automatDeepCopy = Editor.getDrawablePanel().getAutomat().copy();
+        Util.deleteUnreachableStates(automatDeepCopy, automatDeepCopy.getStateByStateIndex(0));
+        
+        // Don't apply the Layout-algorithm, just remove the unreachable states and compute the
+        // painting information again
+        automatDeepCopy.updatePainting();
+        Editor.changeAutonat(automatDeepCopy, true, "Remove unreachable states");
+      }
+    });
+    automatMenu.add(removeUnreachableStates);
+    
+    // Add the built menu to the MenuBar
     this.add(automatMenu);
   }
   
@@ -229,7 +245,7 @@ public class MenuBar extends JMenuBar {
       Automat testAutomat = XMLFileParser.readAutomatFromXMLFile(filePath);
       
       if (testAutomat != null) {
-        Editor.changeAutonat(testAutomat, false);
+        Editor.changeAutonat(testAutomat, false, "");
       } else
         ErrorMessage.setMessage(Config.ErrorMessages.xmlParsingError);
     }

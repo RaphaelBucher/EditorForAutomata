@@ -12,12 +12,12 @@ public interface Config {
   int FPS = 30; 
 
   // Frame will be initialized with these sizes. Can be enlarged.
-  int FRAME_PANEL_MIN_WIDTH = 700;
+  int FRAME_PANEL_MIN_WIDTH = 1000; // TODO change back to 700
 
   // Needs to be a bit bigger than the ToolBar needs. It also contains the
   // frames menu-bar.
   // The height initialization of everything depends on only this value.
-  int FRAME_PANEL_MIN_HEIGHT = 500;
+  int FRAME_PANEL_MIN_HEIGHT = 630; // TODO change back to 500
 
   // ToolBar
   int TOOLBAR_ICON_WIDTH = 60;
@@ -101,6 +101,9 @@ public interface Config {
     String transitionSelectStartingState = "Please select an initial state for the Transition";
     String transitionSelectEndingState = "Please select the same or another destination state";
     String transitionEnterSymbol = "Please enter one or more symbols";
+    
+    // Transformation
+    String transformIsNEAAlready = "Automat is already a NEA";
   }
   
   /** Displayed ErrorMessages */
@@ -115,6 +118,9 @@ public interface Config {
     
     // XML-parsing errors
     String xmlParsingError = "Invalid XML-File";
+    
+    // Transformation
+    String startStateMissing = "Please add a start state";
   }
   
   // In case the Transition has a reverseTransition, how far it is away from

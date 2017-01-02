@@ -79,6 +79,14 @@ public class Transition extends Shape {
     return true;
   }
   
+  /** Adds a list of symbols to the transitions symbol-ArrayList. If any symbol is already in the list,
+   * it is not added. */
+  public void addSymbols(ArrayList<Symbol> symbols) {
+    for (int i = 0; i < symbols.size(); i++) {
+      addSymbol(symbols.get(i).getSymbol(), false);
+    }
+  }
+  
   /** Checks whether the passed character is already in the list.
    * @return true if the character is in the list, false otherwise. */
   private boolean containsSymbol(char symbol) {
@@ -170,6 +178,19 @@ public class Transition extends Shape {
     return foundTransitions;
   }
   
+  /** Returns all Transitions from a passed list that have the passed state as an end-state. */
+  public static ArrayList<Transition> getTransitionsByEndState(State endState,
+      ArrayList<Transition> transitions) {
+    ArrayList<Transition> foundTransitions = new ArrayList<Transition>();
+    
+    for (int i = 0; i < transitions.size(); i++) {
+      if (endState.stateIndex == transitions.get(i).getTransitionEnd().stateIndex)
+        foundTransitions.add(transitions.get(i));
+    }
+    
+    return foundTransitions;
+  }
+  
   /** Returns all Transitions from a passed list that have the passed state as a start-state or end-state.
    * Also returns arcTransitions (same start- and end-state). */
   public static ArrayList<Transition> getTransitionsByState(State state,
@@ -202,6 +223,48 @@ public class Transition extends Shape {
     return foundTransitions;
   }
   
+  /** Returns all LineTransitions from a passed list that have the passed state as an end-state.
+   * Filters out arcTransitions (same start- and end-state). */
+  public static ArrayList<Transition> getLineTransitionsByEndState(State state,
+      ArrayList<Transition> transitions) {
+    ArrayList<Transition> foundTransitions = new ArrayList<Transition>();
+    
+    for (int i = 0; i < transitions.size(); i++) {
+      if (state.stateIndex == transitions.get(i).getTransitionEnd().stateIndex) {
+        if (!transitions.get(i).isArcTransition())
+          foundTransitions.add(transitions.get(i));
+      }
+    }
+    
+    return foundTransitions;
+  }
+  
+  /** Removes all Epsilon-Transitions from a Transition-ArrayList and returns the new list. */
+  public static ArrayList<Transition> removeEpsilonTransitions(ArrayList<Transition> transitions) {
+    ArrayList<Transition> resultList = new ArrayList<Transition>();
+    
+    for (int i = 0; i < transitions.size(); i++) {
+      if (transitions.get(i).getSymbols().size() >= 1) {
+        resultList.add(transitions.get(i));
+      }
+    }
+    
+    return resultList;
+  }
+  
+  /** Gets all Arc-Transitions from a Transition-ArrayList and return this list. */
+  public static ArrayList<Transition> getArcTransitions(ArrayList<Transition> transitions) {
+    ArrayList<Transition> resultList = new ArrayList<Transition>();
+    
+    for (int i = 0; i < transitions.size(); i++) {
+      if (transitions.get(i).isArcTransition()) {
+        resultList.add(transitions.get(i));
+      }
+    }
+    
+    return resultList;
+  }
+  
   /** Returns true if the transitions start- and end-states are the same (an ArcTransition). */
   public boolean isArcTransition() {
     return this.transitionStart.stateIndex == this.transitionEnd.stateIndex;
@@ -219,6 +282,21 @@ public class Transition extends Shape {
     }
     
     return transition;
+  }
+  
+  /** Replaces all occurences of the oldState in the list (Starting or Ending-State) with the newState. */
+  public static void replaceState(State oldState, State newState, ArrayList<Transition> transitions) {
+    for (int i = 0; i < transitions.size(); i++) {
+      Transition transition = transitions.get(i);
+      
+      if (transition.getTransitionStart().equals(oldState)) {
+        transition.transitionStart = newState;
+      }
+      
+      if (transition.getTransitionEnd().equals(oldState)) {
+        transition.transitionEnd = newState;
+      }
+    }
   }
   
   // Setters and Getters

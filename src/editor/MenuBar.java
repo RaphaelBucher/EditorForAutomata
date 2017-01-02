@@ -18,6 +18,7 @@ import javax.swing.KeyStroke;
 
 import controlFlow.UserAction;
 import transformation.Layout;
+import transformation.Transformation;
 import transformation.Util;
 
 public class MenuBar extends JMenuBar {
@@ -40,6 +41,7 @@ public class MenuBar extends JMenuBar {
   private MenuItem info;
   private MenuItem layout;
   private MenuItem removeUnreachableStates;
+  private MenuItem toNEA;
   
   // file-choosers
   private final CustomFileChooser xmlFileChooser;
@@ -211,6 +213,33 @@ public class MenuBar extends JMenuBar {
       }
     });
     automatMenu.add(removeUnreachableStates);
+    automatMenu.addSeparator();
+    
+    // toNEA
+    toNEA = new MenuItem("Transform to NEA");
+    toNEA.addActionListener(new ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent e) {
+        Automat automat = Editor.getDrawablePanel().getAutomat();
+        if (automat.getStateByStateIndex(0) == null) {
+          ErrorMessage.setMessage(Config.ErrorMessages.startStateMissing);
+          return;
+        }
+        
+        if (Util.isNEA(automat)) {
+          Tooltip.setMessage(Config.Tooltips.transformIsNEAAlready, 0);
+          return;
+        }
+        
+        // Automat is a real Epsilon-Automat (has at least one Epsilon-Transition)
+        Automat automatDeepCopy = automat.copy();
+        Transformation.transformToNEA(automatDeepCopy);
+        
+        // TODO call the layout-algorithm instead of updatePainting()?
+        automatDeepCopy.updatePainting();
+        Editor.changeAutonat(automatDeepCopy, true, "Transform to NEA");
+      }
+    });
+    automatMenu.add(toNEA);
     
     // Add the built menu to the MenuBar
     this.add(automatMenu);

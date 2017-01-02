@@ -43,4 +43,9 @@ public class StartState extends State {
     State state = new StartState(stateIndex, x, y);
     return state;
   }
+  
+  /** Returns the type of the state, e.g. State.STATE or State.START_STATE. */
+  public int getType() {
+    return State.START_STATE;
+  }
 }

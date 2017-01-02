@@ -26,6 +26,12 @@ public class State extends Shape {
   
   /** For graph traversation only. */
   private boolean marked;
+  
+  // Constants for state-type changing
+  public static final int STATE = 0;
+  public static final int START_STATE = 1;
+  public static final int END_STATE = 2;
+  public static final int START_END_STATE = 3;
 
   public State(int stateIndex, int x, int y) {
     this.stateIndex = stateIndex;
@@ -169,6 +175,11 @@ public class State extends Shape {
     }
 
     return null;
+  }
+  
+  /** Returns the type of the state, e.g. State.STATE or State.START_STATE. */
+  public int getType() {
+    return State.STATE;
   }
   
   

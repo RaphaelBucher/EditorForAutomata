@@ -32,4 +32,9 @@ public class EndState extends State {
     State state = new EndState(stateIndex, x, y);
     return state;
   }
+  
+  /** Returns the type of the state, e.g. State.STATE or State.START_STATE. */
+  public int getType() {
+    return State.END_STATE;
+  }
 }

@@ -17,7 +17,6 @@ import controlFlow.RemovedState;
 import controlFlow.RemovedTransition;
 import controlFlow.StateMoved;
 import controlFlow.UserAction;
-import transformation.Util;
 
 public class Automat {
   private ArrayList<State> states;
@@ -297,8 +296,6 @@ public class Automat {
       Debug.printAutomat(this);
     }
     if (key == KeyEvent.VK_LEFT) {
-      // gets a nullpointer if the automat has no startState
-      Util.getReachableStates(this, getStateByStateIndex(0));
     }
     // TODO: end of removing
   }
@@ -540,6 +537,11 @@ public class Automat {
       endStateArcTransition.computePaintingCoordinates(transitions);
   }
   
+  /** Removes all transitions of the automat. */
+  public void deleteAllTransitions() {
+    transitions = new ArrayList<Transition>();
+  }
+  
   /** Deletes a state from the automats list and performs the necessary painting updating. 
    * @param addActionToControlFlow Pass true when the user is removing states himself, pass
    * false if this method is just called from a redo / undo order. */
@@ -629,6 +631,59 @@ public class Automat {
     for (int i = 0; i < transitions.size(); i++) {
       transitions.get(i).computePaintingCoordinates(transitions);
     }
+  }
+  
+  /** Changes the type of an automats state. Cannot change the stateIndex. Index 0 can only
+   * be changed to StartState or StartEndState, Indices >= 1 only to State or EndState.
+   * Pass one of the States types, e.g. STATE.START_STATE */
+  public void changeStateType(State oldState, int newType) {
+    if (oldState == null)
+      return;
+
+    // Is the new state type valid?
+    if (!changeStateValidType(oldState, newType))
+      return;
+    
+    State newState = new State(oldState.stateIndex, oldState.x, oldState.y);
+
+    switch (newType) {
+      case State.START_STATE:
+        newState = new StartState(oldState.stateIndex, oldState.x, oldState.y);
+        break;
+      case State.END_STATE:
+        newState = new EndState(oldState.stateIndex, oldState.x, oldState.y);
+        break;
+      case State.START_END_STATE:
+        newState = new StartEndState(oldState.stateIndex, oldState.x, oldState.y);
+        break;
+    }
+    
+    // Replace the State
+    for (int i = 0; i < states.size(); i++) {
+      if (states.get(i).equals(oldState)) {
+        Transition.replaceState(oldState, newState, transitions);
+        
+        states.set(i, newState);
+      }
+    }
+  }
+  
+  /** Computes whether the new state type is valid and needed. */
+  private boolean changeStateValidType(State oldState, int newType) {
+    // same type already?
+    if (oldState.getType() == newType)
+      return false;
+    
+    // -- invalid type --
+    // a StartState / StartEndState can only be changed into one of those
+    if (oldState.getStateIndex() == 0 && (newType == State.STATE || newType == State.END_STATE))
+      return false;
+    
+    // Cannot transform a state with index >= 1 into a StartState / StartEndState
+    if (oldState.getStateIndex() >= 1 && (newType == State.START_STATE || newType == State.START_END_STATE))
+      return false;
+      
+    return true;
   }
   
   

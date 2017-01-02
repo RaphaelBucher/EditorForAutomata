@@ -13,7 +13,8 @@ import editor.Transition;
 
 public class Util {
   /** Every automat is an Epsilon-Automat (NEAs and DEAs are just Epsilon-Automata without Epsilon-Transitions).
-   * A NEA is an automat without Epsilon-Transitions. */
+   * A NEA is an automat without Epsilon-Transitions. This method doesn't check for a start-state. Every automat
+   * needs a start-state, else it's not an automat. */
   public static boolean isNEA(Automat automat) {
     for (int i = 0; i < automat.getTransitions().size(); i++) {
       if (automat.getTransitions().get(i).getSymbols().size() <= 0)
@@ -23,7 +24,8 @@ public class Util {
     return true;
   }
   
-  /** Computes whether the passed automat is a DEA. */
+  /** Computes whether the passed automat is a DEA. This method doesn't check for a start-state. Every automat
+   * needs a start-state, else it's not an automat. */
   public static boolean isDEA(Automat automat) {
     // Make its a NEA (no Epsilon-Transitions)
     if (!isNEA(automat))

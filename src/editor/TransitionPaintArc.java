@@ -15,9 +15,6 @@ import java.util.Comparator;
 /** Painting information of a transition with the same start- and end-state,
  * resulting in an arc back to its state with a little arrow in the end. */
 public class TransitionPaintArc extends TransitionPaint {
-  // The state on which the ArcTransition is
-  private State hostState;
-  
   /** The angle from the hostState to the Transitions-Arc, between 0 and 2 * Math.PI */
   private double arcAngle;
   
@@ -34,7 +31,6 @@ public class TransitionPaintArc extends TransitionPaint {
     super();
     
     this.aggregateTransition = aggregateTransition;
-    this.hostState = aggregateTransition.getTransitionStart();
     
     arrowCenter = new Point();
     arrowLineOne = new Point();
@@ -75,6 +71,8 @@ public class TransitionPaintArc extends TransitionPaint {
   
   /** Computes the three Points for the arrow */
   private void computeArrow() {
+    State hostState = aggregateTransition.getTransitionStart();
+    
     // States radius
     double radius = Config.STATE_DIAMETER / 2 + 0.6d;
     
@@ -106,6 +104,7 @@ public class TransitionPaintArc extends TransitionPaint {
   
   /** Computes the parameters for Swings drawArc-method. */
   private void computeArc() {
+    State hostState = aggregateTransition.getTransitionStart();
     int radius = Config.STATE_DIAMETER / 2;
     
     // distance from the hostStates middle to the Arcs middle. Make it slightly bigger
@@ -124,6 +123,8 @@ public class TransitionPaintArc extends TransitionPaint {
   
   /** Determine the middle of the biggest free area on the circle of the state */
   private void computeTransitionAngle(ArrayList<Transition> transitions) {
+    State hostState = aggregateTransition.getTransitionStart();
+    
     // Get all LineTransitions that involve the ArcTransitions state
     ArrayList<Transition> lineTransitions = Transition.getLineTransitionsByState(
         hostState, transitions);
@@ -184,6 +185,8 @@ public class TransitionPaintArc extends TransitionPaint {
   /** Computes the angle of the hostState in relation to the middle of the DrawablePanel. 
    * This is used for the Arc-computation if the hostState has no LineTransitions. */
   private double hostStateAngleToMiddle() {
+    State hostState = aggregateTransition.getTransitionStart();
+    
     int drawablePanelMidX = Editor.getDrawablePanel().getWidth() / 2;
     int drawablePanelMidY = Editor.getDrawablePanel().getHeight() / 2;
     
@@ -192,6 +195,7 @@ public class TransitionPaintArc extends TransitionPaint {
   
   /** Compute all the circlePoints angles in relation to the hostStates center.  */
   private ArrayList<Double> circlePointAngles(ArrayList<Point> circlePoints) {
+    State hostState = aggregateTransition.getTransitionStart();
     ArrayList<Double> angles = new ArrayList<Double>();
     
     int deltaX, deltaY;
@@ -218,6 +222,7 @@ public class TransitionPaintArc extends TransitionPaint {
   /** Get a list of all LineTransition-PaintingPoints on the states circle. This is used to
    * determine these points angles. */
   private ArrayList<Point> getStateCirclePoints(ArrayList<Transition> lineTransitions) {
+    State hostState = aggregateTransition.getTransitionStart();
     ArrayList<Point> circlePoints = new ArrayList<Point>();
     
     TransitionPaintLine transitionPaintLine;
@@ -240,6 +245,7 @@ public class TransitionPaintArc extends TransitionPaint {
   
   /** Computes the Point where the Transitions Symbols are painted. */
   public void computeSymbolDockingPoint() {
+    State hostState = aggregateTransition.getTransitionStart();
     int stateRadius = Config.STATE_DIAMETER / 2;
     double dockingPointVectorLength = Math.sqrt(stateRadius * stateRadius + stateRadius * stateRadius) +
         stateRadius + this.offsetVectorLength;

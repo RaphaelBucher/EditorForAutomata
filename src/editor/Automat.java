@@ -17,6 +17,8 @@ import controlFlow.RemovedState;
 import controlFlow.RemovedTransition;
 import controlFlow.StateMoved;
 import controlFlow.UserAction;
+import transformation.Language;
+import transformation.ReadSymbol;
 
 public class Automat {
   private ArrayList<State> states;
@@ -296,6 +298,17 @@ public class Automat {
       Debug.printAutomat(this);
     }
     if (key == KeyEvent.VK_LEFT) {
+      ArrayList<ReadSymbol> readTransitionsSymbols = new ArrayList<ReadSymbol>();
+      
+      boolean wordAccepted = Language.wordAccepted("abc", this, readTransitionsSymbols);
+      System.out.println("Word accepted: " + wordAccepted);
+      for (int i = 0; i < readTransitionsSymbols.size(); i++) {
+        Transition transition = readTransitionsSymbols.get(i).getTraveledTransition();
+        System.out.println("Transition state " + transition.getTransitionStart().stateIndex + 
+            " to state " + transition.getTransitionEnd().stateIndex + " with read Symbol " +
+            readTransitionsSymbols.get(i).getReadSymbol());
+      }
+      System.out.println();
     }
     // TODO: end of removing
   }

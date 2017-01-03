@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -14,10 +15,13 @@ import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import controlFlow.UserAction;
+import transformation.Language;
 import transformation.Layout;
+import transformation.ReadSymbol;
 import transformation.Transformation;
 import transformation.Util;
 
@@ -42,6 +46,7 @@ public class MenuBar extends JMenuBar {
   private MenuItem layout;
   private MenuItem removeUnreachableStates;
   private MenuItem toNEA;
+  private MenuItem wordAccepted;
   
   // file-choosers
   private final CustomFileChooser xmlFileChooser;
@@ -234,12 +239,43 @@ public class MenuBar extends JMenuBar {
         Automat automatDeepCopy = automat.copy();
         Transformation.transformToNEA(automatDeepCopy);
         
-        // TODO call the layout-algorithm instead of updatePainting()?
         automatDeepCopy.updatePainting();
         Editor.changeAutonat(automatDeepCopy, true, "Transform to NEA");
       }
     });
     automatMenu.add(toNEA);
+    automatMenu.addSeparator();
+    
+    // wordAccepted
+    wordAccepted = new MenuItem("Word accepted");
+    wordAccepted.addActionListener(new ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent e) {
+        // Open an input dialog
+        String word = (String)JOptionPane.showInputDialog(Editor.getEditor(),
+            "Enter the word the automat should test for acceptance", "Word accepted",
+            JOptionPane.PLAIN_MESSAGE);
+        
+        if (word == null) 
+          return; // the user aborted the dialog
+        
+        Automat automat = Editor.getDrawablePanel().getAutomat();
+        
+        // Store the traveled transitions in this list when the word is tested for acceptance
+        ArrayList<ReadSymbol> readTransitionsSymbols = new ArrayList<ReadSymbol>();
+        boolean wordAccepted = Language.wordAccepted(word, automat, readTransitionsSymbols);
+        
+        // TODO remove printlns
+        System.out.println("Word accepted: " + wordAccepted);
+        for (int i = 0; i < readTransitionsSymbols.size(); i++) {
+          Transition transition = readTransitionsSymbols.get(i).getTraveledTransition();
+          System.out.println("Transition state " + transition.getTransitionStart().stateIndex + 
+              " to state " + transition.getTransitionEnd().stateIndex + " with read Symbol " +
+              readTransitionsSymbols.get(i).getReadSymbol());
+        }
+        System.out.println();
+      }
+    });
+    automatMenu.add(wordAccepted);
     
     // Add the built menu to the MenuBar
     this.add(automatMenu);

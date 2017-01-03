@@ -79,11 +79,38 @@ public class Language {
         }
       } else {
         // Epsilon-Transition
+        // Will the current transition close an cycle with only Epsilon-Transitions? If so,
+        // don't allow this since this leads to a stackOverflow! (algorithm doesn't terminate)
+        if (closesEpsilonCycle(transition, readSymbols))
+          continue;
+        
         readSymbols.add(new ReadSymbol(null, transition));
         readSymbol(wordSubstring, outgoingTransitions.get(i).getTransitionEnd(),
             automat, readSymbols);
         readSymbols.remove(readSymbols.size() - 1);
       }
     }
+  }
+  
+  /** @return true if the passed transition would close a circle of only Epsilon-transitions.
+   * Without this check, Epsilon-cycles result in a StackOverflow because the algorithm 
+   * doesn't terminate. */
+  private static boolean closesEpsilonCycle(Transition transition, ArrayList<ReadSymbol> readSymbols) {
+    State cycleStart = transition.getTransitionEnd();
+    
+    for (int i = readSymbols.size() - 1; i >= 0; i--) {
+      if (readSymbols.get(i).getTraveledTransition().getSymbols().size() >= 1) {
+        // Transition is not an Epsilon-Transition. There is no Epsilon-Cylce
+        return false;
+      } else {
+        // Transition is an Epsilon-Transition
+        if (readSymbols.get(i).getTraveledTransition().getTransitionStart().equals(cycleStart)) {
+          // There is an Epsilon-cycle
+          return true;
+        }
+      }
+    }
+    
+    return false;
   }
 }

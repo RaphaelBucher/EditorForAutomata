@@ -1,5 +1,11 @@
 ### Editor for Automata - Bachelor Thesis - Raphael Bucher 2016
 
+#### Installation
+Go to this page if you are not already on it: https://github.com/RaphaelBucher/EditorForAutomata  
+-> Clone or Download
+-> Download Zip  
+-> open runnable_Editor.jar  
+
 #### Runs on Mac and Windows, not on Linux.
 #### Executing runnable_Editor.jar requires the current Java SE Runtime Environment 8.
 #### In case the file doesn't open, the Problem could be that .jar-files are not opened by the Java Runtime Environment. In this case, try:

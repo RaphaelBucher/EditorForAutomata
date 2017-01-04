@@ -76,6 +76,9 @@ public class MenuBar extends JMenuBar {
     newAutomat = new MenuItem("New");
     newAutomat.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
+        // TODO Dieser Aufruf muss bei allen MenuItems zuerst stehen!!!!!
+        Editor.stopWordAcceptedAnimation();
+        
         UserAction.resetActions();
         Editor.changeAutonat(new Automat(), false, "");
       }
@@ -86,6 +89,8 @@ public class MenuBar extends JMenuBar {
     openAutomat = new MenuItem("Open");
     openAutomat.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
+        Editor.stopWordAcceptedAnimation();
+        
         UserAction.resetActions();
         loadAutomat();
       }
@@ -96,6 +101,8 @@ public class MenuBar extends JMenuBar {
     saveAutomat = new MenuItem("Save");
     saveAutomat.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
+        Editor.stopWordAcceptedAnimation();
+        
         saveAutomat();
       }
     });
@@ -107,6 +114,8 @@ public class MenuBar extends JMenuBar {
     imageExport = new MenuItem("Image Export");
     imageExport.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
+        Editor.stopWordAcceptedAnimation();
+        
         exportImage();
       }
     });
@@ -128,6 +137,8 @@ public class MenuBar extends JMenuBar {
 
       @Override
       public void actionPerformed(ActionEvent e) {
+        Editor.stopWordAcceptedAnimation();
+        
         Automat automat = Editor.getDrawablePanel().getAutomat();
         automat.resetConstructingTransition();
         automat.handleMoveToolMouseReleased();
@@ -151,6 +162,8 @@ public class MenuBar extends JMenuBar {
 
       @Override
       public void actionPerformed(ActionEvent e) {
+        Editor.stopWordAcceptedAnimation();
+        
         // perform the action
         UserAction.redoAction();
       }
@@ -185,6 +198,8 @@ public class MenuBar extends JMenuBar {
     info = new MenuItem("Info");
     info.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
+        Editor.stopWordAcceptedAnimation();
+        
         String info = Util.automatInfo(Editor.getDrawablePanel().getAutomat());
         new TextFrame("Automat Info", new Dimension(500, 300), info);
       }
@@ -196,6 +211,8 @@ public class MenuBar extends JMenuBar {
     layout = new MenuItem("Layout");
     layout.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
+        Editor.stopWordAcceptedAnimation();
+        
         Automat automatDeepCopy = Editor.getDrawablePanel().getAutomat().copy();
         Layout.layoutAutomat(automatDeepCopy);
         Editor.changeAutonat(automatDeepCopy, true, "Layout");
@@ -208,6 +225,8 @@ public class MenuBar extends JMenuBar {
     removeUnreachableStates = new MenuItem("Remove unreachable states");
     removeUnreachableStates.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
+        Editor.stopWordAcceptedAnimation();
+        
         Automat automatDeepCopy = Editor.getDrawablePanel().getAutomat().copy();
         Util.deleteUnreachableStates(automatDeepCopy, automatDeepCopy.getStateByStateIndex(0));
         
@@ -224,6 +243,8 @@ public class MenuBar extends JMenuBar {
     toNEA = new MenuItem("Transform to NEA");
     toNEA.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
+        Editor.stopWordAcceptedAnimation();
+        
         Automat automat = Editor.getDrawablePanel().getAutomat();
         if (automat.getStateByStateIndex(0) == null) {
           ErrorMessage.setMessage(Config.ErrorMessages.startStateMissing);
@@ -250,6 +271,8 @@ public class MenuBar extends JMenuBar {
     wordAccepted = new MenuItem("Word accepted");
     wordAccepted.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
+        Editor.stopWordAcceptedAnimation();
+        
         // Open an input dialog
         String word = (String)JOptionPane.showInputDialog(Editor.getEditor(),
             "Enter the word the automat should test for acceptance", "Word accepted",
@@ -263,6 +286,9 @@ public class MenuBar extends JMenuBar {
         // Store the traveled transitions in this list when the word is tested for acceptance
         ArrayList<ReadSymbol> readTransitionsSymbols = new ArrayList<ReadSymbol>();
         boolean wordAccepted = Language.wordAccepted(word, automat, readTransitionsSymbols);
+        
+        // Start the animation how the word was accepted / denied
+        Editor.startWordAcceptedAnimation(readTransitionsSymbols);
         
         // TODO remove printlns
         System.out.println("Word accepted: " + wordAccepted);

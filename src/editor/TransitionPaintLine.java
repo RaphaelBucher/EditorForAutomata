@@ -48,7 +48,7 @@ public class TransitionPaintLine extends TransitionPaint {
   public void paint(Graphics2D graphics2D) {
     // Does the transition have the minimal length to be painted?
     if (isPainted) {
-      if (this.aggregateTransition.isSelected)
+      if (this.aggregateTransition.isSelected || this.aggregateTransition.wordAcceptedPath)
         graphics2D.setColor(Config.SELECTED_STATE_COLOR);
       
       // Transitions line

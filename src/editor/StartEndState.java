@@ -28,7 +28,7 @@ public class StartEndState extends State {
   public void paint(Graphics2D graphics2D) {
     super.paint(graphics2D);
     
-    if (this.isSelected) {
+    if (this.isSelected || this.wordAcceptedPath) {
       graphics2D.setColor(Config.SELECTED_STATE_COLOR);
       graphics2D.drawImage(startArrowSelectedImage, x - 49, y - 11, null);
     } else

@@ -41,7 +41,7 @@ public class TransitionPaintArc extends TransitionPaint {
   
   @Override
   public void paint(Graphics2D graphics2D) {
-    if (this.aggregateTransition.isSelected)
+    if (this.aggregateTransition.isSelected || this.aggregateTransition.wordAcceptedPath)
       graphics2D.setColor(Config.SELECTED_STATE_COLOR);
     
     // The Arc

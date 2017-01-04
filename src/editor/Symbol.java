@@ -79,7 +79,8 @@ public class Symbol extends Shape {
     for (int i = 0; i < symbols.size(); i++) {
       currentSymbol = symbols.get(i);
       // If the element is selected, paint a background-roundRect to hightlight it
-      if (currentSymbol.isSelected || symbols.get(i).hostTransition.isSelected) {
+      if (currentSymbol.isSelected || symbols.get(i).hostTransition.isSelected ||
+          symbols.get(i).wordAcceptedPath) {
         graphics2D.setColor(new Color(190, 240, 255));
         
         graphics2D.fillRoundRect(currentSymbol.symbolPaintingMiddle.x - currentSymbol.boundingBoxLeft - 2,
@@ -168,6 +169,17 @@ public class Symbol extends Shape {
   public Symbol copy(Transition hostTransition) {
     Symbol newSymbol = new Symbol(hostTransition, symbol);
     return newSymbol;
+  }
+  
+  /** Returns the Symbol-object in the list that has the same symbol-char as the passed one. Returns
+   * null if none is found in the list. */
+  public static Symbol getSymbol(ArrayList<Symbol> symbols, char searchedSymbol) {
+    for (int i = 0; i < symbols.size(); i++) {
+      if (symbols.get(i).symbol == searchedSymbol)
+        return symbols.get(i);
+    }
+    
+    return null;
   }
   
   // Setters and Getters

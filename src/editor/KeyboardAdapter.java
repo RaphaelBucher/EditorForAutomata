@@ -14,6 +14,8 @@ import java.awt.event.KeyEvent;
  * setFocusable(true), e.g. ToolBar instance and DrawablePanel instance, it doesn't work. */
 public class KeyboardAdapter extends KeyAdapter {
   public void keyPressed(KeyEvent keyEvent) {
+    Editor.stopWordAcceptedAnimation();
+    
     // Does the automat need to take action?
     if (!isTakenHotkey(keyEvent))
       Editor.getDrawablePanel().getAutomat().handleKeyPressed(keyEvent);

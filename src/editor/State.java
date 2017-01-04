@@ -41,7 +41,7 @@ public class State extends Shape {
 
   public void paint(Graphics2D graphics2D) {
     // At the start of all paint-methods of State and subclasses
-    if (this.isSelected)
+    if (this.isSelected || this.wordAcceptedPath)
       graphics2D.setColor(Config.SELECTED_STATE_COLOR);
     
     graphics2D.drawOval(x - Config.STATE_DIAMETER / 2, y - Config.STATE_DIAMETER / 2, Config.STATE_DIAMETER,

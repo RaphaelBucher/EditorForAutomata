@@ -10,11 +10,13 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
 import controlFlow.ChangedAutomat;
 import controlFlow.UserAction;
+import transformation.ReadSymbol;
 
 public class Editor extends JFrame {
   private static final long serialVersionUID = 1L;
@@ -26,6 +28,12 @@ public class Editor extends JFrame {
   
   /** The new Automat if the Editor needs to change its Automat, e.g. when loading one. */
   private static Automat newAutomat;
+  
+  private static WordAnimation wordAnimation;
+  
+  // TODO needed? 
+  /** The control flag whether the word-Accepted-Animation is currently running or not. */
+  //private static boolean wordAnimationActive = false;
 
   public Editor() {
     this.setTitle("Editor for Automata");
@@ -135,6 +143,24 @@ public class Editor extends JFrame {
     if (addActionToControlFlow) {
       UserAction.addAction(new ChangedAutomat(Editor.getDrawablePanel().getAutomat(), automat, undoRedoText));
     }
+  }
+  
+  /** Starts the animation after the word has been tested for acceptance. */
+  public static void startWordAcceptedAnimation(ArrayList<ReadSymbol> readTransitionsSymbols) {
+    // Deselect selected shapes and reset transition construction process if some is active
+    Automat automat = Editor.getDrawablePanel().getAutomat();
+    automat.deselectSelectedShape();
+    automat.resetConstructingTransition();
+    
+    wordAnimation = new WordAnimation(readTransitionsSymbols);
+  }
+  
+  /** Stops the animation of the computed word. */
+  public static void stopWordAcceptedAnimation() {
+    if (wordAnimation != null)
+      wordAnimation.stopAnimation();
+    
+    wordAnimation = null;
   }
   
   // Getter

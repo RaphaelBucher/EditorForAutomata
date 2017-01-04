@@ -17,7 +17,7 @@ public class EndState extends State {
   public void paint(Graphics2D graphics2D) {
     super.paint(graphics2D);
     
-    if (this.isSelected)
+    if (this.isSelected || this.wordAcceptedPath)
       graphics2D.setColor(Config.SELECTED_STATE_COLOR);
 
     // draw the second inner oval of an end-state

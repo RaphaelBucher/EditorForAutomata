@@ -30,10 +30,6 @@ public class Editor extends JFrame {
   private static Automat newAutomat;
   
   private static WordAnimation wordAnimation;
-  
-  // TODO needed? 
-  /** The control flag whether the word-Accepted-Animation is currently running or not. */
-  //private static boolean wordAnimationActive = false;
 
   public Editor() {
     this.setTitle("Editor for Automata");
@@ -106,6 +102,11 @@ public class Editor extends JFrame {
       
       // Updating
       drawablePanel.update(toolBar);
+      
+      if (wordAnimation != null) {
+        if (!wordAnimation.update(Editor.getDrawablePanel().getAutomat()))
+          stopWordAcceptedAnimation();
+      }
 
       // Painting
       toolBar.repaint();
@@ -146,13 +147,15 @@ public class Editor extends JFrame {
   }
   
   /** Starts the animation after the word has been tested for acceptance. */
-  public static void startWordAcceptedAnimation(ArrayList<ReadSymbol> readTransitionsSymbols) {
+  public static void startWordAcceptedAnimation(boolean wordAccepted,
+      ArrayList<ReadSymbol> readTransitionsSymbols) {
     // Deselect selected shapes and reset transition construction process if some is active
     Automat automat = Editor.getDrawablePanel().getAutomat();
     automat.deselectSelectedShape();
     automat.resetConstructingTransition();
     
-    wordAnimation = new WordAnimation(readTransitionsSymbols);
+    if (automat.getStateByStateIndex(0) != null)
+      wordAnimation = new WordAnimation(wordAccepted, readTransitionsSymbols);
   }
   
   /** Stops the animation of the computed word. */
@@ -179,5 +182,9 @@ public class Editor extends JFrame {
   /** getMenuBar() is taken by the framework. */
   public static MenuBar getCustomMenuBar() {
     return menuBar;
+  }
+  
+  public static WordAnimation getWordAnimation() {
+    return wordAnimation;
   }
 }

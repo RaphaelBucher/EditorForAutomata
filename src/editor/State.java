@@ -40,9 +40,17 @@ public class State extends Shape {
   }
 
   public void paint(Graphics2D graphics2D) {
-    // At the start of all paint-methods of State and subclasses
+    graphics2D.setColor(Color.BLACK);
+
+    // State selected or part of the word-animation-path?
     if (this.isSelected || this.wordAcceptedPath)
       graphics2D.setColor(Config.SELECTED_STATE_COLOR);
+    
+    // State highlighted during the word-animation?
+    if (Editor.getWordAnimation() != null) {
+      if (this.equals(Editor.getWordAnimation().getHighlightedShape()))
+        graphics2D.setColor(Editor.getWordAnimation().getHighlightedColor());
+    }
     
     graphics2D.drawOval(x - Config.STATE_DIAMETER / 2, y - Config.STATE_DIAMETER / 2, Config.STATE_DIAMETER,
         Config.STATE_DIAMETER);
@@ -53,9 +61,6 @@ public class State extends Shape {
 
     graphics2D.setFont(new Font("Arial", Font.PLAIN, 14));
     graphics2D.drawString("" + this.getStateIndex(), x - 2, y + 9);
-    
-    // At the end of all paint-methods of State and subclasses. Restore default color
-    graphics2D.setColor(Color.BLACK);
   }
 
   public int getStateIndex() {

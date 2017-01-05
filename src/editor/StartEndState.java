@@ -5,7 +5,6 @@
  * */
 package editor;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.File;
@@ -29,7 +28,6 @@ public class StartEndState extends State {
     super.paint(graphics2D);
     
     if (this.isSelected || this.wordAcceptedPath) {
-      graphics2D.setColor(Config.SELECTED_STATE_COLOR);
       graphics2D.drawImage(startArrowSelectedImage, x - 49, y - 11, null);
     } else
       // Start arrow image
@@ -38,8 +36,6 @@ public class StartEndState extends State {
     // draw the second inner oval of an end-state
     graphics2D.drawOval(x - (Config.END_STATE_INNER_DIAMETER / 2), y - (Config.END_STATE_INNER_DIAMETER / 2),
         Config.END_STATE_INNER_DIAMETER, Config.END_STATE_INNER_DIAMETER);
-    
-    graphics2D.setColor(Color.BLACK);
   }
   
   /** Returns a deep copy of the State. */

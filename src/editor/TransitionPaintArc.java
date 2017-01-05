@@ -41,8 +41,7 @@ public class TransitionPaintArc extends TransitionPaint {
   
   @Override
   public void paint(Graphics2D graphics2D) {
-    if (this.aggregateTransition.isSelected || this.aggregateTransition.wordAcceptedPath)
-      graphics2D.setColor(Config.SELECTED_STATE_COLOR);
+    graphics2D.setColor(getPaintingColor());
     
     // The Arc
     graphics2D.drawArc(arcX, arcY, Config.STATE_DIAMETER, Config.STATE_DIAMETER, arcStartAngle, 270);
@@ -279,6 +278,25 @@ public class TransitionPaintArc extends TransitionPaint {
   protected boolean mouseClickHit(Point mousePosition) {
     return Math2D.arcTransitionClicked(mousePosition, new Point(arcX + Config.STATE_DIAMETER / 2,
         arcY + Config.STATE_DIAMETER / 2), arcAngle);
+  }
+  
+  /** Computes the Position of the animated ball for a word-animation. */
+  public Point wordAnimationBall(long passedMillis, long totalMillis) {
+    if (passedMillis > totalMillis)
+      return null;
+    
+    Point arcCenter = new Point(arcX + Config.STATE_DIAMETER / 2, arcY + Config.STATE_DIAMETER / 2);
+    double startAngle = Math.toRadians(arcStartAngle - 90);
+    double movedAngle = (double)passedMillis / totalMillis * Math.PI * 1.5d;
+    double ballAngle = startAngle - movedAngle;
+    
+    int ballX = (int)Math.round(Math.cos(ballAngle) * Config.STATE_DIAMETER / 2);
+    // In cartesian coordinates
+    int ballY = -(int)Math.round(Math.sin(ballAngle) * Config.STATE_DIAMETER / 2);
+
+    Point ballPoint = new Point(arcCenter.x + ballX, arcCenter.y + ballY);
+    
+    return ballPoint;
   }
   
   // Setters and Getters

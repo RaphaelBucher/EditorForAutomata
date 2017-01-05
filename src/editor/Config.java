@@ -36,6 +36,12 @@ public interface Config {
   int STATE_DIAMETER = 50 - 8; // Should be even for more accurate visuals
   int END_STATE_INNER_DIAMETER = STATE_DIAMETER - 6;
   Color SELECTED_STATE_COLOR = new Color(30, 150, 255);
+  
+  // For the animation
+  Color HIGHLIGHTED_COLOR_WORD_ACCEPTED = new Color(90, 200, 105);
+  Color HIGHLIGHTED_COLOR_WORD_DENIED = new Color(255, 102, 102);
+  Color HIGHLIGHTED_COLOR_SYMBOL_BACKGROUND_ACCEPTED = new Color(180, 240, 180);
+  Color HIGHLIGHTED_COLOR_SYMBOL_BACKGROUND_DENIED = new Color(255, 190, 190);
 
   // Background-color of the drawablePanel
   Color BACKGROUND_COLOR = Color.WHITE;

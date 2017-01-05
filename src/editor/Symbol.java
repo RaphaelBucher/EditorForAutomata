@@ -78,15 +78,14 @@ public class Symbol extends Shape {
     Symbol currentSymbol;
     for (int i = 0; i < symbols.size(); i++) {
       currentSymbol = symbols.get(i);
-      // If the element is selected, paint a background-roundRect to hightlight it
-      if (currentSymbol.isSelected || symbols.get(i).hostTransition.isSelected ||
-          symbols.get(i).wordAcceptedPath) {
-        graphics2D.setColor(new Color(190, 240, 255));
-        
-        graphics2D.fillRoundRect(currentSymbol.symbolPaintingMiddle.x - currentSymbol.boundingBoxLeft - 2,
-            currentSymbol.symbolPaintingMiddle.y - boundingBoxUp - 2, currentSymbol.boundingBoxLeft * 2 + 4,
-            boundingBoxUp * 2 + 4, 7, 7);
-        graphics2D.setColor(Color.BLACK);
+      // If the element is selected in some way, paint a background-roundRect to hightlight it
+      if (Editor.getWordAnimation() != null) {
+        if (symbols.get(i).equals(Editor.getWordAnimation().getHighlightedShape()))
+          symbols.get(i).paintBackgroundRect(graphics2D, Editor.getWordAnimation().getHighlightedSymbolBackground());
+        else if (symbols.get(i).wordAcceptedPath)
+          symbols.get(i).paintBackgroundRect(graphics2D, new Color(190, 240, 255));
+      } else if (currentSymbol.isSelected || symbols.get(i).hostTransition.isSelected) {
+        symbols.get(i).paintBackgroundRect(graphics2D, new Color(190, 240, 255));
       }
       
       String drawnString = "" + currentSymbol.getSymbol();
@@ -97,6 +96,16 @@ public class Symbol extends Shape {
       graphics2D.drawString(drawnString, currentSymbol.symbolPaintingMiddle.x -
           currentSymbol.boundingBoxLeft, currentSymbol.symbolPaintingMiddle.y + fontOffsetY);
     }
+  }
+  
+  private void paintBackgroundRect(Graphics2D graphics2D, Color color) {
+    graphics2D.setColor(color);
+    
+    graphics2D.fillRoundRect(symbolPaintingMiddle.x - boundingBoxLeft - 2,
+        symbolPaintingMiddle.y - boundingBoxUp - 2, boundingBoxLeft * 2 + 4,
+        boundingBoxUp * 2 + 4, 7, 7);
+    
+    graphics2D.setColor(Color.BLACK);
   }
   
   /** Computes the symbols middlePoints according to the bounding boxes. */

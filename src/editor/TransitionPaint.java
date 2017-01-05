@@ -5,6 +5,7 @@
  * */
 package editor;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ public abstract class TransitionPaint {
   public abstract void computeSymbolDockingPoint();
   public abstract Point getSymbolDockingPoint();
   public abstract int getSymbolDirection();
+  public abstract Point wordAnimationBall(long passedMillis, long totalMillis);
   protected abstract boolean mouseClickHit(Point mousePosition);
   
   // A reference on the Transition which instantiated this TransitionPaintLine-Object
@@ -42,5 +44,29 @@ public abstract class TransitionPaint {
       angle = Math.PI * 2 - angle;
     
     return angle;
+  }
+  
+  /** Returns the painting color for the transition. */
+  protected Color getPaintingColor() {
+    Color color = new Color(0, 0, 0);
+    
+    if (this.aggregateTransition.isSelected || this.aggregateTransition.wordAcceptedPath)
+      color = Config.SELECTED_STATE_COLOR;
+    
+    // Transition highlighted during the word-animation?
+    WordAnimation wordAnimation = Editor.getWordAnimation();
+    if (wordAnimation != null) {
+      // Is this Epsilon-Transition highlighted
+      if (this.aggregateTransition.equals(wordAnimation.getHighlightedShape()))
+        color = wordAnimation.getHighlightedColor();
+      
+      // Is thie Non-Epsilon-Transition highlighted?
+      if (wordAnimation.getHighlightedShape() instanceof Symbol) {
+        if (aggregateTransition.equals( ((Symbol) wordAnimation.getHighlightedShape()).getHostTransition()) )
+          color = wordAnimation.getHighlightedColor();
+      }
+    }
+    
+    return color;
   }
 }

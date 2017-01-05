@@ -48,8 +48,7 @@ public class TransitionPaintLine extends TransitionPaint {
   public void paint(Graphics2D graphics2D) {
     // Does the transition have the minimal length to be painted?
     if (isPainted) {
-      if (this.aggregateTransition.isSelected || this.aggregateTransition.wordAcceptedPath)
-        graphics2D.setColor(Config.SELECTED_STATE_COLOR);
+      graphics2D.setColor(getPaintingColor());
       
       // Transitions line
       graphics2D.drawLine(transitionStartX, transitionStartY, transitionEndX, transitionEndY);
@@ -228,6 +227,22 @@ public class TransitionPaintLine extends TransitionPaint {
     
     return Math2D.lineTransitionClicked(mousePosition, new Point(transitionStartX, transitionStartY),
         new Point(transitionEndX, transitionEndY));
+  }
+  
+  /** Computes the Position of the animated ball for a word-animation. */
+  public Point wordAnimationBall(long passedMillis, long totalMillis) {
+    if (passedMillis > totalMillis)
+      return null;
+    
+    Vector2D transitionVector = new Vector2D(transitionEndX - transitionStartX, transitionEndY - transitionStartY);
+    transitionVector.scale((double)passedMillis / totalMillis);
+    
+    int ballX = transitionStartX + (int)Math.round(transitionVector.x);
+    int ballY = transitionStartY + (int)Math.round(transitionVector.y);
+    
+    Point ballPoint = new Point(ballX, ballY);
+    
+    return ballPoint;
   }
 
   // Setters and Getters

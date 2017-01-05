@@ -48,4 +48,10 @@ public class Vector2D {
     
     return angle;
   }
+  
+  /** Scales the vector by the passed factor. 1.0d keeps the vector unchanged. */
+  public void scale(double factor) {
+    x *= factor;
+    y *= factor;
+  }
 }

@@ -5,6 +5,7 @@
  * */
 package editor;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
@@ -45,11 +46,16 @@ public class Automat {
     for (int i = 0; i < states.size(); i++) {
       states.get(i).paint(graphics2D);
     }
+    graphics2D.setColor(Color.BLACK);
     
     // transitions
     for (int i = 0; i < transitions.size(); i++) {
       transitions.get(i).paint(graphics2D);
     }
+    
+    // animated Ball
+    if (Editor.getWordAnimation() != null)
+      Editor.getWordAnimation().paintAnimatedBall(graphics2D);
   }
 
   public void handleMousePressed(MouseEvent evt) {

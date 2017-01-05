@@ -5,7 +5,6 @@
  * */
 package editor;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.File;
@@ -27,14 +26,12 @@ public class StartState extends State {
   // custom paint method which overrides the one from class State
   public void paint(Graphics2D graphics2D) {
     super.paint(graphics2D);
-    
+
     if (this.isSelected || this.wordAcceptedPath) {
       graphics2D.drawImage(startArrowSelectedImage, x - 49, y - 11, null);
     } else      
       // Start arrow image
       graphics2D.drawImage(startArrowImage, x - 49, y - 11, null);
-    
-    graphics2D.setColor(Color.BLACK);
   }
   
   /** Returns a deep copy of the State. */

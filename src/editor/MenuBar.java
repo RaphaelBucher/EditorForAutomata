@@ -288,7 +288,7 @@ public class MenuBar extends JMenuBar {
         boolean wordAccepted = Language.wordAccepted(word, automat, readTransitionsSymbols);
         
         // Start the animation how the word was accepted / denied
-        Editor.startWordAcceptedAnimation(readTransitionsSymbols);
+        Editor.startWordAcceptedAnimation(wordAccepted, readTransitionsSymbols);
         
         // TODO remove printlns
         System.out.println("Word accepted: " + wordAccepted);

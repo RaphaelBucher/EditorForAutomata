@@ -182,9 +182,12 @@ public class Symbol extends Shape {
   
   /** Returns the Symbol-object in the list that has the same symbol-char as the passed one. Returns
    * null if none is found in the list. */
-  public static Symbol getSymbol(ArrayList<Symbol> symbols, char searchedSymbol) {
+  public static Symbol getSymbol(ArrayList<Symbol> symbols, Character searchedSymbol) {
+    if (searchedSymbol == null)
+      return null;
+    
     for (int i = 0; i < symbols.size(); i++) {
-      if (symbols.get(i).symbol == searchedSymbol)
+      if (symbols.get(i).symbol == searchedSymbol.charValue())
         return symbols.get(i);
     }
     

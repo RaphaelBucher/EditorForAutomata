@@ -3,7 +3,9 @@ package transformation;
 import java.util.ArrayList;
 
 import editor.Automat;
+import editor.Config;
 import editor.EndState;
+import editor.ErrorMessage;
 import editor.StartEndState;
 import editor.State;
 import editor.Transition;
@@ -20,8 +22,10 @@ public class Language {
    * combination of transitions the word could travel until the road-block. */
   public static boolean wordAccepted(String word, Automat automat, ArrayList<ReadSymbol> usedTransitionsSymbols) {
     State startState = automat.getStateByStateIndex(0);
-    if (startState == null)
+    if (startState == null) {
+      ErrorMessage.setMessage(Config.ErrorMessages.startStateMissing);
       return false;
+    }
     
     // Reset the longest list and its counter
     mostReadSymbols = new ArrayList<ReadSymbol>();

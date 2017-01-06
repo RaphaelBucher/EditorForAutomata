@@ -55,7 +55,7 @@ public class Automat {
     
     // animated Ball
     if (Editor.getWordAnimation() != null)
-      Editor.getWordAnimation().paintAnimatedBall(graphics2D);
+      Editor.getWordAnimation().paint(graphics2D);
   }
 
   public void handleMousePressed(MouseEvent evt) {

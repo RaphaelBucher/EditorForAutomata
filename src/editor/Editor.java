@@ -147,7 +147,7 @@ public class Editor extends JFrame {
   }
   
   /** Starts the animation after the word has been tested for acceptance. */
-  public static void startWordAcceptedAnimation(boolean wordAccepted,
+  public static void startWordAcceptedAnimation(String originalWord, boolean wordAccepted,
       ArrayList<ReadSymbol> readTransitionsSymbols) {
     // Deselect selected shapes and reset transition construction process if some is active
     Automat automat = Editor.getDrawablePanel().getAutomat();
@@ -155,7 +155,7 @@ public class Editor extends JFrame {
     automat.resetConstructingTransition();
     
     if (automat.getStateByStateIndex(0) != null)
-      wordAnimation = new WordAnimation(wordAccepted, readTransitionsSymbols);
+      wordAnimation = new WordAnimation(originalWord, wordAccepted, readTransitionsSymbols);
   }
   
   /** Stops the animation of the computed word. */

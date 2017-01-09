@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import editor.Automat;
+import editor.EndState;
+import editor.StartEndState;
 import editor.State;
 import editor.Symbol;
 import editor.Transition;
@@ -83,7 +85,6 @@ public class Util {
     return symbols;
   }
   
-  
   /** @return All symbols that the automat contains. */
   public static ArrayList<Character> getAlphabet(Automat automat) {
     ArrayList<Character> symbols = new ArrayList<Character>();
@@ -98,6 +99,148 @@ public class Util {
     }
     
     return symbols;
+  }
+  
+  /** A String that contains the Type-3 Grammar with L(G) = A(E). */
+  public static String toGrammar(Automat automat) {
+    String grammar = "";
+    
+    // Base automat should be a NEA. If its an Epsilon-Automat, transform this automat to a NEA
+    if (!isNEA(automat))
+      Transformation.transformToNEA(automat);
+    
+    grammar += "Type-3 Grammar G which generates the accepted Language of the Automat E, ";
+    grammar += "L(G) = A(E).\n\n";
+    grammar += "G = (N, T, P, S) with\n\n";
+    
+    // Nonterminals
+    grammar += grammarApendNonterminals(automat);
+    
+    // Terminals
+    grammar += grammarApendTerminals(automat);
+    
+    // Start-State. The existence of a start-state was checked before and is guaranteed at this stage
+    grammar += "S = " + subscript("q0") + "\n\n";
+    
+    // Propositions
+    grammar += grammarApendPropositions(automat);
+    
+    // Legend for the state to Nonterminal renaming
+    grammar += "\n\n";
+    grammar += "State to Nonterminals renaming:\n" +
+        subscript("q0 = S, q1 = A, q2 = B,...,q18 = R, q19 = T, q20 = U,...,q25 = Z, q26 = A1, q27 = A2,...");
+    
+    return grammar;
+  }
+  
+  private static String grammarApendPropositions(Automat automat) {
+    String grammar = "P:\n";
+    
+    for (int i = 0; i < automat.getStates().size(); i++) {
+      ArrayList<String> propositions = propositions(automat.getStates().get(i), automat);
+      String propRightSide = propositions.toString().replaceAll(", ", "|");
+      propRightSide = propRightSide.substring(1,  propRightSide.length() - 1);
+      grammar += stateToNonterminal(automat.getStates().get(i)) + " \u2192 " + propRightSide;
+      
+      // Comma for all lineEndings except a Point for the last one.
+      grammar += (i < automat.getStates().size() - 1) ? ",\n" : ".\n";
+    }
+    
+    return grammar;
+  }
+  
+  /** Returns a String-ArrayList of the right sides of all propositions a state has. */
+  private static ArrayList<String> propositions(State state, Automat automat) {
+    ArrayList<String> propositions = new ArrayList<String>();
+    
+    // Append S -> Epsilon if q0 is an End-State
+    if (state.getStateIndex() == 0 && (state instanceof EndState || state instanceof StartEndState) )
+      propositions.add("\u03B5");
+    
+    ArrayList<Transition> stateTransitions = Transition.getTransitionsByStartState(state, automat.getTransitions());
+    for (int i = 0; i < stateTransitions.size(); i++) {
+      Transition transition = stateTransitions.get(i);
+      ArrayList<Symbol> symbols = transition.getSymbols();
+      
+      for (int j = 0; j < symbols.size(); j++) {
+        propositions.add("" + symbols.get(j).getSymbol() + stateToNonterminal(transition.getTransitionEnd()));
+        
+        // Is the transition ending-state an End-State?
+        if (transition.getTransitionEnd().isEndState()) {
+          propositions.add("" + symbols.get(j).getSymbol());
+        } 
+      }
+    }
+    
+    return propositions;
+  }
+  
+  /** Appends the Terminals of the automat to the grammar-String. */
+  private static String grammarApendTerminals(Automat automat) {
+    String grammar = "T ";
+    
+    // For DEAs, its =, for NEAs its subset (Epsilon-Automatas were transformed to NEAs as well previously)
+    if (isDEA(automat))
+      grammar += "=";
+    else
+      grammar += "\u2287";
+    
+    grammar += " {";
+    
+    ArrayList<Character> alphabetList = getAlphabet(automat);
+    Collections.sort(alphabetList, new Comparator<Character>() {
+      @Override
+      public int compare(Character char1, Character char2)
+      {
+        return char1.compareTo(char2);
+      }
+    });
+    
+    String alphabet = alphabetList.toString();
+    alphabet = alphabet.substring(1, alphabet.length() - 1);
+    grammar += alphabet;
+    
+    grammar += "}\n\n";
+    
+    return grammar;
+  }
+  
+  private static String grammarApendNonterminals(Automat automat) {
+    // Sort the states by stateIndex
+    sortStates(automat.getStates());
+    
+    String nonTerminals = "N = {";
+    
+    for (int i = 0; i < automat.getStates().size(); i++) {
+      nonTerminals += stateToNonterminal(automat.getStates().get(i));
+      
+      if ( i < automat.getStates().size() - 1)
+        nonTerminals += ", ";
+    }
+    
+    nonTerminals += "}\n\n";
+    return nonTerminals;
+  }
+  
+  /** Helper-method which returns a String-representation of the state. q0 -> S, q1 -> A, g2 -> B ... q25 -> Z.
+   * q26 -> A1, q27 -> A2... */
+  private static String stateToNonterminal(State state) {
+    int stateIndex = state.getStateIndex();
+    
+    // Start-State
+    if (stateIndex == 0)
+      return "S";
+    
+    // q1 - q18 (A - R). A is 65 in the ASCII-Table, so add +64 for the char-value
+    if (stateIndex <= 18)
+      return "" + (char)(stateIndex + 64);
+    
+    // q19 - q25 (T - Z). q19 is T
+    if (stateIndex <= 25)
+      return "" + (char)(stateIndex + 65);
+    
+    // stateIndex >= 26, return A with subscript-number
+    return subscript("A" + (stateIndex - 25));
   }
   
   /** A String representation of the automat, containing information about its type (NEA, DEA...) and
@@ -260,7 +403,15 @@ public class Util {
   
   /** Appends the of the automat to the info-String. */
   private static String automatInfoApendAlphabet(Automat automat, String info) {
-    info += "\u03A3 = {";
+    info += "\u03A3 ";
+    
+    // For DEAs, its =, for NEAs and Epsilon-automata its subset
+    if (isDEA(automat))
+      info += "=";
+    else
+      info += "\u2287";
+    
+    info += " {";
     
     ArrayList<Character> alphabetList = getAlphabet(automat);
     Collections.sort(alphabetList, new Comparator<Character>() {
@@ -373,5 +524,3 @@ public class Util {
     }
   }
 }
-
-

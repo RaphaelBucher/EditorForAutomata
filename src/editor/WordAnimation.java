@@ -190,9 +190,29 @@ public class WordAnimation {
   }
   
   public void paint(Graphics2D graphics2D) {
+    // The animated ball
     graphics2D.setColor(highlightedColor);
-    if (highlightedShape instanceof Transition || highlightedShape instanceof Symbol)
-      graphics2D.fillOval(animatedBall.x - 5, animatedBall.y - 5, 11, 11);
+    if (highlightedShape instanceof Transition) {
+      Transition transition = ((Transition)highlightedShape);
+      
+      if (transition.isArcTransition())
+        graphics2D.fillOval(animatedBall.x - 5, animatedBall.y - 5, 11, 11);
+      else {
+        if( ((TransitionPaintLine)transition.getTransitionPaint()).isPainted() )
+          graphics2D.fillOval(animatedBall.x - 5, animatedBall.y - 5, 11, 11);
+      }
+    }
+    
+    if (highlightedShape instanceof Symbol) {
+      Transition transition = ((Symbol)highlightedShape).getHostTransition();
+      
+      if (transition.isArcTransition())
+        graphics2D.fillOval(animatedBall.x - 5, animatedBall.y - 5, 11, 11);
+      else {
+        if( ((TransitionPaintLine)transition.getTransitionPaint()).isPainted() )
+          graphics2D.fillOval(animatedBall.x - 5, animatedBall.y - 5, 11, 11);
+      }
+    }
     
     graphics2D.setColor(Color.BLACK);
     

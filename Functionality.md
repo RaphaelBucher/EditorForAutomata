@@ -66,7 +66,7 @@ kann. Also 'Epsilon-Zyklen' erkennen und bei diesen die rekursive Methode nicht 
 (-Regex umformatieren)  
 -Testen ob das Wort 'Teil' des regulären Ausdruckes ist  
 
-#### Visuell anzeigen wie Wort verarbeitet wird (Menüeintrag?? Oder doch lieber automatisch nach word accepted!!!?)
+#### Visuell anzeigen wie Wort verarbeitet wird (DONE)
 Welche Zustände, Symbole & Übergänge benutzt werden und diese aufleuchten lassen der Reihe nach. Oder ein kleines Bällchen über die 
 Übergänge wandern lassen.  
 -Ist wahrscheinlich praktisch wenn man vorher abfragen kann ob das Wort akzeptiert wird  
@@ -75,6 +75,7 @@ eine andere Richtung einschlagen könnte (das gleiche Symbol mit einer anderen T
 Beim DEA natürlich nicht möglich bzw. nötig da dies determiniert ist)  
 
 #### NEA nach Typ-3 Grammatik, Satz 7.9 S. 74. Sript S. 75 (endliche Automaten, Regex und Typ-3 Grammatiken sind gleichmächtig).
+#### (TODO: Automat muss DEA sein, S. 74 Satz 7.9 => also Automat deepCopy und diese in DEA umwandeln)
 -Jeder (minimale) DEA ist auch ein NEA.  
 -Epsilon-Automat nach NEA vor der Berechnung  
 -endliche Automaten sind DEA, NEA, Epsilon S. 75  

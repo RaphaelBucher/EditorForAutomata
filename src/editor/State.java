@@ -187,6 +187,9 @@ public class State extends Shape {
     return State.STATE;
   }
   
+  public boolean isEndState() {
+    return this instanceof EndState || this instanceof StartEndState;
+  }
   
   // Setters and Getters
   public int getX() {

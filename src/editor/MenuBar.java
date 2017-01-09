@@ -43,6 +43,7 @@ public class MenuBar extends JMenuBar {
   // automat-menu
   private JMenu automatMenu;
   private MenuItem info;
+  private MenuItem grammar;
   private MenuItem layout;
   private MenuItem removeUnreachableStates;
   private MenuItem toNEA;
@@ -205,6 +206,22 @@ public class MenuBar extends JMenuBar {
       }
     });
     automatMenu.add(info);
+    
+    // Typ-3 Grammatik
+    grammar = new MenuItem("To Type-3 Grammar");
+    grammar.addActionListener(new ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent e) {
+        Editor.stopWordAcceptedAnimation();
+        Automat automatCopy = Editor.getDrawablePanel().getAutomat().copy();
+        
+        if (automatCopy.getStateByStateIndex(0) != null) {
+          String grammar = Util.toGrammar(automatCopy);
+          new TextFrame("Type-3 Grammar", new Dimension(600, 360), grammar);
+        } else
+          ErrorMessage.setMessage(Config.ErrorMessages.startStateMissing);
+      }
+    });
+    automatMenu.add(grammar);
     automatMenu.addSeparator();
     
     // layout

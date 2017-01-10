@@ -74,8 +74,7 @@ Welche Zustände, Symbole & Übergänge benutzt werden und diese aufleuchten las
 eine andere Richtung einschlagen könnte (das gleiche Symbol mit einer anderen Transition lesen kann.
 Beim DEA natürlich nicht möglich bzw. nötig da dies determiniert ist)  
 
-#### NEA nach Typ-3 Grammatik, Satz 7.9 S. 74. Sript S. 75 (endliche Automaten, Regex und Typ-3 Grammatiken sind gleichmächtig).
-#### (TODO: Automat muss DEA sein, S. 74 Satz 7.9 => also Automat deepCopy und diese in DEA umwandeln)
+#### NEA nach Typ-3 Grammatik, Satz 7.9 S. 74. Sript S. 75 (endliche Automaten, Regex und Typ-3 Grammatiken sind gleichmächtig). (DONE)
 -Jeder (minimale) DEA ist auch ein NEA.  
 -Epsilon-Automat nach NEA vor der Berechnung  
 -endliche Automaten sind DEA, NEA, Epsilon S. 75  

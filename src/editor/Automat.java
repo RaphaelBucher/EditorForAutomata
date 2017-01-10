@@ -319,7 +319,7 @@ public class Automat {
         newTransition.getTransitionEnd() == null)
       return;
     
-    // Does the automat already have such a transition with such start-state and 
+    // Does the automat already have such a transition with such start-state and
     // end-state indices?
     Transition transition = newTransition.isInArrayList(transitions);
     if (transition == null) {
@@ -344,6 +344,26 @@ public class Automat {
     // Update the transitions painting information. Called every time, even if only a symbol has
     // been added.
     transition.computePaintingCoordinates(transitions);
+  }
+  
+  /** Adds a Transition to the automat without updating the painting information. */
+  public void addTransitionNoPaintingUpdate(Transition newTransition) {
+    // Does the automat already have such a transition with such start-state and
+    // end-state indices?
+    Transition transition = newTransition.isInArrayList(transitions);
+    if (transition == null) {
+      // Instantiate a new Transition with start- and end-state and no symbols yet
+      transition = new Transition(newTransition.getTransitionStart(),
+          newTransition.getTransitionEnd());
+      
+      // Add the transition to the automats transitions.
+      transitions.add(transition);
+    }
+    
+    // Add all symbols
+    for (int i = 0; i < newTransition.getSymbols().size(); i++) {
+      transition.addSymbol(newTransition.getSymbols().get(i).getSymbol(), false);
+    }
   }
   
   /** Did the mouseClick hit a Shape of the automat? E.g. a state, a transition etc. */

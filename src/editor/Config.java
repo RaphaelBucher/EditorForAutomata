@@ -110,6 +110,7 @@ public interface Config {
     
     // Transformation
     String transformIsNEAAlready = "Automat is already a NEA";
+    String transformIsDEAAlready = "Automat is already a DEA";
   }
   
   /** Displayed ErrorMessages */

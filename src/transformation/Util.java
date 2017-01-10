@@ -450,6 +450,17 @@ public class Util {
     });
   }
   
+  /** Sorts the passed Character-ArrayList. */
+  public static void sortCharacters(ArrayList<Character> characters) {
+    // Sort the list
+    Collections.sort(characters, new Comparator<Character>() {
+      @Override
+      public int compare(Character char1, Character char2)
+      {
+        return new Integer(char1.compareTo(char2));
+      }
+    });
+  }
   
   /** Returns an ArrayList of all States that are reachable by moving along 
    * transitions (only in their direction!). Includes the passed starting state as well.

@@ -47,6 +47,7 @@ public class MenuBar extends JMenuBar {
   private MenuItem layout;
   private MenuItem removeUnreachableStates;
   private MenuItem toNEA;
+  private MenuItem toDEA;
   private MenuItem wordAccepted;
   
   // file-choosers
@@ -282,6 +283,36 @@ public class MenuBar extends JMenuBar {
       }
     });
     automatMenu.add(toNEA);
+    
+    // toDEA
+    toDEA = new MenuItem("Transform to DEA");
+    toDEA.addActionListener(new ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent e) {
+        Editor.stopWordAcceptedAnimation();
+        
+        Automat automat = Editor.getDrawablePanel().getAutomat();
+        if (automat.getStateByStateIndex(0) == null) {
+          ErrorMessage.setMessage(Config.ErrorMessages.startStateMissing);
+          return;
+        }
+        
+        if (Util.isDEA(automat)) {
+          Tooltip.setMessage(Config.Tooltips.transformIsDEAAlready, 0);
+          return;
+        }
+        
+        // Automat is not a DEA, just a NEA or Epsilon-Automat
+        Automat automatDeepCopy = automat.copy();
+        automatDeepCopy = Transformation.transformToDEA(automatDeepCopy);
+        
+        System.out.println("Is DEA: " + Util.isDEA(automatDeepCopy));
+        
+        Layout.layoutAutomat(automatDeepCopy);
+        Editor.changeAutonat(automatDeepCopy, true, "Transform to DEA");
+      }
+    });
+    automatMenu.add(toDEA);
+    
     automatMenu.addSeparator();
     
     // wordAccepted

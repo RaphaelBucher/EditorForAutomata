@@ -1,6 +1,9 @@
 package transformation;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import editor.Automat;
 import editor.EndState;
@@ -11,6 +14,108 @@ import editor.Transition;
 /** Used for the automata transformation algorithms
  * Epsilon-automata -> NEA -> DEA -> minimal DEA. */
 public class Transformation {
+  private static ArrayList<DEATableRow> toDEATableRows;
+  
+  /** Creates a DEA from the passed automat which accepts the same language and returns this automat.
+   * In case the passed automat is a DEA already, this method returns the passed reference. */
+  public static Automat transformToDEA(Automat automat) {
+    Automat newDEA = new Automat();
+    
+    if (Util.isDEA(automat))
+      return automat;
+    
+    // If the Automat is not a NEA but just an Epsilon-Automat, transform the automat into a NEA first.
+    // The called method decides itself whether a transformation is needed.
+    transformToNEA(automat);
+    
+    // automat can only be a NEA at this stage
+    ArrayList<Character> alphabet = Util.getAlphabet(automat);
+    Util.sortCharacters(alphabet);
+
+    toDEATableRows = new ArrayList<DEATableRow>();
+    
+    // Add a new Row with the Start state
+    Set<Integer> startState = new HashSet<Integer>();
+    startState.add(0);
+    addDEATableRow(startState, alphabet);
+    
+    // Computes the whole Table for the DEA
+    toDEAComputeTable(automat, alphabet);
+    
+    // Create the States for the new DEA for each Row (State) of the Table and add them to the list
+    // of the newly created DEA
+    toDEACreateNewStates(automat, newDEA);
+    
+    // Create the transitions of the new DEA
+    toDEACreateTransitions(newDEA);
+
+    return newDEA;
+  }
+  
+  private static void toDEACreateTransitions(Automat newDEA) {
+    for (int i = 0; i < toDEATableRows.size(); i++) {
+      toDEATableRows.get(i).createTransitions(newDEA, toDEATableRows);
+    }
+  }
+  
+  private static void toDEACreateNewStates(Automat originalNEA, Automat newDEA) {
+    for (int i = 0; i < toDEATableRows.size(); i++) {
+      toDEATableRows.get(i).createNewState(originalNEA, i);
+      
+      // Add the newly instantiated state to the DEA
+      newDEA.addState(toDEATableRows.get(i).getNewState(), false);
+    }
+  }
+  
+  private static void toDEAComputeTable(Automat automat, ArrayList<Character> alphabet) {
+    int toDEATableRowsIndex = 0;
+    
+    while (true) {
+      if (toDEATableRowsIndex < toDEATableRows.size()) {
+        toDEATableRows.get(toDEATableRowsIndex).computeRow(automat, alphabet);
+        toDEATableRowsIndex++;
+      } else
+        break;
+    }
+  }
+  
+  /** Checks whether the Set of states is already present in the list. If not, creates a new
+   * Row with this set of states. */
+  public static void addDEATableRow(Set<Integer> states, ArrayList<Character> alphabet) {
+    // Check if the Set of states is already present in the Row-List
+    boolean addStates = true;
+    for (int i = 0; i < toDEATableRows.size(); i++) {
+      if (states.equals(toDEATableRows.get(i).getStates())) {
+        addStates = false;
+        break;
+      }
+    }
+    if (addStates)
+      toDEATableRows.add(new DEATableRow(states, alphabet));
+  }
+
+  /** Returns a HashSet of all State-indices that can be reached by reading the symbol
+   * from all the passed startingStates. */
+  public static Set<Integer> toDEAReachedStates(Set<Integer> startingStates, Character symbol,
+      Automat automat) {
+    Set<Integer> reachedStates = new HashSet<Integer>();
+    
+    // Iterate over the passed states
+    Iterator<Integer> iterator = startingStates.iterator();
+    while (iterator.hasNext()) {
+      State state = automat.getStateByStateIndex(iterator.next());
+      
+      ArrayList<Transition> transitions = Transition.getTransitionsByStartStateAndSymbol(
+          state, symbol, automat.getTransitions());
+      
+      for (int i = 0; i < transitions.size(); i++) {
+        reachedStates.add(transitions.get(i).getTransitionEnd().getStateIndex());
+      }
+    }
+    
+    return reachedStates;
+  }
+  
   
   /** Transforms the passed automat into a NEA. In case the passed automat is a NEA already,
    * this method does nothing. */

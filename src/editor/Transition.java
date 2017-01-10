@@ -178,6 +178,22 @@ public class Transition extends Shape {
     return foundTransitions;
   }
   
+  /** Returns all Transitions from a passed list that have the passed state as a starting-state
+   * and contain the passed symbol in their symbol-list. Can contain the passed startState itself. */
+  public static ArrayList<Transition> getTransitionsByStartStateAndSymbol(State startState, Character symbol,
+      ArrayList<Transition> transitions) {
+    ArrayList<Transition> foundTransitions = new ArrayList<Transition>();
+    
+    for (int i = 0; i < transitions.size(); i++) {
+      if (startState.stateIndex == transitions.get(i).getTransitionStart().stateIndex) {
+        if (transitions.get(i).containsSymbol(symbol.charValue()))
+          foundTransitions.add(transitions.get(i));
+      }
+    }
+    
+    return foundTransitions;
+  }
+  
   /** Returns all Transitions from a passed list that have the passed state as an end-state. */
   public static ArrayList<Transition> getTransitionsByEndState(State endState,
       ArrayList<Transition> transitions) {

@@ -33,6 +33,10 @@ public abstract class TransitionPaint {
   /** Computes the transitions angle of the given Triangles Cathetes. Pass the deltaY-value
    * in the Cartesian coordinate system not in Swings. Returns a value between 0 and 2 * Math.PI */
   public static double computeAngle(int deltaX, int deltaY) {
+    // Edge case when the hypotenuse would be 0 (Division by 0 leading to Not a Number (NaN))
+    if (deltaX == 0 && deltaY == 0)
+      return 0.0d;
+    
     // The Hypotenuse
     double c = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 

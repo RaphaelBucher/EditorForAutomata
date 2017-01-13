@@ -1,5 +1,5 @@
 ### Voraussetzungen ohne Menueintrag
-#### Ist Automat NEA? (DONE), DEA? (DONE), minimaler DEA (TODO)?
+#### Ist Automat NEA? (DONE), DEA? (DONE), minimaler DEA (Kann nur gecheckt werden wenn man den DEA-Reduktions-Algorithmus anwirft => Rückgabewert prüfen)?
 -(min. DEAs sind DEAs), DEAs sind immer auch NEAs, und NEAs sind immer auch Epsilon-Automaten (einfach ohne Epsilon-Übergänge)  
 
 ###Voraussetzungen mit Menueintrag
@@ -15,7 +15,7 @@ S. 20 Skript
 
 
 ### Features
-#### Info zum Automaten als Menueintrag -> Popup mit dem Info-Text und Scrollbar (DONE) (TODO: is minimal DEA)
+#### Info zum Automaten als Menueintrag -> Popup mit dem Info-Text und Scrollbar (DONE)
 -Angeben ob Automat ein Epsilon, NEA, DEA oder minimaler DEA ist  
 -Def. Skript S. 10 angeben, also Zustände, Eingabealphabet, Überführungsfunktion, Startzustand, Endzustände angeben  
 
@@ -23,7 +23,7 @@ S. 20 Skript
 -S. 18 Skript  
 -Epsilon -> NEA -> DEA -> minimaler DEA wäre die Hackordnung  
 
-#### NEA -> DEA (Menüeintrag to DEA)
+#### NEA -> DEA (Menüeintrag to DEA) (DONE)
 Skript 2.2.7: Aus jedem NEA kann man einen DEA konstruieren der die gleiche Sprache akzeptiert  
 3 Bsps. Skript S. 13 / 14  
 Nicht erreichbar Zustände entfernen ist schon implementiert, S. 17  

@@ -48,6 +48,7 @@ public class MenuBar extends JMenuBar {
   private MenuItem removeUnreachableStates;
   private MenuItem toNEA;
   private MenuItem toDEA;
+  private MenuItem toMinimalDEA;
   private MenuItem wordAccepted;
   
   // file-choosers
@@ -312,6 +313,30 @@ public class MenuBar extends JMenuBar {
       }
     });
     automatMenu.add(toDEA);
+    
+    // toMinimalDEA
+    toMinimalDEA = new MenuItem("Transform to minimal DEA");
+    toMinimalDEA.addActionListener(new ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent e) {
+        Editor.stopWordAcceptedAnimation();
+        
+        Automat automat = Editor.getDrawablePanel().getAutomat();
+        if (automat.getStateByStateIndex(0) == null) {
+          ErrorMessage.setMessage(Config.ErrorMessages.startStateMissing);
+          return;
+        }
+        
+        // Get a minimal DEA, the Editors automat is untouched
+        Automat minDEA = Transformation.transformToMinimalDEA(Editor.getDrawablePanel().getAutomat());
+        if (minDEA != null) {
+          // The Editors current automat wasn't a minimal DEA already
+          Layout.layoutAutomat(minDEA);
+          Editor.changeAutonat(minDEA, true, "Transform to minimal DEA");
+        } else
+          Tooltip.setMessage(Config.Tooltips.transformIsMinimalDEAAlready, 0);
+      }
+    });
+    automatMenu.add(toMinimalDEA);
     
     automatMenu.addSeparator();
     

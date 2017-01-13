@@ -259,6 +259,8 @@ public class Util {
   
   /** Appends the infos about the automat-type to the info-String. */
   private static String automatInfoAddTypes(Automat automat, String info) {
+    boolean hasStartState = (automat.getStateByStateIndex(0) != null);
+    
     info += "------ Types ------\n";
     
     // All EAs are Epsilon-automata
@@ -266,18 +268,26 @@ public class Util {
     
     // NEA
     info += "Nichtdeterministischer endlicher Automat (NEA): ";
-    info += isNEA(automat) ? "yes" : "no";
+    info += (hasStartState && isNEA(automat)) ? "yes" : "no";
     info += "\n";
     
     // DEA
+    boolean isDEA = (hasStartState && isDEA(automat));
     info += "Deterministischer endlicher Automat (DEA): ";
-    info += isDEA(automat) ? "yes" : "no";
+    info += isDEA ? "yes" : "no";
     info += "\n";
     
     // minimal DEA
-    info += "Minimaler Deterministischer endlicher Automat: todo todo todo";
-    // TODO wahrscheinlich den minimal DEA Algorithmus anwerfen und gucken ob sich was verändert
-    // hat (weniger Zustände)
+    boolean isMinDEA = true;
+    if (!isDEA)
+      isMinDEA = false;
+    else {
+      if (Transformation.transformToMinimalDEA(automat) != null)
+        isMinDEA = false;
+    }
+    info += "Minimaler Deterministischer endlicher Automat: ";
+    info += isMinDEA ? "yes" : "no";
+    
     info += "\n";
     info += "\n";
     
@@ -512,11 +522,14 @@ public class Util {
   
   /** Deletes all States that are unreachable by moving along 
    * transitions (only in their direction!). Uses recursion. The startingState can
-   * be any state of the automat, not just the real StartState of the automat. */
-  public static void deleteUnreachableStates(Automat automat, State startingState) {
+   * be any state of the automat, not just the real StartState of the automat. 
+   * @return true if one or more states were deleted, false if the automat had no unreachable states. */
+  public static boolean deleteUnreachableStates(Automat automat, State startingState) {
     ArrayList<State> unreachableStates = getUnreachableStates(automat, startingState);
     
     automat.deleteStates(unreachableStates, false);
+    
+    return unreachableStates.size() >= 1;
   }
   
   /** Recursive method that calls itself for all unmarked neighbor-states of that passed state that

@@ -485,7 +485,7 @@ public class Automat {
   }
 
   /** Starts at 1, 0 is reserved for the start-state */
-  private int findNewStateIndex() {
+  public int findNewStateIndex() {
     int i = 1;
     while (getStateByStateIndex(i) != null) {
       i++;

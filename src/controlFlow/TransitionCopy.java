@@ -2,6 +2,7 @@ package controlFlow;
 
 import java.util.ArrayList;
 
+import editor.Automat;
 import editor.Editor;
 import editor.Transition;
 
@@ -32,6 +33,21 @@ public class TransitionCopy {
   protected Transition getOriginalTransition() {
     return Transition.isInArrayList(getStartStateIndex(), getEndStateIndex(),
         Editor.getDrawablePanel().getAutomat().getTransitions());
+  }
+  
+  /** Returns a Transition-instance of this object. */
+  public Transition toTransition() {
+    Automat automat = Editor.getDrawablePanel().getAutomat();
+    Transition transition = new Transition(
+        automat.getStateByStateIndex(getStartStateIndex()),
+        automat.getStateByStateIndex(getEndStateIndex()));
+    
+    // Append the Symbols
+    for (int i = 0; i < symbols.size(); i++) {
+      transition.addSymbol(symbols.get(i).charValue(), false);
+    }
+    
+    return transition;
   }
   
   // Setters and Getters

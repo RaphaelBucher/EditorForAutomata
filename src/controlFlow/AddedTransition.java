@@ -25,11 +25,8 @@ public class AddedTransition extends UserAction {
   @Override
   protected void redo() {
     Automat automat = Editor.getDrawablePanel().getAutomat();
-    Transition restoredTransition = new Transition(
-        automat.getStateByStateIndex(transitionCopy.getStartStateIndex()),
-        automat.getStateByStateIndex(transitionCopy.getEndStateIndex()));
     
-    automat.addTransition(restoredTransition, false);
+    automat.addTransition(transitionCopy.toTransition(), false);
   }
   
   /** String representation for the Undo / Redo MenuItem */

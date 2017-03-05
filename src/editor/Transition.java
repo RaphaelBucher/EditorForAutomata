@@ -319,6 +319,16 @@ public class Transition extends Shape {
     }
   }
   
+  /** Returns true if the Transition contains the empty word ε, \u03B5 in Unicode as the Java char value. */
+  public boolean isEpsilonTransition() {
+    for (int i = 0; i < symbols.size(); i++) {
+      if (symbols.get(i).getSymbol() == '\u03B5')
+        return true;
+    }
+    
+    return false;
+  }
+  
   // Setters and Getters
   public State getTransitionStart() {
     return this.transitionStart;

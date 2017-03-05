@@ -326,6 +326,7 @@ public class Automat {
       // Add the transition to the automats transitions.
       transitions.add(transition);
       
+      // Create a redo/undo entry if needed
       if (addActionToControlFlow) {
         UserAction.addAction(new AddedTransition(newTransition));
         addActionToControlFlow = false;
@@ -516,8 +517,12 @@ public class Automat {
     if (selectedShape instanceof Symbol) {
       Transition hostTransition = ((Symbol) selectedShape).getHostTransition();
      
-      // Remove the selected symbol
-      hostTransition.removeSymbol(((Symbol) selectedShape).getSymbol(), true);
+      // Remove the selected symbol only in case there are Symbols left after the deletion
+      if (hostTransition.getSymbols().size() > 1)
+        hostTransition.removeSymbol(((Symbol) selectedShape).getSymbol(), true);
+      else
+        // Delete the whole Transition in case it was the last symbol
+        deleteTransition(hostTransition, true);
     }
     
     selectedShape = null;

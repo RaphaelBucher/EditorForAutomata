@@ -66,10 +66,6 @@ public class Transition extends Shape {
    * @return false if the symbol was invalid, true otherwise, even if the symbol was in the
    * list already. */
   public boolean addSymbol(char symbol, boolean addActionToControlFlow) {
-    // Translate a Space as user-input into the Epsilon-Sign
-    if (symbol == ' ')
-      symbol = '\u03B5';
-    
     if (!Symbol.isSymbolValid(symbol))
       return false;
     
@@ -259,14 +255,19 @@ public class Transition extends Shape {
     return foundTransitions;
   }
   
-  /** Removes all Epsilon-Transitions from a Transition-ArrayList and returns the new list. */
+  /** Removes all 'pure' Epsilon-Transitions (Transitions which only an Epsilon-symbol) from a
+   * Transition-ArrayList and returns the new list. Transitions which have an Epsilon-Symbol and 
+   * other Symbols will not be removed. */
   public static ArrayList<Transition> removeEpsilonTransitions(ArrayList<Transition> transitions) {
     ArrayList<Transition> resultList = new ArrayList<Transition>();
     
     for (int i = 0; i < transitions.size(); i++) {
-      if (transitions.get(i).getSymbols().size() >= 1) {
-        resultList.add(transitions.get(i));
-      }
+      // The Transition is a Transition with an Epsilon-Symbol only
+      if (transitions.get(i).isEpsilonTransition() && transitions.get(i).getSymbols().size() <= 1)
+        continue;
+      
+      // Else the Transition will be added
+      resultList.add(transitions.get(i));
     }
     
     return resultList;

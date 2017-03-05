@@ -282,6 +282,10 @@ public class Automat {
       // Are we in the 3. phase of the transition-construction?
       if (this.constructingTransition != null) {
         if (this.constructingTransition.getTransitionEnd() != null) {
+          // Change a space into an Epsilon-symbol.
+          if (keyEvent.getKeyChar() == ' ')
+            keyEvent.setKeyChar('\u03B5');
+          
           // Add the key pressed as a Symbol to the built transition
           if (!constructingTransition.addSymbol(keyEvent.getKeyChar(), false))
             ErrorMessage.setMessage(Config.ErrorMessages.transitionInvalidSymbolEntered);

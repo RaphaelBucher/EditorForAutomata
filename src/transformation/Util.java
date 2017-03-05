@@ -19,7 +19,7 @@ public class Util {
    * needs a start-state, else it's not an automat. */
   public static boolean isNEA(Automat automat) {
     for (int i = 0; i < automat.getTransitions().size(); i++) {
-      if (automat.getTransitions().get(i).getSymbols().size() <= 0)
+      if (automat.getTransitions().get(i).isEpsilonTransition())
         return false;
     }
     

@@ -383,7 +383,7 @@ public class Transformation {
       ArrayList<Transition> incomingTransitions = Transition.getTransitionsByEndState(
           state, originalAutomat.getTransitions());
       
-      // filter out Epsilon-Transitions
+      // filter out pure Epsilon-Transitions (Transitions with an Epsilon-Symbol only)
       incomingTransitions = Transition.removeEpsilonTransitions(incomingTransitions);
       
       // Call the recursive backwards EpsilonTransition searchAlgorithm on all starting-states
@@ -401,6 +401,9 @@ public class Transformation {
               builtAutomat.getStateByStateIndex(markedStates.get(k).getStateIndex()),
               builtAutomat.getStateByStateIndex(state.getStateIndex()));
           newTransition.addSymbols(incomingTransitions.get(j).getSymbols());
+          
+          // Ignore Epsilon-Symbols. Can't delete since their needed for the rest of the computation
+          newTransition.removeSymbol('\u03B5', false);
           
           // Add the transition
           builtAutomat.addTransition(newTransition, false);
@@ -455,7 +458,7 @@ public class Transformation {
     
     for (int i = 0; i < incomingTransitions.size(); i++) {
       // Consider only Epsilon-Transitions
-      if (incomingTransitions.get(i).getSymbols().size() <= 0) {
+      if (incomingTransitions.get(i).isEpsilonTransition()) {
       
         State transitionStart = incomingTransitions.get(i).getTransitionStart();
         if (!transitionStart.isMarked()) {

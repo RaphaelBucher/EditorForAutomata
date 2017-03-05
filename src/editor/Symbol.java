@@ -44,7 +44,7 @@ public class Symbol extends Shape {
 
   @Override
   public void displaySelectedShapeTooltip() {
-    Tooltip.setMessage(Config.Tooltips.symbolSelected, Config.TOOLTIP_DRAWABLE_PANEL_DISPLAY_AMOUNT);
+    Tooltip.setMessage(Config.Tooltips.symbolSelected, 0);
   }
   
   /** Computes the middle of the symbols and paints them. direction = 1 mean the symbols
@@ -69,11 +69,6 @@ public class Symbol extends Shape {
   private static void paint(Graphics2D graphics2D, ArrayList<Symbol> symbols, FontMetrics fontMetrics,
       Point symbolDockingPoint) {
     int fontOffsetY = fontMetrics.getAscent() / 3;
-    
-    // In case its an Epsilon-Transition, paint only the epsilon-sign at the docking-point
-    if (symbols.size() <= 0) {
-      graphics2D.drawString("\u03B5", symbolDockingPoint.x - 3, symbolDockingPoint.y + fontOffsetY);
-    }
     
     Symbol currentSymbol;
     for (int i = 0; i < symbols.size(); i++) {
@@ -169,6 +164,10 @@ public class Symbol extends Shape {
       return true;
     
     if (symbol >= 'a' && symbol <= 'z')
+      return true;
+    
+    // Epsilon-Transitions are allowed too
+    if (symbol == '\u03B5')
       return true;
     
     return false;

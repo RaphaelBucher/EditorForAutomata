@@ -29,7 +29,7 @@ Skript 2.2.7: Aus jedem NEA kann man einen DEA konstruieren der die gleiche Spra
 Nicht erreichbar Zustände entfernen ist schon implementiert, S. 17  
 Falls ein Epsilon-Automat vorliegt, muss dieser natürlich zuerst in einen NEA transformiert werden  
 
-#### DEA -> minimaler DEA (Menüeintrag to minimal DEA)
+#### DEA -> minimaler DEA (Menüeintrag to minimal DEA) (DONE)
 Sript S. 19  
 Falls der Ausgangs-DEA nicht schon minimal ist, hat der neue DEA weniger Zustände (die minimale Anzahl) als der alte.  
 Die beiden DEAs akzeptieren die gleiche Sprache.  

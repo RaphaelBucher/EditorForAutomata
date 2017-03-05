@@ -85,10 +85,10 @@ public interface Config {
   int ERROR_MESSAGE_FONT_SIZE = 20;
   
   // The Tooltips in the top left corner. E.g. hotkeys like backspace to delete states
-  long TOOLTIP_DURATION_MILLIS = 3900;
+  long TOOLTIP_DURATION_MILLIS = 6900;
   int TOOLTIP_FONT_SIZE = 16;
-  int TOOLTIP_TOOLBAR_DISPLAY_AMOUNT = 2;
-  int TOOLTIP_DRAWABLE_PANEL_DISPLAY_AMOUNT = 3;
+  //int TOOLTIP_TOOLBAR_DISPLAY_AMOUNT = 2;
+  //int TOOLTIP_DRAWABLE_PANEL_DISPLAY_AMOUNT = 3;
   
   /** Displayed tooltips of the Toolbars ToggleButtons */
   interface ToolbarTooltips {
@@ -106,7 +106,7 @@ public interface Config {
     // Transition
     String transitionSelectStartingState = "Please select an initial state for the Transition";
     String transitionSelectEndingState = "Please select the same or another destination state";
-    String transitionEnterSymbol = "Please enter one or more symbols";
+    String transitionEnterSymbol = "Please enter one or more symbols. Hit 'Space' for the empty Word \u03B5";
     
     // Transformation
     String transformIsNEAAlready = "Automat is already a NEA";

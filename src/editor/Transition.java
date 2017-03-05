@@ -58,7 +58,7 @@ public class Transition extends Shape {
 
   @Override
   public void displaySelectedShapeTooltip() {
-    Tooltip.setMessage(Config.Tooltips.transitionSelected, Config.TOOLTIP_DRAWABLE_PANEL_DISPLAY_AMOUNT);
+    Tooltip.setMessage(Config.Tooltips.transitionSelected, 0);
   }
   
   /** Adds a symbol to the transitions symbol-ArrayList. If the symbol is already in the list,
@@ -66,6 +66,10 @@ public class Transition extends Shape {
    * @return false if the symbol was invalid, true otherwise, even if the symbol was in the
    * list already. */
   public boolean addSymbol(char symbol, boolean addActionToControlFlow) {
+    // Translate a Space as user-input into the Epsilon-Sign
+    if (symbol == ' ')
+      symbol = '\u03B5';
+    
     if (!Symbol.isSymbolValid(symbol))
       return false;
     

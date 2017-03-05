@@ -61,7 +61,7 @@ public class ToggleButton extends JToggleButton {
       /* mouseClicked() would only be triggered if the mouse is pressed down and released at
        * the exact same pixel within the component. */
       public void mousePressed(MouseEvent evt) {
-        Tooltip.setMessage(tooltip, Config.TOOLTIP_TOOLBAR_DISPLAY_AMOUNT);
+        Tooltip.setMessage(tooltip, 0);
         
         // Important: Do not replace parentObject with Editor.getToolbar() !!!!!
         // During Swings component construction, this reference is not always valid already!

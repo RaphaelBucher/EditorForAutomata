@@ -264,7 +264,9 @@ public class Util {
     info += "------ Types ------\n";
     
     // All EAs are Epsilon-automata
-    info += "\u03B5-Automat: yes\n";
+    info += "\u03B5-Automat: ";
+    info += hasStartState ? "yes" : "no";
+    info += "\n";
     
     // NEA
     info += "Nichtdeterministischer endlicher Automat (NEA): ";

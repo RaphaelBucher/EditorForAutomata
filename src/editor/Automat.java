@@ -211,8 +211,7 @@ public class Automat {
         clickedShape.setSelected(true);
         
         // Display the tooltip to click the second state (ending state)
-        Tooltip.setMessage(Config.Tooltips.transitionSelectEndingState,
-            Config.TOOLTIP_DRAWABLE_PANEL_DISPLAY_AMOUNT);
+        Tooltip.setMessage(Config.Tooltips.transitionSelectEndingState, 0);
       } else {
         Tooltip.setMessage(Config.Tooltips.transitionSelectStartingState, 0);
       }
@@ -230,10 +229,8 @@ public class Automat {
             constructingTransitionEndState);
         clickedShape.setSelected(true);
         
-        addTransition(constructingTransition, true);
-        
         // Display the tooltop to enter a symbol
-        Tooltip.setMessage(Config.Tooltips.transitionEnterSymbol, Config.TOOLTIP_DRAWABLE_PANEL_DISPLAY_AMOUNT);
+        Tooltip.setMessage(Config.Tooltips.transitionEnterSymbol, 0);
       } else {
         // Set an ErrorMessage and return to phase 1
         ErrorMessage.setMessage(Config.ErrorMessages.transitionEndNotClicked);
@@ -243,7 +240,7 @@ public class Automat {
       return;
     }
     
-    // 3. Phase. Transition-symbol entered by keyboard expected. 
+    // 3. Phase. Transition-symbol entered by keyboard expected.
     
     // If the user clicks the mouse somewhere, the transition construction process is being resetted.
     this.resetConstructingTransition();
@@ -257,8 +254,7 @@ public class Automat {
       clickedShape.setSelected(true);
       
       // Display the tooltip to click the second state (ending state)
-      Tooltip.setMessage(Config.Tooltips.transitionSelectEndingState,
-          Config.TOOLTIP_DRAWABLE_PANEL_DISPLAY_AMOUNT);
+      Tooltip.setMessage(Config.Tooltips.transitionSelectEndingState, 0);
     }
   }
   

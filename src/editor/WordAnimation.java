@@ -86,13 +86,9 @@ public class WordAnimation {
         transitionPassedMillis = passedMillis - (durationTaken - TRANSITION_HIGHLIGHT_DURATION);
         animateBall(readTransitionsSymbols.get(i).getTraveledTransition(), transitionPassedMillis);
         
-        // The transition is highlighted. Differ whether its an Epsilon-Transition or not
-        if (readSymbol.getReadSymbol() == null)
-          // Epsilon-Transition
-          highlightedShape = readSymbol.getTraveledTransition();
-        else
-          highlightedShape = Symbol.getSymbol(readSymbol.getTraveledTransition().getSymbols(),
-              readSymbol.getReadSymbol().charValue());
+        // The transition is highlighted. 
+        highlightedShape = Symbol.getSymbol(readSymbol.getTraveledTransition().getSymbols(), 
+            readSymbol.getReadSymbol().charValue());
         
         wordSubstrings(i);
         break;
@@ -142,7 +138,7 @@ public class WordAnimation {
     String word = "";
     
     for (int i = beginIndex; i < endIndex; i++) {
-      if (readTransitionsSymbols.get(i).getReadSymbol() != null)
+      if (readTransitionsSymbols.get(i).getReadSymbol().charValue() != '\u03B5')
         word += readTransitionsSymbols.get(i).getReadSymbol();
     }
     
@@ -153,7 +149,7 @@ public class WordAnimation {
     String word = "";
     
     for (int i = 0; i < readTransitionsSymbols.size(); i++) {
-      if (readTransitionsSymbols.get(i).getReadSymbol() != null)
+      if (readTransitionsSymbols.get(i).getReadSymbol().charValue() != '\u03B5')
         word += readTransitionsSymbols.get(i).getReadSymbol();
     }
     
@@ -181,11 +177,9 @@ public class WordAnimation {
       transition.setWordAcceptedPath(wordAcceptedPath);
       
       Character readSymbol = readTransitionsSymbols.get(i).getReadSymbol();
-      if (readSymbol != null) {
-        // No Epsilon-Transition
-        Symbol symbol = Symbol.getSymbol(transition.getSymbols(), readSymbol.charValue());
-        symbol.setWordAcceptedPath(wordAcceptedPath);
-      }
+        
+      Symbol symbol = Symbol.getSymbol(transition.getSymbols(), readSymbol.charValue());
+      symbol.setWordAcceptedPath(wordAcceptedPath);
     }
   }
   

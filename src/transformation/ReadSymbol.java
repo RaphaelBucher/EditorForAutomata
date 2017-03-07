@@ -10,8 +10,7 @@ import editor.Transition;
 public class ReadSymbol {
   private Transition traveledTransition;
   
-  /** The symbol that was read by traveling the transition. If it was an Epsilon-Transition,
-   * this field is null. */
+  /** The symbol that was read by traveling the transition. */
   private Character readSymbol;
   
   public ReadSymbol(Character readSymbol, Transition traveledTransition) {
@@ -24,7 +23,8 @@ public class ReadSymbol {
     int readSymbolCount = 0;
     
     for (int i = 0; i < readSymbols.size(); i++) {
-      if (readSymbols.get(i).readSymbol != null)
+      // Epsilon-Symbols don't count, rest does
+      if (readSymbols.get(i).readSymbol.charValue() != '\u03B5')
         readSymbolCount++;
     }
     

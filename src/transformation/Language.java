@@ -62,6 +62,58 @@ public class Language {
     
     for (int i = 0; i < outgoingTransitions.size(); i++) {
       Transition transition = outgoingTransitions.get(i);
+      
+      // Iterate over all transition-symbols, only if there are still Symbols to read
+      if (wordSubstring.length() > 0) {
+        for (int j = 0; j < transition.getSymbols().size(); j++) {
+          // Read an actual Symbol? (No Epsilon)
+          if (wordSubstring.charAt(0) == transition.getSymbols().get(j).getSymbol()) {
+            readSymbols.add(new ReadSymbol(wordSubstring.charAt(0), transition));
+            readSymbol(wordSubstring.substring(1), outgoingTransitions.get(i).getTransitionEnd(),
+                automat, readSymbols);
+            readSymbols.remove(readSymbols.size() - 1);
+          }
+        }
+      }
+      
+      // Try the Epsilon-Transition in case it is one (and not an ArcTransition, Epsilon-Arc is useless)
+      if (transition.isEpsilonTransition() && !transition.isArcTransition()) {
+        // Will the current transition close an cycle with only Epsilon-Transitions? If so,
+        // don't allow this since this leads to a stackOverflow! (algorithm doesn't terminate)
+        if (closesEpsilonCycle(transition, readSymbols))
+          continue;
+        
+        readSymbols.add(new ReadSymbol(new Character('\u03B5'), transition));
+        readSymbol(wordSubstring, outgoingTransitions.get(i).getTransitionEnd(),
+            automat, readSymbols);
+        readSymbols.remove(readSymbols.size() - 1);
+      }
+    }
+  }
+  
+  
+  // ---------- Original version, before the Epsilon-Transition modifications ---------------
+  /*
+  private static void readSymbol(String wordSubstring, State state, Automat automat,
+      ArrayList<ReadSymbol> readSymbols) {
+    if (ReadSymbol.getEffectiveLenght(readSymbols) >= ReadSymbol.getEffectiveLenght(mostReadSymbols) &&
+        !wordAccepted) {
+      mostReadSymbols = ReadSymbol.copyList(readSymbols);
+    }
+    
+    if (wordSubstring.length() == 0) {
+      if (state instanceof EndState || state instanceof StartEndState) {
+        wordAccepted = true;
+        return;
+      }
+    }
+    
+    // Get all reachable states. Includes ArcTransitions
+    ArrayList<Transition> outgoingTransitions = Transition.getTransitionsByStartState(state,
+        automat.getTransitions());
+    
+    for (int i = 0; i < outgoingTransitions.size(); i++) {
+      Transition transition = outgoingTransitions.get(i);
       // Skip Epsilon-ArcTransitions
       if (transition.isArcTransition() && transition.getSymbols().size() <= 0)
         continue;
@@ -95,6 +147,9 @@ public class Language {
       }
     }
   }
+  */
+
+  
   
   /** @return true if the passed transition would close a circle of only Epsilon-transitions.
    * Without this check, Epsilon-cycles result in a StackOverflow because the algorithm 
@@ -103,11 +158,15 @@ public class Language {
     State cycleStart = transition.getTransitionEnd();
     
     for (int i = readSymbols.size() - 1; i >= 0; i--) {
-      if (readSymbols.get(i).getTraveledTransition().getSymbols().size() >= 1) {
+      if (!readSymbols.get(i).getTraveledTransition().isEpsilonTransition()) {
         // Transition is not an Epsilon-Transition. There is no Epsilon-Cylce
         return false;
       } else {
-        // Transition is an Epsilon-Transition
+        // Transition is an Epsilon-Transition. Did the history actually read the Epsilon-Symbol?
+        if (readSymbols.get(i).getReadSymbol().charValue() != '\u03B5')
+          return false;
+        
+        // Epsilon-Transition and the Epsilon-Symbol was actually read. Continue the search
         if (readSymbols.get(i).getTraveledTransition().getTransitionStart().equals(cycleStart)) {
           // There is an Epsilon-cycle
           return true;

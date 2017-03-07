@@ -306,8 +306,6 @@ public class MenuBar extends JMenuBar {
         Automat automatDeepCopy = automat.copy();
         automatDeepCopy = Transformation.transformToDEA(automatDeepCopy);
         
-        System.out.println("Is DEA: " + Util.isDEA(automatDeepCopy));
-        
         Layout.layoutAutomat(automatDeepCopy);
         Editor.changeAutonat(automatDeepCopy, true, "Transform to DEA");
       }

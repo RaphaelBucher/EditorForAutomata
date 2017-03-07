@@ -29,7 +29,7 @@ public class Util {
   /** Computes whether the passed automat is a DEA. This method doesn't check for a start-state. Every automat
    * needs a start-state, else it's not an automat. */
   public static boolean isDEA(Automat automat) {
-    // Make its a NEA (no Epsilon-Transitions)
+    // Return false if it's not even a NEA
     if (!isNEA(automat))
       return false;
     
@@ -53,7 +53,8 @@ public class Util {
   }
   
   /** Iterates over all the automats transitions that have the passed state as a startState and
-   * puts the transitions symbols into the returned ArrayList. Can contain duplicates.  */
+   * puts the transitions symbols into the returned ArrayList. Can contain duplicates. Doesn't contain
+   * the empty word Epsilon. */
   public static ArrayList<Character> getStateOutgoingSymbolsDuplicates(Automat automat, State state) {
     ArrayList<Character> symbols = new ArrayList<Character>();
     
@@ -64,7 +65,8 @@ public class Util {
     // Put all symbols of all outgoing Transitions into an ArrayList, duplications enabled by default
     for (int i = 0; i < outgoingTransitions.size(); i++) {
       for (int j = 0; j < outgoingTransitions.get(i).getSymbols().size(); j++) {
-        symbols.add(outgoingTransitions.get(i).getSymbols().get(j).getSymbol());
+        if (outgoingTransitions.get(i).getSymbols().get(j).getSymbol() != '\u03B5')
+          symbols.add(outgoingTransitions.get(i).getSymbols().get(j).getSymbol());
       }
     }
     
@@ -85,7 +87,7 @@ public class Util {
     return symbols;
   }
   
-  /** @return All symbols that the automat contains. */
+  /** @return All symbols that the automat contains. Also contains Epsilon in case its present. */
   public static ArrayList<Character> getAlphabet(Automat automat) {
     ArrayList<Character> symbols = new ArrayList<Character>();
     
@@ -329,17 +331,11 @@ public class Util {
       
       for (int j = 0; j < outgoingTransitions.size(); j++) {
         ArrayList<Symbol> symbols = outgoingTransitions.get(j).getSymbols();
-        
-        if (symbols.size() <= 0) {
-          // Epsilon-Transition
-          info += "\u03B4(" + subscript("q" + sortedStates.get(i).getStateIndex()) + ", \u03B5) = " +
-              subscript("q" + outgoingTransitions.get(j).getTransitionEnd().getStateIndex()) + "    ";
-        } else {
           for (int k = 0; k < symbols.size(); k++) {
-            info += "\u03B4(" + subscript("q" + sortedStates.get(i).getStateIndex()) + ", " +
-                symbols.get(k).getSymbol() + ") = " +
-                subscript("q" + outgoingTransitions.get(j).getTransitionEnd().getStateIndex()) + "    ";
-          }
+            
+          info += "\u03B4(" + subscript("q" + sortedStates.get(i).getStateIndex()) + ", " +
+              symbols.get(k).getSymbol() + ") = " +
+              subscript("q" + outgoingTransitions.get(j).getTransitionEnd().getStateIndex()) + "    ";
         }
       }
       
@@ -434,11 +430,15 @@ public class Util {
       }
     });
     
-    // Add the Epsilon-sign in case there's an Epsilon-Transition
+    // Add the Epsilon-sign at start in case there's an Epsilon-Transition
     if (!isNEA(automat)) {
       info += "\u03B5";
+
+      // Remove the Epsilon-Symbol
+      alphabetList.remove(alphabetList.indexOf('\u03B5'));
       
       info += alphabetList.size() >= 1 ? ", " : "";
+      
     }
     
     String alphabet = alphabetList.toString();

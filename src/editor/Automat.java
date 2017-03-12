@@ -290,9 +290,10 @@ public class Automat {
           if (!constructingTransition.addSymbol(keyEvent.getKeyChar(), false))
             ErrorMessage.setMessage(Config.ErrorMessages.transitionInvalidSymbolEntered);
           
-          // Add the Transition to the automat. The method decides itself what 
-          // still needs to be added, e.g. the whole transition or only a symbol
-          addTransition(constructingTransition, true);
+          else
+            // Add the Transition to the automat. The method decides itself what 
+            // still needs to be added, e.g. the whole transition or only a symbol
+            addTransition(constructingTransition, true);
         }
       }
     }

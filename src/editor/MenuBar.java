@@ -59,7 +59,7 @@ public class MenuBar extends JMenuBar {
     super();
     
     // Create the file choosers
-    xmlFileChooser = new CustomFileChooser("xml", new File("").getAbsolutePath() + "/savedAutomats/");
+    xmlFileChooser = new CustomFileChooser("xml", new File("").getAbsolutePath() + "/savedAutomata/");
     pngFileChooser = new CustomFileChooser("png", new File("").getAbsolutePath() + "/exportedImages/");
     
     // Init the Menus
@@ -195,7 +195,7 @@ public class MenuBar extends JMenuBar {
   /** Helper method for the constructor */
   private void initAutomatMenu() {
     // --- Automat-menu ---
-    automatMenu = new JMenu("Automat");
+    automatMenu = new JMenu("Automaton");
     
     // info
     info = new MenuItem("Info");
@@ -204,7 +204,7 @@ public class MenuBar extends JMenuBar {
         Editor.stopWordAcceptedAnimation();
         
         String info = Util.automatInfo(Editor.getDrawablePanel().getAutomat());
-        new TextFrame("Automat Info", new Dimension(500, 300), info);
+        new TextFrame("Automaton Info", new Dimension(500, 300), info);
       }
     });
     automatMenu.add(info);
@@ -218,7 +218,7 @@ public class MenuBar extends JMenuBar {
         
         if (automatCopy.getStateByStateIndex(0) != null) {
           String grammar = Util.toGrammar(automatCopy);
-          new TextFrame("Type-3 Grammar", new Dimension(600, 360), grammar);
+          new TextFrame("Type-3 Grammar", new Dimension(620, 360), grammar);
         } else
           ErrorMessage.setMessage(Config.ErrorMessages.startStateMissing);
       }
@@ -241,7 +241,7 @@ public class MenuBar extends JMenuBar {
     automatMenu.addSeparator();
     
     // remove unreachable states
-    removeUnreachableStates = new MenuItem("Remove unreachable states");
+    removeUnreachableStates = new MenuItem("Remove unreachable States");
     removeUnreachableStates.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         Editor.stopWordAcceptedAnimation();
@@ -252,14 +252,14 @@ public class MenuBar extends JMenuBar {
         // Don't apply the Layout-algorithm, just remove the unreachable states and compute the
         // painting information again
         automatDeepCopy.updatePainting();
-        Editor.changeAutonat(automatDeepCopy, true, "Remove unreachable states");
+        Editor.changeAutonat(automatDeepCopy, true, "Remove unreachable States");
       }
     });
     automatMenu.add(removeUnreachableStates);
     automatMenu.addSeparator();
     
     // toNEA
-    toNEA = new MenuItem("Transform to NEA");
+    toNEA = new MenuItem("Transform to NFA (NEA)");
     toNEA.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         Editor.stopWordAcceptedAnimation();
@@ -280,13 +280,13 @@ public class MenuBar extends JMenuBar {
         Transformation.transformToNEA(automatDeepCopy);
         
         automatDeepCopy.updatePainting();
-        Editor.changeAutonat(automatDeepCopy, true, "Transform to NEA");
+        Editor.changeAutonat(automatDeepCopy, true, "Transform to NFA (NEA)");
       }
     });
     automatMenu.add(toNEA);
     
     // toDEA
-    toDEA = new MenuItem("Transform to DEA");
+    toDEA = new MenuItem("Transform to DFA (DEA)");
     toDEA.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         Editor.stopWordAcceptedAnimation();
@@ -307,13 +307,13 @@ public class MenuBar extends JMenuBar {
         automatDeepCopy = Transformation.transformToDEA(automatDeepCopy);
         
         Layout.layoutAutomat(automatDeepCopy);
-        Editor.changeAutonat(automatDeepCopy, true, "Transform to DEA");
+        Editor.changeAutonat(automatDeepCopy, true, "Transform to DFA (DEA)");
       }
     });
     automatMenu.add(toDEA);
     
     // toMinimalDEA
-    toMinimalDEA = new MenuItem("Transform to minimal DEA");
+    toMinimalDEA = new MenuItem("Transform to minimal DFA (DEA)");
     toMinimalDEA.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         Editor.stopWordAcceptedAnimation();
@@ -329,7 +329,7 @@ public class MenuBar extends JMenuBar {
         if (minDEA != null) {
           // The Editors current automat wasn't a minimal DEA already
           Layout.layoutAutomat(minDEA);
-          Editor.changeAutonat(minDEA, true, "Transform to minimal DEA");
+          Editor.changeAutonat(minDEA, true, "Transform to minimal DFA (DEA)");
         } else
           Tooltip.setMessage(Config.Tooltips.transformIsMinimalDEAAlready, 0);
       }

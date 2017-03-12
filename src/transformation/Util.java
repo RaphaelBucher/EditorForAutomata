@@ -111,7 +111,7 @@ public class Util {
     if (!isNEA(automat))
       Transformation.transformToNEA(automat);
     
-    grammar += "Type-3 Grammar G which generates the accepted Language of the Automat E, ";
+    grammar += "Type-3 Grammar G which generates the accepted Language of the Automaton E, ";
     grammar += "L(G) = A(E).\n\n";
     grammar += "G = (N, T, P, S) with\n\n";
     
@@ -142,12 +142,22 @@ public class Util {
       ArrayList<String> propositions = propositions(automat.getStates().get(i), automat);
       String propRightSide = propositions.toString().replaceAll(", ", "|");
       propRightSide = propRightSide.substring(1,  propRightSide.length() - 1);
-      grammar += stateToNonterminal(automat.getStates().get(i)) + " \u2192 " + propRightSide;
       
-      // Comma for all lineEndings except a Point for the last one.
-      grammar += (i < automat.getStates().size() - 1) ? ",\n" : ".\n";
+      if (propositions.size() > 0) {
+        grammar += stateToNonterminal(automat.getStates().get(i)) + " \u2192 " + propRightSide;
+      
+        // Comma for all lineEndings
+        grammar += ",\n";
+      }
     }
     
+    // Replace the last comma with a dot
+    int indexOfLastComma = grammar.lastIndexOf(","); 
+    if (indexOfLastComma != -1) {
+      grammar = grammar.substring(0, grammar.length() - 2);
+      grammar += ".\n";
+    }
+      
     return grammar;
   }
   
@@ -181,13 +191,8 @@ public class Util {
   private static String grammarApendTerminals(Automat automat) {
     String grammar = "T ";
     
-    // For DEAs, its =, for NEAs its subset (Epsilon-Automatas were transformed to NEAs as well previously)
-    if (isDEA(automat))
-      grammar += "=";
-    else
-      grammar += "\u2287";
-    
-    grammar += " {";
+    // = for DEA and NEA (Epsilon-Automatas were transformed to NEAs as well previously)
+    grammar += "= {";
     
     ArrayList<Character> alphabetList = getAlphabet(automat);
     Collections.sort(alphabetList, new Comparator<Character>() {
@@ -266,18 +271,20 @@ public class Util {
     info += "------ Types ------\n";
     
     // All EAs are Epsilon-automata
+    /*
     info += "\u03B5-Automat: ";
     info += hasStartState ? "yes" : "no";
     info += "\n";
+    */
     
     // NEA
-    info += "Nichtdeterministischer endlicher Automat (NEA): ";
+    info += "Nondeterministic finite automaton (NEA): ";
     info += (hasStartState && isNEA(automat)) ? "yes" : "no";
     info += "\n";
     
     // DEA
     boolean isDEA = (hasStartState && isDEA(automat));
-    info += "Deterministischer endlicher Automat (DEA): ";
+    info += "Deterministic finite automaton (DEA): ";
     info += isDEA ? "yes" : "no";
     info += "\n";
     
@@ -289,7 +296,7 @@ public class Util {
       if (Transformation.transformToMinimalDEA(automat) != null)
         isMinDEA = false;
     }
-    info += "Minimaler Deterministischer endlicher Automat: ";
+    info += "Minimal deterministic finite automaton: ";
     info += isMinDEA ? "yes" : "no";
     
     info += "\n";
@@ -321,6 +328,11 @@ public class Util {
   
   /** Appends the String representation of the automats transfer function to the passed String. */
   private static String appendTransferFunction(Automat automat, String info) {
+    boolean isDEA = isDEA(automat);
+    
+    // Append the definition of the function
+    info += getTransferFunctionDefinition(automat);
+    
     // Work on a copy of the automats original states-ArrayList
     ArrayList<State> sortedStates = copyStates(automat.getStates());
     sortStates(sortedStates);
@@ -329,14 +341,36 @@ public class Util {
       ArrayList<Transition> outgoingTransitions = Transition.getTransitionsByStartState(
           sortedStates.get(i), automat.getTransitions());
       
+      // Store all reached stateIndices from a read Symbol
+      Set<StatesOfSymbol> reachedStatesPerSymbol = new HashSet<StatesOfSymbol>();
+      
       for (int j = 0; j < outgoingTransitions.size(); j++) {
         ArrayList<Symbol> symbols = outgoingTransitions.get(j).getSymbols();
-          for (int k = 0; k < symbols.size(); k++) {
-            
-          info += "\u03B4(" + subscript("q" + sortedStates.get(i).getStateIndex()) + ", " +
-              symbols.get(k).getSymbol() + ") = " +
-              subscript("q" + outgoingTransitions.get(j).getTransitionEnd().getStateIndex()) + "    ";
+        for (int k = 0; k < symbols.size(); k++) {
+          char symbol = symbols.get(k).getSymbol();
+          int stateIndex = outgoingTransitions.get(j).getTransitionEnd().getStateIndex();
+          
+          StatesOfSymbol statesOfSymbol = StatesOfSymbol.getObjectBySymbol(reachedStatesPerSymbol, symbol);
+          
+          if (statesOfSymbol == null) 
+            reachedStatesPerSymbol.add(new StatesOfSymbol(symbol, stateIndex));
+          else
+            statesOfSymbol.addStateIndex(stateIndex);
         }
+      }
+      
+      // Append the collected elements
+      for (StatesOfSymbol statesOfSymbol : reachedStatesPerSymbol) {
+        info += "\u03B4(" + subscript("q" + sortedStates.get(i).getStateIndex()) + ", " +
+            statesOfSymbol.getSymbol() + ") = " + statesOfSymbol.toString(isDEA) + "    ";
+      }
+      
+      // Append the empty sets
+      ArrayList<Character> alphabet = getAlphabet(automat);
+      for (int j = 0; j < alphabet.size(); j++) {
+        if (StatesOfSymbol.getObjectBySymbol(reachedStatesPerSymbol, alphabet.get(j).charValue()) == null)
+          info += "\u03B4(" + subscript("q" + sortedStates.get(i).getStateIndex()) + ", " +
+              alphabet.get(j) + ") = {}    ";
       }
       
       if (outgoingTransitions.size() >= 1)
@@ -345,6 +379,22 @@ public class Util {
     
     return info;
   }
+  
+  
+  private static String getTransferFunctionDefinition(Automat automat) {
+    // Epsilon-Automaton
+    String definition = "\u03B4: Q \u00D7 (\u03A3 \u222A {\u03B5}) \u2192 \u03A1(Q)";
+    
+    if (isNEA(automat))
+      definition = "\u03B4: Q \u00D7 \u03A3 \u2192 \u03A1(Q)";
+    
+    if (isDEA(automat))
+      definition = "\u03B4: Q \u00D7 \u03A3 \u2192 Q";
+    
+    return definition + "\n";
+  }
+  
+  
   
   /** @return a copy of the passed ArrayList. The states itself are not copied, they use the
    * same reference. */
@@ -395,7 +445,7 @@ public class Util {
   }
   
   /** Replaces all numbers in the passed string with their subscript version. */
-  private static String subscript(String str) {
+  public static String subscript(String str) {
     str = str.replaceAll("0", "\u2080");
     str = str.replaceAll("1", "\u2081");
     str = str.replaceAll("2", "\u2082");

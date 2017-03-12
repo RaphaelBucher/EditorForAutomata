@@ -81,11 +81,11 @@ public interface Config {
   String START_STATE_ARROW_SELECTED_ICON_PATH = "/resources/Icons/startStateArrowSelected.png";
 
   // How many millis until the Error-message fades away completely
-  long ERROR_MESSAGE_DURATION_MILLIS = 2400;
+  long ERROR_MESSAGE_DURATION_MILLIS = 3900;
   int ERROR_MESSAGE_FONT_SIZE = 20;
   
   // The Tooltips in the top left corner. E.g. hotkeys like backspace to delete states
-  long TOOLTIP_DURATION_MILLIS = 6900;
+  long TOOLTIP_DURATION_MILLIS = 6000;
   int TOOLTIP_FONT_SIZE = 16;
   //int TOOLTIP_TOOLBAR_DISPLAY_AMOUNT = 2;
   //int TOOLTIP_DRAWABLE_PANEL_DISPLAY_AMOUNT = 3;
@@ -93,20 +93,20 @@ public interface Config {
   /** Displayed tooltips of the Toolbars ToggleButtons */
   interface ToolbarTooltips {
     String selectTool = "Please select States, Transitions and their Symbols";
-    String moveTool = "Please drag & drop states";
-    String transition = "Please select a start-state for the Transition";
+    String moveTool = "Please drag & drop States";
+    String transition = "Please select an outgoing State for the Transition";
   }
   
   /** Displayed Tooltips */
   interface Tooltips {
-    String stateSelected = "Please press Backspace to delete the state";
-    String transitionSelected = "Please press Backspace to delete the transition";
-    String symbolSelected = "Please press Backspace to delete the symbol";
+    String stateSelected = "Please press 'Backspace' to delete the State";
+    String transitionSelected = "Please press 'Backspace' to delete the Transition";
+    String symbolSelected = "Please press 'Backspace' to delete the Symbol";
     
     // Transition
-    String transitionSelectStartingState = "Please select an initial state for the Transition";
-    String transitionSelectEndingState = "Please select the same or another destination state";
-    String transitionEnterSymbol = "Please enter one or more symbols. Hit 'Space' for the empty Word \u03B5";
+    String transitionSelectStartingState = "Please select an outgoing State for the Transition";
+    String transitionSelectEndingState = "Please select the same or another destination State";
+    String transitionEnterSymbol = "Please enter one or more Symbols. Hit 'Space' for the empty Word \u03B5";
     
     // Transformation
     String transformIsNEAAlready = "Automat is already a NEA";
@@ -116,19 +116,19 @@ public interface Config {
   
   /** Displayed ErrorMessages */
   interface ErrorMessages {
-    String cannotAddStartState = "Has already a start state";
+    String cannotAddStartState = "Has already a starting State";
     
     // Transition
-    String transitionStartNotClicked = "Please select a starting state";
-    String transitionEndNotClicked = "Please select an ending state";
+    String transitionStartNotClicked = "Please select an outgoing State for the Transition";
+    String transitionEndNotClicked = "Please select a destination State";
     String transitionInvalidSymbolEntered = "Valid symbols are 0,...,9 and a,...,z";
-    String transitionStateDeletionProhibited = "Please use the selection tool to delete states";
+    String transitionStateDeletionProhibited = "Please use the selection tool to delete States";
     
     // XML-parsing errors
     String xmlParsingError = "Invalid XML-File";
     
     // Transformation
-    String startStateMissing = "Please add a start state";
+    String startStateMissing = "Please add a starting State";
   }
   
   // In case the Transition has a reverseTransition, how far it is away from

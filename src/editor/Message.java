@@ -28,7 +28,7 @@ public class Message {
 
     // fade effect starts at halftime. So for e.g. ERROR_MESSAGE_DURATION_MILLIS
     // = 3000, it goes down from 255 * 2 to 0 and limits result to 255
-    int alpha = (int)((double)remainingMillis / this.messageDurationMillis * 255 * 2);
+    int alpha = (int)((double)remainingMillis / this.messageDurationMillis * 255 * 5);
 
     // limit the value to 255 and ensure its not negative
     alpha = Math.min(alpha, 255);

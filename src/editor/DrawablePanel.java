@@ -136,7 +136,7 @@ public class DrawablePanel extends JPanel implements MouseMotionListener {
   
   /** Exports this JPanel into an image and saves it on the file-system. */
   public void imageExport(String filePath) {
-    int scale = 2; // Needed for image-quality...
+    int scale = 2; // Needed for image-quality
     BufferedImage image = new BufferedImage(getWidth() * scale, getHeight() * scale, BufferedImage.TYPE_INT_ARGB);
     Graphics2D g = image.createGraphics();
     

@@ -79,7 +79,7 @@ public class Language {
       // Try the Epsilon-Transition in case it is one (and not an ArcTransition, Epsilon-Arc is useless)
       if (transition.isEpsilonTransition() && !transition.isArcTransition()) {
         // Will the current transition close an cycle with only Epsilon-Transitions? If so,
-        // don't allow this since this leads to a stackOverflow! (algorithm doesn't terminate)
+        // don't allow this since this leads to a stackOverflow. (algorithm doesn't terminate)
         if (closesEpsilonCycle(transition, readSymbols))
           continue;
         

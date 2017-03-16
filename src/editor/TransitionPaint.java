@@ -24,7 +24,7 @@ public abstract class TransitionPaint {
   
   // Docking point for the Transitions symbols
   protected Point symbolDockingPoint;
-  /** 1 if the symbols go from docking point to right, -1 if the symbols go from docking pint to left. */
+  /** 1 if the symbols go from docking point to right, -1 if the symbols go from docking point to left. */
   protected int symbolDirection;
   /** The offsetVectors length from the LineTransitions middle to the symbolDockingPoint, or
    * from the middle of the ArcCircle to the dockingPoint in cases its an ArcTransition. */

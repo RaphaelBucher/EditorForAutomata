@@ -198,7 +198,7 @@ public class Transformation {
             
             if (isStatePairMarked(reachedFromP, reachedFromQ, equivalenceTable, automat)) {
               // Mark the pair (p, q)
-              equivalenceTable[i][j] = true;
+              equivalenceTable[i][j] = true;  
               markedSomething = true;
             }
           }
@@ -374,7 +374,8 @@ public class Transformation {
   }
   
   /** Step 3 from Abbildung 2.2.6 in the script.
-   * Removes all Epsilon Transitions from the Automat. */
+   * Removes all Epsilon Transitions from the Automat and replaces Epsilon-chains with a 
+   * non-Epsilon-symbol in the end with a new transition according to the script. */
   private static void toNEARemoveEpsilonTransitions(Automat originalAutomat, Automat builtAutomat) {
     for (int i = 0; i < originalAutomat.getStates().size(); i++) {
       State state = originalAutomat.getStates().get(i);

@@ -49,6 +49,7 @@ public class Math2D {
     // The angle of the mouse in relation to the Arcs Center
     double mouseAngle = Vector2D.computeAngle(mouse.x - arc.x, mouse.y - arc.y);
     double reverseArcAngle = arcAngle + Math.PI; // ReverseArcAngle is between PI and 3 * PI
+    
     // Ensure that the angles are periodically as close as possible for easy comparison
     if (reverseArcAngle - mouseAngle > Math.PI)
       mouseAngle += 2 * Math.PI;

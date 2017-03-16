@@ -7,7 +7,7 @@ import editor.Editor;
 /** Represents a reversible user-action. Used for the undo/redo functionality. */
 public abstract class UserAction {
   /** How many actions will be stored for undoing / redoing. */
-  private static final int listSize = 30; //TODO increase after its been tested
+  private static final int listSize = 30; //TODO increase for final build?
   /** An index for the list iteration. Undoing decrements, redoing increments. */
   private static int currentListIndex = -1;
   private static LinkedList<UserAction> userActions = new LinkedList<UserAction>();

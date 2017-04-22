@@ -12,12 +12,12 @@ public interface Config {
   int FPS = 30; 
 
   // Frame will be initialized with these sizes. Can be enlarged.
-  int FRAME_PANEL_MIN_WIDTH = 1000; // TODO change back to 700
+  int FRAME_PANEL_MIN_WIDTH = 700;
 
   // Needs to be a bit bigger than the ToolBar needs. It also contains the
   // frames menu-bar.
   // The height initialization of everything depends on only this value.
-  int FRAME_PANEL_MIN_HEIGHT = 630; // TODO change back to 500
+  int FRAME_PANEL_MIN_HEIGHT = 500;
 
   // ToolBar
   int TOOLBAR_ICON_WIDTH = 60;

@@ -298,13 +298,12 @@ public class Automat {
       }
     }
     
-    // Debug TODO: start of removing
+    // Debug
     if (key == KeyEvent.VK_RIGHT) {
-      Debug.printAutomat(this);
+      //Debug.printAutomat(this);
     }
     if (key == KeyEvent.VK_LEFT) {
     }
-    // TODO: end of removing
   }
   
   /** Do not directly add Transitions to the transitions-ArrayList. Call this method instead,

@@ -1,3 +1,8 @@
+/* 
+ * Editor for Automata
+ * Bachelor Thesis
+ * Raphael Bucher 2016 / 2017
+ * */
 package transformation;
 
 import java.awt.Point;

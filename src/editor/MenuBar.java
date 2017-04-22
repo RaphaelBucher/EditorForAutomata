@@ -1,3 +1,8 @@
+/* 
+ * Editor for Automata
+ * Bachelor Thesis
+ * Raphael Bucher 2016 / 2017
+ * */
 package editor;
 
 import java.awt.Color;
@@ -79,7 +84,7 @@ public class MenuBar extends JMenuBar {
     newAutomat = new MenuItem("New");
     newAutomat.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
-        // TODO Dieser Aufruf muss bei allen MenuItems zuerst stehen!!!!!
+        // Dieser Aufruf muss bei allen MenuItems zuerst stehen!!!!!
         Editor.stopWordAcceptedAnimation();
         
         UserAction.resetActions();
@@ -363,6 +368,25 @@ public class MenuBar extends JMenuBar {
       }
     });
     automatMenu.add(wordAccepted);
+    
+    /*
+    // regex to Automat
+    regexToAutomat = new MenuItem("Regex to finite Automaton");
+    regexToAutomat.addActionListener(new ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent e) {
+        Editor.stopWordAcceptedAnimation();
+        
+        // Open an input dialog
+        String regex = (String)JOptionPane.showInputDialog(Editor.getEditor(),
+            "Enter a regex, e.g. ", "Word accepted",
+            JOptionPane.PLAIN_MESSAGE);
+        
+        if (regex == null) 
+          return; // the user aborted the dialog
+      }
+    });
+    automatMenu.add(regexToAutomat);
+    */
     
     // Add the built menu to the MenuBar
     this.add(automatMenu);

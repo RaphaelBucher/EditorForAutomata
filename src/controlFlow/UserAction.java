@@ -1,3 +1,8 @@
+/* 
+ * Editor for Automata
+ * Bachelor Thesis
+ * Raphael Bucher 2016 / 2017
+ * */
 package controlFlow;
 
 import java.util.LinkedList;
@@ -7,7 +12,7 @@ import editor.Editor;
 /** Represents a reversible user-action. Used for the undo/redo functionality. */
 public abstract class UserAction {
   /** How many actions will be stored for undoing / redoing. */
-  private static final int listSize = 30; //TODO increase for final build?
+  private static final int listSize = 30;
   /** An index for the list iteration. Undoing decrements, redoing increments. */
   private static int currentListIndex = -1;
   private static LinkedList<UserAction> userActions = new LinkedList<UserAction>();

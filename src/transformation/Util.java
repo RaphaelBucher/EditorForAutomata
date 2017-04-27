@@ -464,7 +464,7 @@ public class Util {
     return str;
   }
   
-  /** Appends the of the automat to the info-String. */
+  /** Appends the alphabet of the automat to the info-String. */
   private static String automatInfoApendAlphabet(Automat automat, String info) {
     info += "\u03A3 ";
     
@@ -487,13 +487,8 @@ public class Util {
     
     // Add the Epsilon-sign at start in case there's an Epsilon-Transition
     if (!isNEA(automat)) {
-      info += "\u03B5";
-
       // Remove the Epsilon-Symbol
       alphabetList.remove(alphabetList.indexOf('\u03B5'));
-      
-      info += alphabetList.size() >= 1 ? ", " : "";
-      
     }
     
     String alphabet = alphabetList.toString();

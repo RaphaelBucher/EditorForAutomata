@@ -13,4 +13,3 @@ open terminal and type
 cd directory_of_the_runnable_Editor.jar (e.g. drag and drop the Folder into the Terminal)  
 java -jar runnable_Editor.jar  
 
-Want the full eclipse-project in the repo currently for testing purpose, .gitignore will be filled out later again.

@@ -1,2 +1,6 @@
 .com.apple.timemachine.supported
 Functionality.md
+.classpath
+.project
+.settings
+bin
